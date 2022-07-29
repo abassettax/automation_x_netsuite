@@ -1,0 +1,301 @@
+function BUPROFIT(request,response) //(portlet, column)
+{
+ 
+var accountingperiodSearch = nlapiSearchRecord("accountingperiod",null,
+[
+   ["enddate","within","lastmonth"], 
+   "AND", 
+   ["alllocked","is","T"]
+], 
+[
+   new nlobjSearchColumn("periodname").setSort(false)
+]
+);
+  
+  var totaltrans = 0;
+    var periodFields = request.getParameter('custpage_periodselect');
+ if(!periodFields)
+   {periodFields = "LP";}
+  
+  if(!accountingperiodSearch){ periodFields ='PBL' }
+  
+ /*///////////////////bu INCOME info
+	var incomefilter= new Array();  
+ incomefilter[0] = new nlobjSearchFilter("postingperiod", null ,"rel", periodFields);
+ incomefilter[1] = new nlobjSearchFilter("posting",null,"is","T");
+ incomefilter[2] = new nlobjSearchFilter("accounttype",null,"anyof",["Income","OthIncome"]);
+
+	var incomecolumns = new Array();
+  incomecolumns[0] =  new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} != 'Income' AND {accounttype} != 'Other Income' ) THEN {grossamount} *-1 ELSE {grossamount} END").setSort(true);
+ incomecolumns[1] =  new nlobjSearchColumn("formulatext",null,"GROUP").setFormula("CASE WHEN {class} LIKE 'A: Business Unit%' and {class.internalid} != 27  THEN {classnohierarchy} ELSE 'Corporate' END").setSort(true);
+ 
+ //incomecolumns[2] =  new nlobjSearchColumn("formulapercent",null,"SUM").setFormula("CASE WHEN {class} LIKE 'A: Business Unit%' and {class.internalid} != 27  THEN 1 ELSE 0 END").setFunction('percentOfTotal');//
+
+var incometransactionSearch = nlapiSearchRecord("transaction",null,incomefilter, incomecolumns);
+  
+/////////////////end bu INCOME info 
+  
+ /////////////////////bu GOGS info
+	var cogsfilter= new Array();  
+ cogsfilter[0] = new nlobjSearchFilter("postingperiod", null ,"rel",periodFields);
+ cogsfilter[1] = new nlobjSearchFilter("posting",null,"is","T");
+ cogsfilter[2] = new nlobjSearchFilter("accounttype",null,"anyof",["COGS", "Income"]);
+
+	var cogscolumns = new Array();
+  cogscolumns[0] =  new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} != 'Income' AND {accounttype} != 'Other Income' ) THEN 0 ELSE {grossamount} END").setSort(true);
+ cogscolumns[1] =  new nlobjSearchColumn("formulatext",null,"GROUP").setFormula("CASE WHEN {class} LIKE 'A: Business Unit%' and {class.internalid} != 27  THEN {classnohierarchy} ELSE 'Corporate' END").setSort(true);;
+ cogscolumns[2] =  new nlobjSearchColumn("formulanumeric",null,"SUM").setFormula("CASE WHEN( {accounttype} != 'Income' AND {accounttype} != 'Other Income' ) THEN {grossamount} *-1 ELSE 0 END");
+ 
+
+ 
+var cogstransactionSearch = nlapiSearchRecord("transaction",null,cogsfilter, cogscolumns);
+/////////////////end bu COGS info 
+  
+  /////////////////////bu OH info
+	var buohfilter= new Array();  
+ buohfilter[0] = new nlobjSearchFilter("postingperiod", null ,"rel",periodFields);
+ buohfilter[1] = new nlobjSearchFilter("posting",null,"is","T");
+ buohfilter[2] = new nlobjSearchFilter("accounttype",null,"anyof",["Expense","OthExpense","Income"]);
+
+	var buohcolumns = new Array();
+ buohcolumns[0] =  new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} != 'Income' AND {accounttype} != 'Other Income' ) THEN 0 ELSE {grossamount} END").setSort(true);
+ buohcolumns[1] =  new nlobjSearchColumn("formulatext",null,"GROUP").setFormula("CASE WHEN {class} LIKE 'A: Business Unit%' and {class.internalid} != 27  THEN {classnohierarchy} ELSE 'Corporate' END").setSort(true);
+ buohcolumns[2] =  new nlobjSearchColumn("formulanumeric",null,"SUM").setFormula("CASE WHEN( {accounttype} != 'Income' AND {accounttype} != 'Other Income' ) THEN {grossamount} *-1 ELSE 0 END");
+
+ 
+var buohtransactionSearch = nlapiSearchRecord("transaction",null,buohfilter, buohcolumns);
+*/////////////////end bu OH info
+  
+/////////////////////bu profit info
+	var filter= new Array();  
+ filter[0] = new nlobjSearchFilter("postingperiod", null ,"rel",periodFields);
+ filter[1] = new nlobjSearchFilter("posting",null,"is","T");
+ filter[2] = new nlobjSearchFilter("accounttype",null,"anyof",["Income","COGS","Expense","OthIncome","OthExpense"]);
+
+	var columns = new Array();
+ columns[0] = new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} = 'Income' OR {accounttype} = 'Other Income' ) THEN {grossamount} ELSE  0 END").setSort(true); //Income
+ columns[1] =  new nlobjSearchColumn("formulatext",null,"GROUP").setFormula("CASE WHEN {class} LIKE 'A: Business Unit%' and {class.internalid} != 27  THEN {classnohierarchy} ELSE 'Corporate' END");  // bu name
+ columns[2] =  new nlobjSearchColumn("formulanumeric",null,"SUM").setFormula("CASE WHEN( {accounttype} != 'Income' AND {accounttype} != 'Other Income' ) THEN {grossamount} *-1 ELSE {grossamount} END"); //bu net
+ columns[3] =  new nlobjSearchColumn("formulapercent",null,"SUM").setFormula("CASE WHEN {class} LIKE 'A: Business Unit%' and {class.internalid} != 27  THEN 1 ELSE 0 END").setFunction('percentOfTotal');//% of business
+ columns[4] = new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} != 'Income' AND {accounttype} != 'Other Income' ) THEN 0 ELSE {grossamount} END");  //income
+ columns[5] = new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} = 'Cost of Goods Sold' ) THEN {grossamount}  ELSE 0 END").setSort(true);  // cogs 
+ columns[6] =  new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} = 'Expense' OR {accounttype}= 'Other Expense' ) THEN {grossamount}  ELSE 0 END").setSort(true); //expense
+  columns[7] = new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} = 'Income' OR {accounttype} = 'Other Income' ) THEN {grossamount} ELSE  0 END").setFunction('percentOfTotal'); //% of total Income   
+
+var transactionSearch = nlapiSearchRecord("transaction",null,filter, columns);
+/////////////////end bu profit info
+  
+  ///////////////corporate overhead
+ /* var filters= new Array();  
+ filters[0] = new nlobjSearchFilter("postingperiod", null ,"rel",periodFields);
+ filters[1] = new nlobjSearchFilter("posting",null,"is","T");
+ filters[2] = new nlobjSearchFilter("accounttype",null,"anyof",["Income","COGS","Expense","OthIncome","OthExpense"]);
+  filters[3] = new nlobjSearchFilter[("formulatext",null,"startswith","Corporate").setFormula("CASE WHEN {class} LIKE 'A: Business Unit%' and {class.internalid} != 27  THEN {classnohierarchy} ELSE 'Corporate' END"),"OR",("formulatext",null,"startswith","Support").setFormula("CASE WHEN {class} LIKE 'A: Business Unit%' and {class.internalid} != 27  THEN {classnohierarchy} ELSE 'Corporate' END")];
+//
+ */
+  var filters=[
+  
+   ["posting","is","T"], 
+   "AND", 
+   ["accounttype","anyof","Expense","OthExpense"], 
+   "AND", 
+   ["shipping","is","F"], 
+   "AND", 
+   ["taxline","is","F"], 
+   "AND", 
+   ["postingperiod","rel",periodFields], 
+   "AND", 
+   ["formulatext: CASE WHEN {class} LIKE 'A: Business Unit%' and {class.internalid} != 27  THEN {classnohierarchy} ELSE 'Corporate' END","startswith","Corporate"]
+];
+  
+ //("formulatext",null,"startswith","Corporate").setFormula("CASE WHEN {class} LIKE 'A: Business Unit%' and {class.internalid} != 27  THEN {classnohierarchy} ELSE 'Corporate' END"); 
+var column = new Array();
+column[0] = new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} = 'Expense' OR {accounttype}= 'Other Expense' ) THEN {grossamount} *-1 ELSE 0 END"); //new nlobjSearchColumn("formulanumeric",null,"SUM").setFormula("CASE WHEN( {accounttype} != 'Income' AND {accounttype} != 'Other Income' ) THEN {grossamount} * -1 ELSE {grossamount} *-1 END");
+//column[1] =  new nlobjSearchColumn("formulanumeric",null,"SUM").setFormula("CASE WHEN( {accounttype} != 'Income' AND {accounttype} != 'Other Income' ) THEN 0 ELSE {grossamount} END").setSort(true);
+//column[2] =  new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} = 'Expense' OR {accounttype}= 'Other Expense' ) THEN {grossamount}  ELSE 0 END"); 
+var corpoverhead = nlapiSearchRecord("transaction",null,filters, column);
+
+///////////////////////////////////// end corporate overhead
+
+/////////////////////////////////////////////////////////////income
+var incomefilters = [
+   ["posting","is","T"], 
+   "AND", 
+   ["accounttype","anyof","Income","OthIncome"], 
+   "AND",
+   ["postingperiod","rel", periodFields]
+];
+var Incomecolumn = new Array();
+Incomecolumn[0] = new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} = 'Income' OR {accounttype}= 'Other Income' ) THEN {grossamount}   ELSE 0 END"); 
+  
+  var TotalIncome = nlapiSearchRecord("transaction",null, incomefilters , Incomecolumn  );
+//////////////////////////////////////////////////////// end total income
+
+
+/////////////////////Ebita
+	var EBITAfilter= new Array();  
+ EBITAfilter[0] = new nlobjSearchFilter("postingperiod", null ,"rel",periodFields);
+ EBITAfilter[1] = new nlobjSearchFilter("posting",null,"is","T");
+ EBITAfilter[2] = new nlobjSearchFilter("accounttype",null,"anyof",["Income","COGS","Expense","OthIncome","OthExpense"]);
+ EBITAfilter[3] = new nlobjSearchFilter("parent" ,"account", "noneof","983"); 
+// EBITAfilter[3] = new nlobjSearchFilter("account",null, "noneof",["235","248","318","321","322","385","319","320","588","667","324","815","809","479","884","908","804","590","330","386","387","388","389","841","390","391","392","393","863","394"]);
+                                   
+	var EBITAcolumns = new Array();
+ EBITAcolumns[0] =  new nlobjSearchColumn("formulanumeric",null,"SUM").setFormula("CASE WHEN( {accounttype} != 'Income' AND {accounttype} != 'Other Income' ) THEN {grossamount} *-1 ELSE {grossamount} END").setSort(true);
+
+ var EBITAsearch = nlapiSearchRecord("transaction",null,EBITAfilter, EBITAcolumns);
+ var EBITA = parseFloat(EBITAsearch[0].getValue(EBITAcolumns[0]));
+/////////////////end EBITA
+  
+ var content = "<table height=\"60\%\"> <tr><td>"+ "</td><td></td><td></TD></tr>  <th valign=\"middle\" bgcolor=\"#dadada\"><b>Business Unit &nbsp&nbsp  &nbsp&nbsp&nbsp</b></th> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\">&nbsp&nbsp &nbsp&nbsp Income <font size=\"1\"> </font> &nbsp&nbsp &nbsp&nbsp </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\">  &nbsp&nbsp &nbsp&nbspCOGS &nbsp&nbsp &nbsp&nbsp &nbsp&nbsp</Th> <th align=\"center\" bgcolor=\"#dadada\"><b> &nbsp&nbsp&nbsp &nbsp&nbsp&nbspGross Profit  &nbsp&nbsp&nbsp &nbsp&nbsp&nbsp</b></th><th bgcolor=\"#dadada\"  align=\"center\" valign=\"top\" >Expense </th>  <th valign=\"middle\"  bgcolor=\"#dadada\"><b>  &nbsp&nbsp&nbsp Support Overhead<font size=\"1\"> \(\%\)</font> &nbsp&nbsp  &nbsp&nbsp</b> </th>  <th valign=\"middle\" bgcolor=\"#dadada\"><b>&nbsp&nbsp&nbsp BU Net Profit  &nbsp&nbsp </b></th>  "; //<th border=\"1\" valign=\"middle\" bgcolor=\"#dadada\"><b> Net Profit Before Support Overhead  </b></th>; // adds header for profit before corp overhead
+var companynet = 0;
+ var totalincome = 0; 
+ var totalExpense = 0;
+ var totalcogs = 0;
+ var totalBUdirectOH = 0;
+ var totalcompanyoh = 0;
+ var totalcompanyohv2 = 0;
+  var BUGrossprofit =0;
+var totalBUGROSS =0;
+var buOHtotal =0;
+var buOHtran  =0;
+var buOHsplit =0;
+var buOHsales =0;
+var companynetV2 =0; 
+  
+ var bucount =  transactionSearch.length;  nlapiLogExecution('DEBUG', 'bucount', bucount);
+  ////////////////////////////////////////////////////////////////////////////////////
+ var corpexpense = 0; 
+  for ( var i = 0; transactionSearch != null && i < transactionSearch.length; i++ )
+  {
+if(transactionSearch[i].getValue(columns[1]) == 'Corporate' ){ corpexpense = transactionSearch[i].getValue(columns[6]);}
+  }
+/////////////////////////////////////////////////////
+for ( var i = 0; transactionSearch != null && i < transactionSearch.length; i++ )
+  {
+    if(i%2 == 0)
+      {
+       content += "<tr>";   
+      }
+    else
+    {
+      content += "<tr style=\" background-color: #f2f4f7 \">"; //#f2f3f4
+    }
+var bu = transactionSearch[i].getValue(columns[1]);
+
+var bunet = transactionSearch[i].getValue(columns[2]);
+var bunetNOcorp = transactionSearch[i].getValue(columns[2]);
+    
+var BUpercent = (parseFloat(transactionSearch[i].getValue(columns[3])));
+var BUpercentformated = "\(" + BUpercent + "\%\)";
+var buOH = (parseInt(corpoverhead[0].getValue(columns[0]))/100)* BUpercent;
+ 
+
+    //( (parseInt(corpoverhead[0].getValue(columns[0]))/100)*  parseInt(transactionSearch[i].getValue(columns[2])));
+
+
+var bunetAfterCorp = (parseFloat(bunet) - Math.abs((parseFloat(corpoverhead[0].getValue(columns[0]))/100)*  parseFloat(transactionSearch[i].getValue(columns[3]))));
+
+    
+var bunetFormated = '$' + parseFloat(bunet).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+var buOHFormated = '$' + parseFloat(buOH).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+var bunetAfterCorpFormated = '$' + parseFloat(bunetAfterCorp).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+       
+    if(transactionSearch[i])
+      {
+var buincome = transactionSearch[i].getValue(columns[0]);  
+      }else{buincome = 0; }
+var buincomeformated ='$' + parseFloat(buincome).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+
+    if(transactionSearch[i])
+      {
+var bucogs = transactionSearch[i].getValue(columns[5]);
+      }else{bucogs=0; }
+var bucogsformated ='$' + parseFloat(bucogs).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+ 
+var BUGROSS =Math.abs(buincome)-Math.abs(bucogs);
+var BUGROSSformated ='$' + parseFloat(BUGROSS).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    
+    if(transactionSearch[i])
+    {
+var buohdirect = transactionSearch[i].getValue(columns[6]);
+    }else{buohdirect=0;}
+var buohdirectformated ='$' + parseFloat(buohdirect).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");  
+
+
+var bumargin = ((1-(Math.abs(parseFloat(bucogs))/Math.abs(parseFloat(buincome))))*100).toFixed(2);
+if(bumargin<=0 || isNaN(bumargin)){bumargin = "-";}  
+    
+var CalcBuRevPercent =  parseFloat(buincome /  TotalIncome[0].getValue(Incomecolumn[0]));  
+nlapiLogExecution('DEBUG', 'TotalIncome[0].getValue(Incomecolumn[0]', TotalIncome[0].getValue(Incomecolumn[0]));
+                  nlapiLogExecution('DEBUG', 'CalcBuRevPercent', CalcBuRevPercent);
+var buOHtotal = (parseFloat(corpoverhead[0].getValue(columns[0]))) ;  
+var buOHtran =  ((parseFloat(corpoverhead[0].getValue(columns[0]))) *.2) * (parseFloat(transactionSearch[i].getValue(columns[3]))/100);  //1
+var buOHsplit = ((parseFloat(corpoverhead[0].getValue(columns[0]))) *.5) / (bucount); // .4  
+var buOHsales = ((parseFloat(corpoverhead[0].getValue(columns[0]))) ) * parseFloat(CalcBuRevPercent);  //3  ((parseInt(corpoverhead[0].getValue(columns[0]))) *.4) * (parseFloat(transactionSearch[i].getValue(columns[7])).toFixed(2)/100);  .toFixed(10)
+var buOHTotalSalesOnly = buOHsales;  /// sales only
+var buOHsalesTotal  = ((parseFloat(corpoverhead[0].getValue(columns[0])))* .9 ) * (CalcBuRevPercent);
+var buOHTotalV2 = buOHTotalSalesOnly ; //+ buOHsplit; //  mix corp overhead buOHtran + buOHsplit + buOHsales;
+
+var bunetAfterCorpv2 = (parseFloat(bunet) + parseFloat(buOHTotalV2));
+var BUpercentformated = "\(" + ((buOHTotalV2/buOHtotal)*100).toFixed(2) + "\%\)";
+    
+    
+ var bunetfont = "<td align=\"center\"><font>"; if(bunet <= 0) {bunetfont ="<td align=\"center\"><font color=\"red\">"}
+ var buOHfont = "><font>"; if(buOH <= 0) {buOHfont ="><font color=\"red\">"}
+ var bunetAfterCorpfont = "<td align=\"center\"><font>"; if(bunetAfterCorpv2 <= 0) {bunetAfterCorpfont ="<td align=\"center\"><font color=\"red\">"}
+
+    
+    totalBUGROSS += parseFloat(BUGROSS);
+    companynet += parseFloat(bunet);
+    companynetV2 =+ parseFloat(bunetAfterCorpv2);
+    totalincome += parseFloat(buincome );
+    totalcogs += parseFloat(bucogs);
+    totalBUdirectOH += parseFloat(buohdirect);
+    totalcompanyoh += parseFloat(buOH);
+    totalcompanyohv2 += parseFloat(buOHTotalV2);
+    
+
+    if(bu.indexOf(str) !== -1 )
+    {bunetNOcorp=0;}
+    BUGrossprofit += parseFloat(bunetNOcorp);
+
+   var formattotalincome ='$' + parseFloat(totalincome).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");   
+   var formattotalcogs ='$' + parseFloat(totalcogs).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");    
+   var formattotalBUdirectOH ='$' + parseFloat(totalBUdirectOH).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");   
+   var formattotalcompanyoh ='$' + parseFloat(totalcompanyoh).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");   
+   var formatBUGrossprofit ='$' + parseFloat(BUGrossprofit).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");   
+   var formattotalBUGROSS =    '$' + parseFloat(totalincome - totalcogs).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");//////'$' + parseFloat(totalBUGROSS).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");   
+
+    var formatbuOHTotalV2 ='$' + parseFloat(buOHTotalV2).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"); 
+    var formattotalcompanyohv2 = '$' + parseFloat(totalcompanyohv2).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"); 
+    
+    var formatbunetAfterCorpv2 ='$' + parseFloat(bunetAfterCorpv2).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    var formatTotalExpense = '$' + parseFloat( totalBUdirectOH ).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    
+    var str = "Corporate";
+if(bu.indexOf(str) !== -1 )
+   {
+   bunetAfterCorpFormated= "";
+   BUpercentformated= "";
+   buOHFormated= "";
+   bunetFormated= "";
+   formatbunetAfterCorpv2= "";
+  // formatbuOHTotalV2= "";
+   }
+ 
+  if(bu == "Corporate"){bu="Support";}  
+    var searchrow =Math.round( (parseFloat(corpoverhead[0].getValue(columns[0]))/100)*  parseFloat(transactionSearch[i].getValue(columns[3])));
+//formatbuOHTotalV2 + "<font color=\"black\" size=\"1\"> &nbsp" + BUpercentformated +"</font></td>" + bunetAfterCorpfont + formatbunetAfterCorpv2 +
+content += "<td ><b>"  + bu + "</b></td>" +"<TD align=\"center\">"+buincomeformated+" <font color=\"black\" size=\"1\"> <font></TD>"+"<TD align=\"center\">"+bucogsformated+"</TD> <TD align=\"center\">"+  BUGROSSformated  +"</TD><TD align=\"center\">"+buohdirectformated +"<td align=\"center\">" + formatbuOHTotalV2  + "<font color=\"black\" size=\"1\"> &nbsp" + BUpercentformated +"</font></td>" + bunetAfterCorpfont + formatbunetAfterCorpv2  + "<font color=\"black\" size=\"1\"> &nbsp" +  "</td>"  ;      //+   "</TD>"+ bunetfont + bunetFormated + "</font></td>";// adds net profit before corp overhead
+content += "</tr>";
+  }
+  EBITA = '$' + EBITA.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  var num = '$' + companynet.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  
+  content += "<tr><td bgcolor=\"#dadada\"><b>Totals</b></td><td bgcolor=\"#dadada\" align=\"center\"><b>"+ formattotalincome +"</td><td bgcolor=\"#dadada\" align=\"center\"><b>"+ formattotalcogs  +"</td> <td bgcolor=\"#dadada\" align=\"center\"><b>" + formattotalBUGROSS + "<td bgcolor=\"#dadada\" align=\"center\"><b>"+   formatTotalExpense   +"</td><td bgcolor=\"#dadada\" align=\"center\"><b>" + formattotalcompanyohv2 + " </td><td bgcolor=\"#dadada\" align=\"center\"><b>" + num  + "</b></td></tr> <tr><td align=\"right\"><b></br>EBITA:&nbsp </b></TD><td align=\"left\"><b></br>"+ EBITA +"</b></td></tr></table>"; //"</td><td bgcolor=\"#dadada\" align=\"center\"><b>"+ formattotalBUdirectOH +"</td>
+  //portlet.setHtml( content );
+ //  formatBUGrossprofit
+  response.write(content);
+ 
+}

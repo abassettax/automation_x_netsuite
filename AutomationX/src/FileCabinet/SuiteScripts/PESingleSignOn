@@ -1,0 +1,12 @@
+function go()
+{
+  	var form = nlapiCreateForm("PlanningEdge Dashboard");
+    var redir = form.addField('custpage_redir', 'inlinehtml');
+
+	var url = nlapiOutboundSSO('customssoplanningedge');
+
+    var resp = nlapiRequestURL(url);
+    var json = JSON.parse(resp.getBody());
+    redir.setDefaultValue("<script>location.href = 'https://" + json.system + "/PlanningEdge/web/tools/webForecastViewer/index.html?token=" + encodeURIComponent(json.token) + "&itemnum=" + encodeURIComponent(request.getParameter('itemnum')) + "'</script>");
+    response.writePage(form);
+}

@@ -1,0 +1,52 @@
+function targetinventory(request,response)
+{
+
+  var cate= nlapiLoadSearch('transaction', '5012');   //load saved search-jf
+
+  
+  var runcate =cate.runSearch();
+ /* 
+  runcate.forEachResult(function(searchResult)
+	{
+	var source = searchResult.getValue('source');
+	var percent= searchResult.getValue( 'percent' ); 
+	var inventory= searchResult.getValue('inventory');
+  	var total= searchResult.getValue('total');
+
+  
+  
+  
+
+var transactionSearch = nlapiSearchRecord("transaction",null,
+[
+   [["postingperiod","rel","LP"],"OR",["postingperiod","rel","TPOLQ"],"OR",["postingperiod","rel","PBL"]], 
+   "AND", 
+   ["posting","is","T"], 
+   "AND", 
+   ["accounttype","anyof","COGS","Income"]
+], 
+[
+ new nlobjSearchColumn("formulatext",null,"GROUP").setFormula("CASE WHEN {item.custitem46} like 'International' THEN 'International' ELSE 'Domestic' END"), 
+ new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} = 'Income' OR {accounttype}= 'Other Income' ) THEN {grossamount}   ELSE 0 END").setSort(false), 
+ new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("(((CASE WHEN( {accounttype} = 'Cost of Goods Sold' ) THEN {grossamount} ELSE NULL END)/3 )*1.5)").setSort(false), 
+ new nlobjSearchColumn("totalvalue","item","SUM")
+]
+);
+
+ var fat=  new nlobjSearchColumn("formulatext",null,"GROUP").setFormula("CASE WHEN {item.custitem46} like 'International' THEN 'International' ELSE 'Domestic' END");
+ var Income=  new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("CASE WHEN( {accounttype} = 'Income' OR {accounttype}= 'Other Income' ) THEN {grossamount}   ELSE 0 END").setSort(false);
+ var COGS=  new nlobjSearchColumn("formulacurrency",null,"SUM").setFormula("(((CASE WHEN( {accounttype} = 'Cost of Goods Sold' ) THEN {grossamount} ELSE NULL END)/3 )*1.5)").setSort(false);
+ var totalINVvalue=  new nlobjSearchColumn("totalvalue","item","SUM")
+
+////////////end cogs bu portlet
+var content = "<table height=\"60\%\"><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" >Business Unit  </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" >Average COGS  </TH> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" >Target Inventory </TH> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > Available Value   </TH> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" >  Total Value   </TH> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" >  Committed Value  </TH> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > % of Target Value </TH> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  >Estimated Annual Turn Over  </TH> ";
+
+//content += "<td align= \"center\"  >"  + fat + "</td>" +"<td align= \"center\"  >"  + Income + "</td>" +"<td align= \"center\" >"  +  COGS +  "</td>"  +"<td align= \"center\" >"  + totalINVvalue + "</td>" 
+content += "<td align= \"center\"  >"  + source + "</td>" +"<td align= \"center\"  >"  + percent + "</td>" +"<td align= \"center\" >"  +  inventory +  "</td>"  +"<td align= \"center\" >"  + total + "</td>" 
+ content +=  "</tr>"; 
+response.write(content);
+})
+ */
+  response.write(runcate);
+  
+}
