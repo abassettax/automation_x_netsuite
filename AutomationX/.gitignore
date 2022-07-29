@@ -46,3 +46,4 @@ project.json
 /src/FileCabinet/Templates
 /src/FileCabinet/Web Site Hosting Files
 **/.attributes
+*.xml
