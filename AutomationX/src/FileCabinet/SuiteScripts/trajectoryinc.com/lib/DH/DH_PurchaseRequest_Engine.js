@@ -303,7 +303,9 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                 purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'item', value: line.itemId });
                 purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity', value: line.quantity });
                 purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: line.locationId });
-                purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: line.rate });
+                if (line.rate != '' && line.rate!= null && line.rate != undefined) {
+                    purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: line.rate });
+                }
                 // Allow the 'rate' to be overrideen by the incoming estimated cost 'rate' field
                 if (line.isCustomPrice) {
                     purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: line.estimatedCost });
