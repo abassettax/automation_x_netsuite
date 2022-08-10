@@ -6,7 +6,7 @@ function avacashportlet(portlet, column)
  
 var results =  portlet.addField('custpage_lblproductrating', 'inlinehtml')
    results.setLayoutType('outsidebelow', 'startrow')
-   results.setDefaultValue('<iframe style=\"border: 0px none; height:225px; width:550px;  \"src='+ portletsearch+'></iframe>'); 
+   results.setDefaultValue('<iframe style=\"border: 0px none; height:300px; width:800px;  \"src='+ portletsearch+'></iframe>'); 
 
 
 }

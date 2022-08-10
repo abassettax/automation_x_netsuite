@@ -2,7 +2,7 @@ function avaCash() {
 
    ///////////////////////////////////117	
    ///***************************
-   var linemax = 9000000;      //***********************************************************************************
+   var linemax = 12000000;      //***********************************************************************************
    ///***************************
 
    ////total ap 
@@ -72,6 +72,34 @@ function avaCash() {
       ]
    );
 
+   var transactionSearch2 = nlapiSearchRecord("transaction", null,
+      [
+         ["account", "anyof", "1123"],
+         "AND",
+         ["posting", "is", "T"],
+         "AND",
+         ["trandate", "onorbefore", "thismonth"]
+      ],
+
+      [
+         new nlobjSearchColumn("amount", null, "SUM")
+      ]
+   );
+
+   var transactionSearch3 = nlapiSearchRecord("transaction", null,
+      [
+         ["account", "anyof", "1146"],
+         "AND",
+         ["posting", "is", "T"],
+         "AND",
+         ["trandate", "onorbefore", "thismonth"]
+      ],
+
+      [
+         new nlobjSearchColumn("amount", null, "SUM")
+      ]
+   );
+
    ///////// lineOS https://system.na3.netsuite.com/app/common/search/search.nl?cu=T&e=T&id=4003#
    var accountSearchA = nlapiSearchRecord("account", null,
       [
@@ -97,9 +125,11 @@ function avaCash() {
    var AmountRecNotBilled = recNotbilledSearch[0].getValue(nlobjSearchColumn("balance", null, null));
 
    var glCash = transactionSearch[0].getValue(nlobjSearchColumn("amount", null, "SUM"));
+   var glCash2 = transactionSearch2[0].getValue(nlobjSearchColumn("amount", null, "SUM"));
+   var glCash3 = transactionSearch3[0].getValue(nlobjSearchColumn("amount", null, "SUM"));
    var glundepfunds = accountSearch[0].getValue(nlobjSearchColumn("balance", null, null));
    var lineOS = accountSearchA[0].getValue(nlobjSearchColumn("balance", null, null));
-   var cashAVA = parseInt(linemax) + parseInt(glCash) + parseInt(glundepfunds) + parseInt(lineOS);
+   var cashAVA = parseInt(linemax) + parseInt(glCash) + parseInt(glCash2) + parseInt(glCash3) + parseInt(glundepfunds) + parseInt(lineOS);
 
    var sevenplus = vendorbillSearch[0].getValue(APcolumns[1]);
    var fifteenplus = vendorbillSearch[0].getValue(APcolumns[3]);
@@ -117,6 +147,8 @@ function avaCash() {
 
    var FormatedAmountRecNotBilled = '$' + parseFloat(Math.abs(AmountRecNotBilled)).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
    var FormatedglCash = '$' + parseFloat(glCash).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+   var FormatedglCash2 = '$' + parseFloat(glCash2).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+   var FormatedglCash3 = '$' + parseFloat(glCash3).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
    var Formatedglundepfunds = '$' + parseFloat(glundepfunds).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
    var FormatedlineOS = '$' + parseFloat(lineOS).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
    var FormatedcashAVA = '$' + parseFloat(cashAVA).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
@@ -131,20 +163,20 @@ function avaCash() {
 
    var FormatedtotalapPlusRecNotBilled = '$' + parseFloat(totalapPlusRecNotBilled).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 
-   content += "<table> <tr> <th align=\"center\"  style= \"border-bottom: solid; background-color:#dadada; \"></TH> <th align=\"center\"  style= \"border-bottom: solid;   background-color:#dadada;  padding: 5; \"> Amount </TH>  <th align=\"center\"  style= \"border-bottom: solid; border-left: solid;  background-color:#dadada;  \"> Days Past Due </br> <font size =2>(Due Date <=)</font> </TH>     <th align=\"center\"  style= \"border-bottom: solid;   background-color:#dadada;  \"> Past Due Amount </TH></tr>" +
+   content += "<table style=\"table-layout:auto; width:800px\"> <tr> <th align=\"center\"  style= \"border-bottom: solid; background-color:#dadada; width:200px\"></TH> <th align=\"center\"  style= \"border-bottom: solid;   background-color:#dadada;  padding: 5;  width:200px\"> Amount </TH>  <th align=\"center\"  style= \"border-bottom: solid; border-left: solid;  background-color:#dadada;   width:200px\"> Days Past Due </br> <font size =2>(Due Date <=)</font> </TH>     <th align=\"center\"  style= \"border-bottom: solid;   background-color:#dadada;   width:200px\"> Past Due Amount </TH></tr>" +
 
-      "<tr ><td style=\"  padding: 2px; text-align: right; \"> G\L Cash: </td><td>" + FormatedglCash + "</td>   <td style=\" padding: 2px; border-left: solid;  text-align:center; \" > 7+  <font size =2>(" + sevenplus + ")</font </td><td style=\" padding: 2px;  text-align: center;\"> " + Formatedsevenplusamount + "</td> </tr>" +
+      "<tr ><td><table align=\"center\"><tr><td align=\"center\"> G\L Cash - 3808: </td></tr><tr><td align=\"center\"> G\L Cash - 2906: </td></tr><tr><td align=\"center\"> G\L Cash - 3205: </td></tr></table></td><td><table ><tr><td align=\"center\">" + FormatedglCash + "</td></tr><tr><td align=\"center\">" + FormatedglCash2 + "</td></tr><tr><td align=\"center\">" + FormatedglCash3 + "</td></tr></table></td>   <td style=\" padding: 2px; border-left: solid;  text-align:center; \" > 7+  <font size =2>(" + sevenplus + ")</font </td><td style=\" padding: 2px;  text-align: left;\"> " + Formatedsevenplusamount + "</td> </tr>" +
 
-      "<tr style=\"  padding: 2px;   background-color: #f2f4f7 \"><td style=\" padding: 2px;  text-align: right;  \" > G\L Undeposited Funds: </td>  <td>" + Formatedglundepfunds + "</td><td style=\" padding: 2px; border-left: solid;  text-align:center; \" > 15+  <font size =2>(" + fifteenplus + ")</font </td><td style=\"  text-align: center;\"> " + Formatedfifteenplusamount + "</td></tr>  " +
+      "<tr style=\"  padding: 2px;   background-color: #f2f4f7 \"><td style=\" padding: 2px;  text-align: center;  \" > G\L Undeposited Funds: </td>  <td>" + Formatedglundepfunds + "</td><td style=\" padding: 2px; border-left: solid;  text-align:center; \" > 15+  <font size =2>(" + fifteenplus + ")</font </td><td style=\"  text-align: left;\"> " + Formatedfifteenplusamount + "</td></tr>  " +
 
-      "<tr><td style=\" padding: 2px;  text-align: right; \" > Line Max: </td>  <td>" + Formatedlinemax + "</td> <td style=\" padding: 2px; border-left: solid;  text-align:center; \" > 20+  <font size =2>(" + twentyplus + ")</font </td><td style=\" padding: 2px;  text-align: center;\"> " + Formatedtwentyplusamount + "</td></tr>  " +
+      "<tr><td style=\" padding: 2px;  text-align: center; \" > Line Max: </td>  <td>" + Formatedlinemax + "</td> <td style=\" padding: 2px; border-left: solid;  text-align:center; \" > 20+  <font size =2>(" + twentyplus + ")</font </td><td style=\" padding: 2px;  text-align: left;\"> " + Formatedtwentyplusamount + "</td></tr>  " +
 
-      "<tr style=\" background-color: #f2f4f7;  padding: 2px;\"><td style=\"  padding: 2px; text-align: right; \"> Line Outstanding: </td>  <td>" + FormatedlineOS + "</td> <td style=\" border-left: solid;  padding: 2px; text-align:center; \" > 25+  <font size =2>(" + twentyfiveplus + ")</font </td><td style=\"  padding: 2px; text-align: center;\"> " + Formatedtwentyfiveplusamount + "</td></tr>  " +
+      "<tr style=\" background-color: #f2f4f7;  padding: 2px;\"><td style=\"  padding: 2px; text-align: center; \"> Line Outstanding: </td>  <td>" + FormatedlineOS + "</td> <td style=\" border-left: solid;  padding: 2px; text-align:center; \" > 25+  <font size =2>(" + twentyfiveplus + ")</font </td><td style=\"  padding: 2px; text-align: left;\"> " + Formatedtwentyfiveplusamount + "</td></tr>  " +
 
-      "<tr style= \" font-weight: bold;  padding: 2px; \" ><td style= \"border-top: solid;  padding: 2px;  background-color: #dadada; text-align: right \" > Available Cash:</td>  <td  style= \"border-top: solid;  padding: 2px; background-color: #dadada \">" + FormatedcashAVA + "</td>" +
+      "<tr style= \" font-weight: bold;  padding: 2px; \" ><td style= \"border-top: solid;  padding: 2px;  background-color: #dadada; text-align: center \" > Available Cash:</td>  <td  style= \"border-top: solid;  padding: 2px; background-color: #dadada \">" + FormatedcashAVA + "</td>" +
       "<td style= \"border-top: solid;  padding: 2px; border-left: solid; background-color: #dadada; text-align: center \" > Total AP:</td>  <td  style= \"border-top: solid;  padding: 2px;  background-color: #dadada \">" + Formatedtotalap + "</td></tr> " +
 
-      "<tr style= \" padding: 2px; font-weight: bold; \" ><td style= \"   padding: 2px; background-color: #dadada; text-align: right \" > Received not billed:</td>  <td  style= \"   padding: 2px; background-color: #dadada \">" + FormatedAmountRecNotBilled + "</td>" +
+      "<tr style= \" padding: 2px; font-weight: bold; \" ><td style= \"   padding: 2px; background-color: #dadada; text-align: center \" > Received not billed:</td>  <td  style= \"   padding: 2px; background-color: #dadada \">" + FormatedAmountRecNotBilled + "</td>" +
       "<td style= \"  padding: 2px; border-left: solid;  background-color: #dadada; text-align: center \" >   Total AP & Rec Not Billed:</td>  <td  style= \"   padding: 2px; background-color: #dadada \">" + FormatedtotalapPlusRecNotBilled + "</td></tr></table> ";
 
 
