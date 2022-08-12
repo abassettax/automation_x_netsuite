@@ -9,7 +9,7 @@
  * @NModuleScope SameAccount
  * @NScriptType ClientScript
  */
- define(["require", "exports", "./DH_Library"], function (require, exports, DH_Library_1) {
+ define(["require", "exports", "N/ui/message", "./DH_Library"], function (require, exports, message, DH_Library_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.pageInit = function (context) {
         var screenHeight = screen.height - 400;
@@ -38,7 +38,7 @@
             screenHeight = 400;
         }
         document.getElementById('custpagesublist_splits').parentElement.style.overflow = 'auto';
-        document.getElementById('custpagesublist_splits').parentElement.style.height = screenHeight + 'px';
+        // document.getElementById('custpagesublist_splits').parentElement.style.height = screenHeight + 'px';
         document.getElementById('custpagesublist_splits').parentElement.addEventListener('scroll', function () {
             var translate = 'translate(0,' + this.scrollTop + 'px)';
             var allTh = document.querySelectorAll('tr#custpagesublist_headerrow.uir-machine-headerrow');
@@ -58,6 +58,60 @@
             return true;
         }
       
+    };
+    exports.saveRecord = function (context) {
+        var currentRecord = context.currentRecord;
+        var lineCount = currentRecord.getLineCount({
+            sublistId: 'custpagesublist'
+        });
+        var zeroLines = true;
+        var toNoRate = false;
+        for (var i = 0; i < lineCount; i++) {
+            var processLine = currentRecord.getSublistValue({
+                sublistId: 'custpagesublist',
+                fieldId: 'process',
+                line: i
+            });
+            var status = currentRecord.getSublistValue({
+                sublistId: 'custpagesublist',
+                fieldId: 'status',
+                line: i
+            });
+            var rate = currentRecord.getSublistValue({
+                sublistId: 'custpagesublist',
+                fieldId: 'rate',
+                line: i
+            });
+            if (status == '2' && (rate == '' || rate == null || rate == undefined)) {
+                toNoRate = true;
+            }
+            if (processLine == true) {
+                zeroLines = false;
+            }
+        }
+        if (toNoRate) {
+            var myMsg = message.create({
+                title: 'NO RATE ON TRANSFER',
+                message: 'At least one of the requests you selected is a Transfer Order that does not have a Rate set. Please fill in the required fields before submitting.',
+                type: message.Type.ERROR
+            });
+            myMsg.show({
+                duration: 10000 // will disappear after 5s
+            });
+            return false;
+        } else if (zeroLines) {
+            var myMsg = message.create({
+                title: 'NO SELECTION',
+                message: 'None of the purchase requests were selected to process. Please select at least one and fill in the required fields before submitting.',
+                type: message.Type.ERROR
+            });
+            myMsg.show({
+                duration: 10000 // will disappear after 5s
+            });
+            return false;
+        }  else {
+            return true;
+        }
     };
     var getParameterFromURL = function (param) {
         var query = window.location.search.substring(1);

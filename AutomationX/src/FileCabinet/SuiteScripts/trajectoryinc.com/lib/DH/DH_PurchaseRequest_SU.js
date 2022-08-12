@@ -9,8 +9,8 @@
  * @NModuleScope SameAccount
  * @NScriptType Suitelet
  */
-define(["require", "exports", "N/https", "N/search", "N/format", "N/runtime", "N/task", "N/ui/serverWidget", "./DH_Library", "./PurchaseRequestItemDetail", "./DH_ProcessManager"],
-    function (require, exports, https, search, format, runtime, task, serverWidget, DH_Library_1, PurchaseRequestItemDetail_1, DH_ProcessManager_1) {
+define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/format", "N/runtime", "N/task", "N/ui/serverWidget", "./DH_Library", "./PurchaseRequestItemDetail", "./DH_ProcessManager"],
+    function (require, exports, log, record, https, search, format, runtime, task, serverWidget, DH_Library_1, PurchaseRequestItemDetail_1, DH_ProcessManager_1) {
         Object.defineProperty(exports, "__esModule", { value: true });
         var FORM = {
             title: 'Process Purchase Requests'
@@ -50,10 +50,13 @@ define(["require", "exports", "N/https", "N/search", "N/format", "N/runtime", "N
             }
 
             // var stockRequests = !DH_ProcessManager_1.isProcessing() ? getStockRequests(clearAll, isNormallyStocked) : []; 
-            var stockRequests = !DH_ProcessManager_1.isProcessing() ? getStockRequests(clearAll, locationId, isNormallyStocked) : [];
+            // var stockRequests = !DH_ProcessManager_1.isProcessing() ? getStockRequests(clearAll, locationId, isNormallyStocked) : [];
+            // removing cache check, doesn't work well with new UI and functionally doesn't do much since we can backload requests into the MR queue
+            var stockRequests = getStockRequests(clearAll, locationId, isNormallyStocked);
             var form = serverWidget.createForm({ title: FORM.title });
             // region Item List 
-            var itemList = form.addSublist({ id: ITEMSUBLIST.id, label: stockRequests.length + " " + ITEMSUBLIST.label, type: serverWidget.SublistType.INLINEEDITOR });
+            var itemList = form.addSublist({ id: ITEMSUBLIST.id, label: stockRequests.length + " " + ITEMSUBLIST.label, type: serverWidget.SublistType.LIST });
+            itemList.addMarkAllButtons();
             STOCK_REQUEST_FIELDS.forEach(function (stockRequestField) {
                 itemList.addField(stockRequestField.config).updateDisplayType({ displayType: stockRequestField.displayType });
             });
@@ -99,9 +102,14 @@ define(["require", "exports", "N/https", "N/search", "N/format", "N/runtime", "N
         };
         var postHandler = function (context) {
             var purchaseRequests = [];
+            var purchaseRequestIds = [];
             for (var i = 0, lineCount = +context.request.getLineCount({ group: ITEMSUBLIST.id }); i < lineCount; i = i + 1) {
-                var status_1 = +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'status', line: i });
-                if (status_1 > 0) {
+                var status_1 = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'process', line: i });
+                log.debug({
+                    title: 'checking line',
+                    details: 'line: ' + i + ' | process: '  + status_1
+                });
+                if (status_1 == 'T') {
                     purchaseRequests.push({
                         processingStatus: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'status', line: i }),
                         salesOrderLine: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'solineid', line: i }),
@@ -125,6 +133,7 @@ define(["require", "exports", "N/https", "N/search", "N/format", "N/runtime", "N
                         LocationPreferredStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'LocationPreferredStockLevel', line: i }), //MH added
                         AddLocalStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'AddLocalStockLevel', line: i }), //MH added
                     });
+                    purchaseRequestIds.push(context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i }));
                 }
             }
             if (purchaseRequests.length > 0) {
@@ -139,6 +148,16 @@ define(["require", "exports", "N/https", "N/search", "N/format", "N/runtime", "N
                 };
                 purchaseRequestProcessor.submit();
                 DH_ProcessManager_1.processingStart();
+            }
+            //Set placeholder "Processing" status on each record
+            for (var i = 0; i < purchaseRequestIds.length; i++) {
+                var updateValues = {};
+                updateValues[PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus] = 5;
+                record.submitFields({
+                    type: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.RECORD_TYPE,
+                    id: purchaseRequestIds[i],
+                    values: updateValues
+                });
             }
             // Reload the current page.
             context.response.sendRedirect({
@@ -436,6 +455,8 @@ define(["require", "exports", "N/https", "N/search", "N/format", "N/runtime", "N
         FORM_BUTTONS.push({ id: 'custpage_cust_hist_btn', label: 'Customer History', functionName: 'gethist' });
         FORM_BUTTONS.push({ id: 'custpage_reset', label: 'Reset', functionName: 'reset' });
         var STOCK_REQUEST_FIELDS = [];
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'process', type: serverWidget.FieldType.CHECKBOX, label: 'Process'}, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'id', type: serverWidget.FieldType.TEXT, label: 'ID' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'status', type: serverWidget.FieldType.SELECT, label: 'Status', source: 'customlist465' }, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'isstocked', type: serverWidget.FieldType.TEXT, label: 'Stocked Item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: DH_Library_1.FIELDS.ITEM.AX5Code, type: serverWidget.FieldType.TEXT, label: 'AX 5 Code' }, displayType: serverWidget.FieldDisplayType.DISABLED });
@@ -461,14 +482,13 @@ define(["require", "exports", "N/https", "N/search", "N/format", "N/runtime", "N
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'so', type: serverWidget.FieldType.SELECT, label: 'Sales Order', source: 'salesorder' }, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'custbu', type: serverWidget.FieldType.TEXT, label: 'BU/Customer' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'estcost', type: serverWidget.FieldType.TEXT, label: 'Estimated Cost' }, displayType: serverWidget.FieldDisplayType.DISABLED });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'id', type: serverWidget.FieldType.TEXT, label: 'ID' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'solineid', type: serverWidget.FieldType.INTEGER, label: 'solineid' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'empemails', type: serverWidget.FieldType.EMAIL, label: 'email' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'potype', type: serverWidget.FieldType.INTEGER, label: 'potype' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'description', type: serverWidget.FieldType.TEXT, label: 'description' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'iscustomprice', type: serverWidget.FieldType.CHECKBOX, label: 'iscustomprice' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'vendornotes', type: serverWidget.FieldType.TEXTAREA, label: 'vendornotes' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'rate', type: serverWidget.FieldType.TEXT, label: 'rate' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'rate', type: serverWidget.FieldType.TEXT, label: 'rate' }, displayType: serverWidget.FieldDisplayType.ENTRY });
         // endregion
         // region Searches
         var getItemsDetails = function (itemLocations) {

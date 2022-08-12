@@ -13,12 +13,15 @@
     function (require, exports, runtime, search, url, email, log, DH_Library_1, DH_ProcessManager_1, DH_PurchaseRequest_Engine_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getInputData = function () {
-        return DH_PurchaseRequest_Engine_1.determineTransactions({
+        var inputData = DH_PurchaseRequest_Engine_1.determineTransactions({
             employeeId: +runtime.getCurrentScript().getParameter({ name: 'custscript_tjinc_dh_employee' }),
             purchaseRequests: JSON.parse(runtime.getCurrentScript().getParameter({ name: 'custscript_tjinc_dh_purchaserequests' }))
         });
+        log.audit('getInputData', JSON.stringify(inputData));
+        return inputData;
     };
     exports.map = function (context) {
+        log.audit('map', JSON.stringify(context));
         var transactionId = DH_PurchaseRequest_Engine_1.createTransaction({
             transaction: JSON.parse(context.value)
         });
@@ -67,7 +70,7 @@
             email.send({
                 author: employeeId,
                 recipients: [employeeId],
-                cc: ['darren@darrenhillconsulting.ca'],
+                cc: ['darren@darrenhillconsulting.ca','andrew.bassett@automation-x.com'],
                 subject: 'Generated Purchase Request Transactions',
                 body: emailBody
             });
