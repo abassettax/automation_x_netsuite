@@ -65,6 +65,7 @@
             sublistId: 'custpagesublist'
         });
         var zeroLines = true;
+        var emptyStatus = false;
         var toNoRate = false;
         for (var i = 0; i < lineCount; i++) {
             var processLine = currentRecord.getSublistValue({
@@ -72,34 +73,26 @@
                 fieldId: 'process',
                 line: i
             });
-            var status = currentRecord.getSublistValue({
-                sublistId: 'custpagesublist',
-                fieldId: 'status',
-                line: i
-            });
-            var rate = currentRecord.getSublistValue({
-                sublistId: 'custpagesublist',
-                fieldId: 'rate',
-                line: i
-            });
-            if (status == '2' && (rate == '' || rate == null || rate == undefined)) {
-                toNoRate = true;
-            }
             if (processLine == true) {
                 zeroLines = false;
+                var status = currentRecord.getSublistValue({
+                    sublistId: 'custpagesublist',
+                    fieldId: 'status',
+                    line: i
+                });
+                var rate = currentRecord.getSublistValue({
+                    sublistId: 'custpagesublist',
+                    fieldId: 'rate',
+                    line: i
+                });
+                if (status == '') {
+                    emptyStatus = true;
+                } else if (status == '2' && (rate == '' || rate == null || rate == undefined)) {
+                    toNoRate = true;
+                }
             }
         }
-        if (toNoRate) {
-            var myMsg = message.create({
-                title: 'NO RATE ON TRANSFER',
-                message: 'At least one of the requests you selected is a Transfer Order that does not have a Rate set. Please fill in the required fields before submitting.',
-                type: message.Type.ERROR
-            });
-            myMsg.show({
-                duration: 10000 // will disappear after 5s
-            });
-            return false;
-        } else if (zeroLines) {
+        if (zeroLines) {
             var myMsg = message.create({
                 title: 'NO SELECTION',
                 message: 'None of the purchase requests were selected to process. Please select at least one and fill in the required fields before submitting.',
@@ -109,7 +102,27 @@
                 duration: 10000 // will disappear after 5s
             });
             return false;
-        }  else {
+        } else if (emptyStatus) {
+            var myMsg = message.create({
+                title: 'NO ACTION',
+                message: 'At least one of the requests you selected does not have an Action set. Please fill in the required fields before submitting.',
+                type: message.Type.ERROR
+            });
+            myMsg.show({
+                duration: 10000 // will disappear after 5s
+            });
+            return false;
+        } else if (toNoRate) {
+            var myMsg = message.create({
+                title: 'NO RATE ON TRANSFER',
+                message: 'At least one of the requests you selected is a Transfer Order that does not have a Rate set. Please fill in the required fields before submitting.',
+                type: message.Type.ERROR
+            });
+            myMsg.show({
+                duration: 10000 // will disappear after 5s
+            });
+            return false;
+        } else {
             return true;
         }
     };

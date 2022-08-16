@@ -9,8 +9,8 @@
  * @NModuleScope SameAccount
  * @NScriptType Suitelet
  */
-define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/format", "N/runtime", "N/task", "N/ui/serverWidget", "./DH_Library", "./PurchaseRequestItemDetail", "./DH_ProcessManager"],
-    function (require, exports, log, record, https, search, format, runtime, task, serverWidget, DH_Library_1, PurchaseRequestItemDetail_1, DH_ProcessManager_1) {
+define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search", "N/format", "N/runtime", "N/task", "N/ui/serverWidget", "./DH_Library", "./PurchaseRequestItemDetail", "./DH_ProcessManager"],
+    function (require, exports, log, record, url, https, search, format, runtime, task, serverWidget, DH_Library_1, PurchaseRequestItemDetail_1, DH_ProcessManager_1) {
         Object.defineProperty(exports, "__esModule", { value: true });
         var FORM = {
             title: 'Process Purchase Requests'
@@ -58,7 +58,30 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/for
             var itemList = form.addSublist({ id: ITEMSUBLIST.id, label: stockRequests.length + " " + ITEMSUBLIST.label, type: serverWidget.SublistType.LIST });
             itemList.addMarkAllButtons();
             STOCK_REQUEST_FIELDS.forEach(function (stockRequestField) {
-                itemList.addField(stockRequestField.config).updateDisplayType({ displayType: stockRequestField.displayType });
+                var field = itemList.addField(stockRequestField.config).updateDisplayType({ displayType: stockRequestField.displayType });
+                if (stockRequestField.config.id == 'status') {
+                    field.addSelectOption({
+                        value: '',
+                        text: ''
+                    });
+                    field.addSelectOption({
+                        value: '1',
+                        text: 'Purchase Order'
+                    });
+                    field.addSelectOption({
+                        value: '2',
+                        text: 'Transfer Order'
+                    });
+                    field.addSelectOption({
+                        value: '3',
+                        text: 'Rejected'
+                    });
+                    field.addSelectOption({
+                        value: '4',
+                        text: 'Alternate - Sourcing Hold'
+                    });
+                    
+                }
             });
             // endregion
             // region Buttons
@@ -91,10 +114,38 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/for
                 label: 'Create Transactions'
             });
             form.clientScriptModulePath = './DH_PurchaseRequest_SU_CS.js';
+            var baseUrl = url.resolveDomain({
+                hostType: url.HostType.APPLICATION,
+                accountId: '422523'
+            });
+            log.debug({
+                title: 'stockRequests',
+                details: JSON.stringify(stockRequests)
+            });
             stockRequests.forEach(function (stockRequest, index) {
                 stockRequest.values.forEach(function (stockRequest) {
                     if (stockRequest.value) {
-                        itemList.setSublistValue({ id: stockRequest.config.id, value: stockRequest.value, line: index });
+                        if (stockRequest.id == 'rate' && !isNaN(stockRequest.value)) {
+                            itemList.setSublistValue({ id: stockRequest.config.id, value: stockRequest.value, line: index });
+                        } else if (stockRequest.config.id == 'id') {
+                            log.debug({
+                                title: 'rec id',
+                                details: stockRequest.value
+                            });
+                            var recId = stockRequest.value;
+                            var recUrl = url.resolveRecord({
+                                recordType: 'customrecord463',
+                                recordId: recId
+                            });
+                            var recLink = '<a href="https://'+baseUrl+recUrl+'" target="_blank">'+stockRequest.value+'</a>';
+                            log.debug({
+                                title: 'rec link',
+                                details: recLink
+                            });
+                            itemList.setSublistValue({ id: stockRequest.config.id, value: recLink, line: index });
+                        } else {
+                            itemList.setSublistValue({ id: stockRequest.config.id, value: stockRequest.value, line: index });
+                        }
                     }
                 });
             });
@@ -103,15 +154,17 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/for
         var postHandler = function (context) {
             var purchaseRequests = [];
             var purchaseRequestIds = [];
+            var purchaseRequestStatuses = [];
             for (var i = 0, lineCount = +context.request.getLineCount({ group: ITEMSUBLIST.id }); i < lineCount; i = i + 1) {
                 var status_1 = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'process', line: i });
+                var processStatus = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'status', line: i });
                 log.debug({
                     title: 'checking line',
                     details: 'line: ' + i + ' | process: '  + status_1
                 });
                 if (status_1 == 'T') {
                     purchaseRequests.push({
-                        processingStatus: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'status', line: i }),
+                        processingStatus: processStatus,
                         salesOrderLine: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'solineid', line: i }),
                         itemId: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'itemid', line: i }),
                         quantity: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'qty', line: i }),
@@ -134,6 +187,7 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/for
                         AddLocalStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'AddLocalStockLevel', line: i }), //MH added
                     });
                     purchaseRequestIds.push(context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i }));
+                    purchaseRequestStatuses.push(processStatus);
                 }
             }
             if (purchaseRequests.length > 0) {
@@ -152,7 +206,11 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/for
             //Set placeholder "Processing" status on each record
             for (var i = 0; i < purchaseRequestIds.length; i++) {
                 var updateValues = {};
-                updateValues[PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus] = 5;
+                if (purchaseRequestStatuses[i] == '4') {
+                    updateValues[PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus] = 4;
+                } else {
+                    updateValues[PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus] = 5;
+                }
                 record.submitFields({
                     type: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.RECORD_TYPE,
                     id: purchaseRequestIds[i],
@@ -457,7 +515,7 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/for
         var STOCK_REQUEST_FIELDS = [];
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'process', type: serverWidget.FieldType.CHECKBOX, label: 'Process'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'id', type: serverWidget.FieldType.TEXT, label: 'ID' }, displayType: serverWidget.FieldDisplayType.DISABLED });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'status', type: serverWidget.FieldType.SELECT, label: 'Status', source: 'customlist465' }, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'status', type: serverWidget.FieldType.SELECT, label: 'Action'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'isstocked', type: serverWidget.FieldType.TEXT, label: 'Stocked Item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: DH_Library_1.FIELDS.ITEM.AX5Code, type: serverWidget.FieldType.TEXT, label: 'AX 5 Code' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemid', type: serverWidget.FieldType.SELECT, label: 'Item', source: 'item' }, displayType: serverWidget.FieldDisplayType.ENTRY });
@@ -488,7 +546,7 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/for
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'description', type: serverWidget.FieldType.TEXT, label: 'description' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'iscustomprice', type: serverWidget.FieldType.CHECKBOX, label: 'iscustomprice' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'vendornotes', type: serverWidget.FieldType.TEXTAREA, label: 'vendornotes' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'rate', type: serverWidget.FieldType.TEXT, label: 'rate' }, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'rate', type: serverWidget.FieldType.FLOAT, label: 'rate' }, displayType: serverWidget.FieldDisplayType.ENTRY });
         // endregion
         // region Searches
         var getItemsDetails = function (itemLocations) {
