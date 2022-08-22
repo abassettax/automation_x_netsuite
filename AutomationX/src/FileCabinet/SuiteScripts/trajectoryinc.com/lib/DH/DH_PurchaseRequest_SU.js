@@ -123,31 +123,48 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 details: JSON.stringify(stockRequests)
             });
             stockRequests.forEach(function (stockRequest, index) {
+                var links = '';
                 stockRequest.values.forEach(function (stockRequest) {
                     if (stockRequest.value) {
-                        if (stockRequest.id == 'rate' && !isNaN(stockRequest.value)) {
-                            itemList.setSublistValue({ id: stockRequest.config.id, value: stockRequest.value, line: index });
-                        } else if (stockRequest.config.id == 'id') {
-                            log.debug({
-                                title: 'rec id',
-                                details: stockRequest.value
-                            });
+                        if (stockRequest.config.id == 'id') {
+                            //TODO: rework to search on multiple requests when consolidation happens
                             var recId = stockRequest.value;
                             var recUrl = url.resolveRecord({
                                 recordType: 'customrecord463',
                                 recordId: recId
                             });
-                            var recLink = '<a href="https://'+baseUrl+recUrl+'" target="_blank">'+stockRequest.value+'</a>';
-                            log.debug({
-                                title: 'rec link',
-                                details: recLink
-                            });
-                            itemList.setSublistValue({ id: stockRequest.config.id, value: recLink, line: index });
+                            links = '<a href="https://' + baseUrl + recUrl + '" target="_blank">Purchase Request</a><br><br>';
+                        } else if (stockRequest.config.id == 'itemid') {
+                            //item links
+                            var itemId = stockRequest.value;
+                            // var itemUrl = url.resolveRecord({
+                            //     recordType: record.Type.ITEM,
+                            //     recordId: itemId
+                            // });
+                            links = links + '<a href="https://' + baseUrl + '/app/common/item/item.nl?id=' + itemId + '" target="_blank">Item</a><br><br>';
+                            //inv check link
+                            links = links + '<a href="https://422523.app.netsuite.com/app/common/search/searchresults.nl?searchtype=Item&Item_INTERNALID=' + itemId + '&style=NORMAL&report=&grid=&searchid=3993&sortcol=Item_INVENTOCATION17_raw&sortdir=ASC&csv=HTML&OfficeXML=F&pdf=&size=1000&twbx=F" target="_blank">Check Inv</a><br><br>';
+                            //po history link
+                            links = links + '<a href="https://422523.app.netsuite.com/app/common/search/searchresults.nl?searchtype=Transaction&IT_Item_INTERNALID=' + itemId + '&searchid=7144" target="_blank">PO History</a>';
+                        }
+                        if (stockRequest.config.id == 'rate') {
+                            if (!isNaN(stockRequest.value)) {
+                                itemList.setSublistValue({ id: stockRequest.config.id, value: stockRequest.value, line: index });
+                            }
+                        } else if (stockRequest.config.id == 'line') { 
+                            itemList.setSublistValue({ id: stockRequest.config.id, value: parseFloat(index + 1).toFixed(), line: index });
                         } else {
                             itemList.setSublistValue({ id: stockRequest.config.id, value: stockRequest.value, line: index });
                         }
                     }
                 });
+                // log.debug({
+                //     title: 'links',
+                //     details: links
+                // });
+                if (links != '') {
+                    itemList.setSublistValue({ id: 'links', value: links, line: index });
+                }
             });
             return form;
         };
@@ -236,6 +253,9 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         case 'status':
                             itemListField.value = purchaseRequestItemDetail.processingStatus;
                             break;
+                        case 'line':
+                            itemListField.value = 'test';  //placeholder so indexing on field set forEach doesn't break
+                            break;
                         case 'isstocked':
                             itemListField.value = purchaseRequestItemDetail.isStock ? 'Y' : 'N';
                             break;
@@ -311,6 +331,9 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         case 'id':
                             itemListField.value = purchaseRequestItemDetail.internalId;
                             break;
+                        case 'idlink':
+                            itemListField.value = purchaseRequestItemDetail.internalId;
+                            break;
                         case 'solineid':
                             itemListField.value = purchaseRequestItemDetail.salesOrderLine.toString();
                             break;
@@ -343,7 +366,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         };
         var getPurchaseRequestItemDetails = function (clearAll, locationId, isStock, AddLocalStockLevel, isNormallyStocked) {
             var itemIds = [], itemLocationIds = [], purchaseRequestItemDetails = [];
-            var filter = [['isinactive', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', '@NONE@']];
+            var filter = [['isinactive', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', ['@NONE@','4']]];
             if (locationId > 0) {
                 filter.push('AND');
                 filter.push([PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Location, 'anyof', locationId]);
@@ -423,7 +446,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     customerId: +result.getValue(result.columns[14]),
                     customer: result.getText(result.columns[14]),
                     fromLocationId: +result.getValue(result.columns[15]),
-                    processingStatus: PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.BLANK,
+                    processingStatus: result.getValue(result.columns[16]), //PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.BLANK,
                     monthsOnHand: +result.getValue(result.columns[17]),
                     companyOnOrder: +result.getValue(result.columns[18]),
                     locationOnOrder: +result.getValue(result.columns[19]),
@@ -443,6 +466,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     companyAvailable: -1,
                     createdFromId: -1,
                     internalId: result.id,
+                    internalId2: result.id,
                     locationPreferredStockLevel: -1,
                     fromSalesOrderProcess: false,
                     rate: result.getValue(result.columns[31])
@@ -477,25 +501,36 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     purchaseRequestItemDetail.locationPreferredStockLevel = itemDetail.locationPreferredStockLevel;
                     purchaseRequestItemDetail.isAvailable = isItemAvailable[+purchaseRequestItemDetail.itemId];
                 }
-                if (clearAll) {
-                    purchaseRequestItemDetail.processingStatus = PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.BLANK;
-                }
-                else {
-                    if (!purchaseRequestItemDetail.isAvailable && !(purchaseRequestItemDetail.fromLocationId > 0)) {
-                        purchaseRequestItemDetail.processingStatus = PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.PurchaseOrder;
+                //TODO: this is suggestion logic. should review and refine with Kyle
+                if (purchaseRequestItemDetail.processingStatus == '') {
+                    //automatically clears all lines, no suggestions applied
+                    if (clearAll) {
+                        purchaseRequestItemDetail.processingStatus = PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.BLANK;
                     }
-                    else if (!(purchaseRequestItemDetail.fromLocationId > 0)) {
-                        if (+purchaseRequestItemDetail.monthsOnHand === 0) {
+                    else {
+                        //if none available, set to PO
+                        if (!purchaseRequestItemDetail.isAvailable && !(purchaseRequestItemDetail.fromLocationId > 0)) {
                             purchaseRequestItemDetail.processingStatus = PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.PurchaseOrder;
                         }
-                        else {
-                            var fromLocationDetails = getFromLocation(purchaseRequestItemDetail.itemId, purchaseRequestItemDetail.quantity, purchaseRequestItemDetail.locationId);
-                            if (fromLocationDetails.fromLocation === -1) {
+                        //if some are available, eval further
+                        else if (!(purchaseRequestItemDetail.fromLocationId > 0)) {
+                            //if motnhs on hand is 0, set to PO
+                            if (+purchaseRequestItemDetail.monthsOnHand === 0) {
                                 purchaseRequestItemDetail.processingStatus = PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.PurchaseOrder;
                             }
+                            //else if available and months on hand greater than 0, eval further
                             else {
-                                purchaseRequestItemDetail.fromLocationId = fromLocationDetails.fromLocation;
-                                purchaseRequestItemDetail.processingStatus = PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.TransferOrder;
+                                //TODO: determines value for From Location field. need to review logic that determines if a match is found. may just need to skip this defaulting
+                                var fromLocationDetails = getFromLocation(purchaseRequestItemDetail.itemId, purchaseRequestItemDetail.quantity, purchaseRequestItemDetail.locationId);
+                                //if transfer match is not found, set to PO
+                                if (fromLocationDetails.fromLocation === -1) {
+                                    purchaseRequestItemDetail.processingStatus = PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.PurchaseOrder;
+                                }
+                                //else if transfer match is found, set to TO
+                                else {
+                                    purchaseRequestItemDetail.fromLocationId = fromLocationDetails.fromLocation;
+                                    purchaseRequestItemDetail.processingStatus = PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.TransferOrder;
+                                }
                             }
                         }
                     }
@@ -505,48 +540,51 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         };
         // region Form Elements
         var FORM_BUTTONS = [];
-        FORM_BUTTONS.push({ id: 'custpage_openitem_btn', label: 'Open Item', functionName: 'openitem' });
+        // FORM_BUTTONS.push({ id: 'custpage_openitem_btn', label: 'Open Item', functionName: 'openitem' });
         FORM_BUTTONS.push({ id: 'custpage_clear_btn', label: 'Clear All Lines', functionName: 'clearalllines' });
-        FORM_BUTTONS.push({ id: 'custpage_openstckreq_btn', label: 'Open Stock Request', functionName: 'openrequest' });
-        FORM_BUTTONS.push({ id: 'custpage_checkinv_btn', label: 'Check Inventory', functionName: 'getinv' });
-        FORM_BUTTONS.push({ id: 'custpage_tran_hist_btn', label: 'Transaction History', functionName: 'tranHistory' });
-        FORM_BUTTONS.push({ id: 'custpage_cust_hist_btn', label: 'Customer History', functionName: 'gethist' });
+        // FORM_BUTTONS.push({ id: 'custpage_openstckreq_btn', label: 'Open Stock Request', functionName: 'openrequest' });
+        // FORM_BUTTONS.push({ id: 'custpage_checkinv_btn', label: 'Check Inventory', functionName: 'getinv' });
+        // FORM_BUTTONS.push({ id: 'custpage_tran_hist_btn', label: 'Transaction History', functionName: 'tranHistory' });
+        // FORM_BUTTONS.push({ id: 'custpage_cust_hist_btn', label: 'Customer History', functionName: 'gethist' });
         FORM_BUTTONS.push({ id: 'custpage_reset', label: 'Reset', functionName: 'reset' });
         var STOCK_REQUEST_FIELDS = [];
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'line', type: serverWidget.FieldType.TEXT, label: 'Line'}, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'process', type: serverWidget.FieldType.CHECKBOX, label: 'Process'}, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'id', type: serverWidget.FieldType.TEXT, label: 'ID' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'id', type: serverWidget.FieldType.TEXT, label: 'ID' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'status', type: serverWidget.FieldType.SELECT, label: 'Action'}, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'isstocked', type: serverWidget.FieldType.TEXT, label: 'Stocked Item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'locationid', type: serverWidget.FieldType.SELECT, label: 'Location', source: 'location'}, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'fromlocationid', type: serverWidget.FieldType.SELECT, label: 'From Location', source: 'location'}, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'links', type: serverWidget.FieldType.TEXTAREA, label: 'Links' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: DH_Library_1.FIELDS.ITEM.AX5Code, type: serverWidget.FieldType.TEXT, label: 'AX 5 Code' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemid', type: serverWidget.FieldType.SELECT, label: 'Item', source: 'item' }, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'isstocked', type: serverWidget.FieldType.TEXT, label: 'Netstock Item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'custbu', type: serverWidget.FieldType.TEXT, label: 'BU/Customer' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'estcost', type: serverWidget.FieldType.TEXT, label: 'Estimated Cost' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'vendor', type: serverWidget.FieldType.SELECT, label: 'Vendor', source: 'vendor' }, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'iscustomprice', type: serverWidget.FieldType.CHECKBOX, label: 'iscustomprice' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'qty', type: serverWidget.FieldType.INTEGER, label: 'QTY' }, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'soqty', type: serverWidget.FieldType.INTEGER, label: 'SO QTY' }, displayType: serverWidget.FieldDisplayType.DISABLED });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'loccompava', type: serverWidget.FieldType.TEXT, label: 'Local / Company Avalible' }, displayType: serverWidget.FieldDisplayType.DISABLED });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'locationid', type: serverWidget.FieldType.SELECT, label: 'Location', source: 'location' }, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'fromlocationid', type: serverWidget.FieldType.SELECT, label: 'From Location', source: 'location' }, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'moh', type: serverWidget.FieldType.TEXT, label: 'MOH' }, displayType: serverWidget.FieldDisplayType.DISABLED });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'demandavgs', type: serverWidget.FieldType.TEXT, label: 'Local / Company Demand' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'rate', type: serverWidget.FieldType.FLOAT, label: 'rate' }, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'so', type: serverWidget.FieldType.SELECT, label: 'Sales Order', source: 'salesorder' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'soqty', type: serverWidget.FieldType.INTEGER, label: 'SO QTY' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'moh', type: serverWidget.FieldType.TEXT, label: 'MOH' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
+        // STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'demandavgs', type: serverWidget.FieldType.TEXT, label: 'Local / Company Demand' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'customer', type: serverWidget.FieldType.SELECT, label: 'Customer', source: 'customer' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'loccompava', type: serverWidget.FieldType.TEXT, label: 'Local / Company Avalible' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'loccomponorder', type: serverWidget.FieldType.TEXT, label: 'Local / Company On Order' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'locad', type: serverWidget.FieldType.TEXT, label: 'Local Demand' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'compad', type: serverWidget.FieldType.TEXT, label: 'Company Demand' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'leadtime', type: serverWidget.FieldType.TEXT, label: 'Lead Time' }, displayType: serverWidget.FieldDisplayType.DISABLED });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'lastnegotiationdate', type: serverWidget.FieldType.TEXTAREA, label: 'Last Negotiation Date' }, displayType: serverWidget.FieldDisplayType.DISABLED }); // MH added
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'vendor', type: serverWidget.FieldType.SELECT, label: 'Vendor', source: 'vendor' }, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'newstock', type: serverWidget.FieldType.CHECKBOX, label: 'Add Stock Level' }, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'leadtime', type: serverWidget.FieldType.TEXT, label: 'Lead Time' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'lastnegotiationdate', type: serverWidget.FieldType.TEXTAREA, label: 'Last Negotiation Date' }, displayType: serverWidget.FieldDisplayType.HIDDEN }); // MH added
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'newstock', type: serverWidget.FieldType.CHECKBOX, label: 'Add Stock Level' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'forecastnotes', type: serverWidget.FieldType.TEXT, label: 'Forecast/Notes' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'purchasingnotes', type: serverWidget.FieldType.TEXTAREA, label: 'Purchasing Notes' }, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'avgcost', type: serverWidget.FieldType.TEXT, label: 'cost' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'so', type: serverWidget.FieldType.SELECT, label: 'Sales Order', source: 'salesorder' }, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'custbu', type: serverWidget.FieldType.TEXT, label: 'BU/Customer' }, displayType: serverWidget.FieldDisplayType.DISABLED });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'estcost', type: serverWidget.FieldType.TEXT, label: 'Estimated Cost' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'solineid', type: serverWidget.FieldType.INTEGER, label: 'solineid' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'empemails', type: serverWidget.FieldType.EMAIL, label: 'email' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'potype', type: serverWidget.FieldType.INTEGER, label: 'potype' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'description', type: serverWidget.FieldType.TEXT, label: 'description' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'iscustomprice', type: serverWidget.FieldType.CHECKBOX, label: 'iscustomprice' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'vendornotes', type: serverWidget.FieldType.TEXTAREA, label: 'vendornotes' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'rate', type: serverWidget.FieldType.FLOAT, label: 'rate' }, displayType: serverWidget.FieldDisplayType.ENTRY });
+        
         // endregion
         // region Searches
         var getItemsDetails = function (itemLocations) {
@@ -573,12 +611,13 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     'locationquantityonorder',
                     'quantityonorder',
                     'quantityavailable',
-                    'locationpreferredstocklevel'
+                    'locationpreferredstocklevel',
+                    'custitem111'
                 ]
             }).run().each(function (result) {
                 itemDetails[result.id + "_" + result.getValue(result.columns[0])] = {
                     internalid: +result.id,
-                    isStock: +result.getValue(result.columns[5]) > 0,
+                    isStock: +result.getValue(result.columns[6]) > 0,
                     locationAvailable: +result.getValue(result.columns[1]),
                     locationOnOrder: +result.getValue(result.columns[2]),
                     companyOnOrder: +result.getValue(result.columns[3]),
