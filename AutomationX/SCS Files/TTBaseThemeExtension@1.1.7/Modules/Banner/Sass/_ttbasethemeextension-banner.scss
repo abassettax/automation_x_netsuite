@@ -1,0 +1,245 @@
+/*
+	Sass Application Entry Point
+	Link all your sass dependencies in the right order
+
+	Example:
+	@import "other-sass-file.scss";
+	@import "../../<other module>/Sass/other-sass-file.scss";
+*/ 
+
+// Variables
+
+$banner-text-color-light: rgb(255, 255, 255);
+$banner-text-color-dark: rgb(0, 0, 0);
+$banner-text-shadow-light: 1px 1px 5px rgba(0,0,0,0.8);
+$banner-text-shadow-dark: 1px 1px 5px rgba(189, 189, 189, 0.8);
+
+$banner-background-color: rgb(228, 228, 228);
+
+$banner-font-size-xs: 12px;
+$banner-font-size-s: 15px;
+$banner-font-size-m: 20px;
+$banner-font-size-l: 30px;
+$banner-font-size-xl: 40px;
+$banner-font-size-xxl: 50px;
+$banner-font-size-xxxl: 60px;
+
+$banner-font-size-mobile-xs: 10px;
+$banner-font-size-mobile-s: 12px;
+$banner-font-size-mobile-m: 15px;
+$banner-font-size-mobile-l: 20px;
+$banner-font-size-mobile-xl: 25px;
+$banner-font-size-mobile-xxl: 30px;
+$banner-font-size-mobile-xxxl: 35px;
+
+// Styles
+
+.tt-banner-section {
+	position: relative;
+	width: 100%;
+	height: 100%;
+
+	.tt-banner-mobile {
+		@media (min-width: $screen-sm-min) { display: none; }
+	}
+	.tt-banner-desktop {
+		@media (max-width: $screen-xs-max) { display: none; }
+	}
+
+	img { display: block; width: 100%; }
+
+	// No Imgage - START
+	@mixin tt-banner-no-image() {
+		.tt-banner-wrapper {
+			background-color: $banner-background-color;
+			padding: $sc-padding-lv4 0;
+		}
+		.tt-banner-wrapper, .tt-banner-content-info {
+			&::after { // clearfix
+				display: block;
+				content: "";
+				clear: both;
+			}
+			position: relative !important;
+			left: inherit !important;
+			right: inherit !important;
+			top: inherit !important;
+			bottom: inherit !important;
+			transform: inherit !important;
+		}
+		.tt-banner-wrapper, .tt-banner-content-info, .tt-banner-content-title, .tt-banner-content-description, .tt-banner-content-button-container {
+			float: none !important;
+		}
+	}
+	@media (max-width: $screen-xs-max) {
+		&.tt-banner-no-image-mobile { @include tt-banner-no-image(); }
+	}
+	@media (min-width: $screen-sm-min) {
+		&.tt-banner-no-image-desktop { @include tt-banner-no-image(); }
+	}
+	// No Imgage - END
+
+	// Parallax
+	.tt-banner-parallax {
+		height: 500px;
+		background-attachment: fixed;
+		background-position: center;
+		background-repeat: no-repeat;
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
+	}
+
+	.tt-banner-wrapper {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		bottom: 0px;
+		right: 0px;
+		
+		.tt-banner-content {
+			display: block;
+			position: relative;
+			height: 100%;
+
+			&-container { @extend .container; }
+			&-fullwidth { width: 100%; }
+		}
+
+		.tt-banner-content-link {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+		}
+	}
+
+	.tt-banner-content-info {
+		position: absolute;
+		margin: 0px;
+		padding: $sc-margin-lv5;
+
+		h2, h3, p, .tt-banner-content-button-container { margin: 0; padding: 0px 10px; }
+
+		// Content Position - START
+		@mixin translateMixin ($x-value, $y-value) {
+			transform: translate($x-value, $y-value);
+			-ms-transform: translate($x-value, $y-value); // IE 9
+			-webkit-transform: translate($x-value, $y-value); // Safari 3-8
+		}
+		@mixin tt-banner-content-position() {
+			&-top-left 		{ left: 0px;	top: 0px;		}
+			&-top-center	{ left: 50%;	top: 0px;	 	@include translateMixin(-50%, 0);}
+			&-top-right		{ right: 0px;	top: 0px;		}
+			&-center-left	{ left: 0px;	top: 50%;		@include translateMixin(0, -50%);}
+			&-center-center	{ left: 50%;	top: 50%;		@include translateMixin(-50%, -50%);}
+			&-center-right	{ right: 0px;	top: 50%;		@include translateMixin(0, -50%);}
+			&-bottom-left	{ left: 0px;	bottom: 0px;	}
+			&-bottom-center	{ left: 50%;	bottom: 0px;	@include translateMixin(-50%, 0);}
+			&-bottom-right	{ right: 0px;	bottom: 0px;	}
+
+			&-center-left	{ margin-top: 0 !important; 	margin-bottom: 0 !important; }
+			&-center-right	{ margin-top: 0 !important; 	margin-bottom: 0 !important; }
+			&-top-center	{ margin-left: 0 !important; 	margin-right: 0 !important; }
+			&-bottom-center	{ margin-left: 0 !important; 	margin-right: 0 !important; }
+			&-center-center	{ margin: 0 !important; }
+		}
+		&.tt-banner-content-position {
+			@media (min-width: $screen-sm-min) {
+				&-desktop { @include tt-banner-content-position(); }
+			}
+			@media (max-width: $screen-xs-max) {
+				&-mobile { @include tt-banner-content-position(); }
+			}
+		}
+		// Content Position - END
+
+		// Content Align - START
+		@mixin tt-banner-content-alignment() {
+			&-center {
+				text-align: center;
+			}
+			&-left {
+				text-align: left;
+			}
+			&-right {
+				text-align: right;
+			}
+		}
+		&.tt-banner-content-alignment {
+			@media (min-width: $screen-sm-min) {
+				&-desktop { @include tt-banner-content-alignment(); }
+			}
+			@media (max-width: $screen-xs-max) {
+				&-mobile { @include tt-banner-content-alignment(); }
+			}
+		}
+		// Content Align - END
+
+		// Content Border Radius
+		&.tt-banner-content-border-radius { border-radius: $sc-border-radius; }
+
+		// Text Style
+		&.text-style-default,
+		&.text-style-light {
+			h3, h2, p { color: $banner-text-color-light; }
+			&.text-shadow {
+				h3, h2, p { text-shadow: $banner-text-shadow-light; }
+			}
+		}
+		&.text-style-dark {
+			h3, h2, p { color: $banner-text-color-dark; }
+			&.text-shadow {
+				h3, h2, p { text-shadow: $banner-text-shadow-dark; }
+			}
+		}
+
+		// Button Style
+		.tt-banner-content-button-container .tt-banner-content-button {
+			&-primary		{ @extend .button-primary; }
+			&-secondary 	{ @extend .button-secondary; }
+			&-tertiary		{ @extend .button-tertiary; }
+			&-quaternary	{ @extend .button-quaternary !optional; }
+			&-link			{ color: $sc-color-primary; }
+
+			&-primary, &-secondary, &-tertiary, &-quaternary {
+				@extend .button-medium;
+			}
+			&-primary, &-secondary, &-tertiary, &-quaternary, &-link {
+				width: auto;
+				text-decoration: none;
+			}
+    	}
+	}
+
+	// Font sizes
+	.font-size{
+		&-xs	{ font-size: $banner-font-size-xs !important; }
+		&-s		{ font-size: $banner-font-size-s !important; }
+		&-m		{ font-size: $banner-font-size-m !important; }
+		&-l		{ font-size: $banner-font-size-l !important; }
+		&-xl	{ font-size: $banner-font-size-xl !important; }
+		&-xxl	{ font-size: $banner-font-size-xxl !important; }
+		&-xxxl	{ font-size: $banner-font-size-xxxl !important; }
+
+		@media (max-width: $screen-md-max) {
+			&-xs	{ font-size: $banner-font-size-mobile-xs !important; }
+			&-s		{ font-size: $banner-font-size-mobile-s !important; }
+			&-m		{ font-size: $banner-font-size-mobile-m !important; }
+			&-l		{ font-size: $banner-font-size-mobile-l !important; }
+			&-xl	{ font-size: $banner-font-size-mobile-xl !important; }
+			&-xxl	{ font-size: $banner-font-size-mobile-xxl !important; }
+			&-xxxl	{ font-size: $banner-font-size-mobile-xxxl !important; }
+		}
+	}
+
+	// Font Weight
+	.font-weight{
+		&-light		{ font-weight: $sc-font-weight-light !important; }
+		&-normal	{ font-weight: $sc-font-weight-normal !important; }
+		&-semibold	{ font-weight: $sc-font-weight-semibold !important; }
+		&-bold		{ font-weight: $sc-font-weight-bold !important; }
+	}
+}

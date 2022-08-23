@@ -1,0 +1,37 @@
+/*
+	Sass Application Entry Point
+	Link all your sass dependencies in the right order
+
+	Example:
+	@import "other-sass-file.scss";
+	@import "../../<other module>/Sass/other-sass-file.scss";
+*/ 
+
+// .basethememodule-info-card {
+//     @extend .info-card;
+// }
+
+// .basethememodule-info-card-content {
+//     @extend .info-card-content;
+//     color: $sc-color-secondary;
+//     font-weight: bold;
+// }
+
+@import "../../Slider/Sass/_ttbasethemeextension-slider";
+
+@import "../../SmartMerchand/Sass/_ttbasethemeextension-smartmerchand";
+
+@import "../../Banner/Sass/_ttbasethemeextension-banner";
+
+@import "../../HeaderNavigation/Sass/_ttbasethemeextension_headermenu_general";
+@import "../../HeaderNavigation/Sass/_ttbasethemeextension_headermenu_compact";
+@import "../../HeaderNavigation/Sass/_ttbasethemeextension_headermenu_normal";
+@import "../../HeaderNavigation/Sass/_ttbasethemeextension_headermenu_thumbnail";
+@import "../../HeaderNavigation/Sass/_ttbasethemeextension_headermenu_html_contents";
+@import "../../HeaderNavigation/Sass/_ttbasethemeextension_headermenu_general_overrides";
+
+@import "../../LazyLoading/Sass/_ttbasethemeextension-lazyloading";
+
+@import "../../FixedBackToTop/Sass/_fixed-back-to-top";
+
+@import "../../StickyHeader/Sass/_ttbasethemeextension-stickyheader";

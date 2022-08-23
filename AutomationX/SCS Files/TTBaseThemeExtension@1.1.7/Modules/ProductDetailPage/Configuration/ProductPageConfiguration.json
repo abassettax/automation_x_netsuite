@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "pageproduct",
+    "group": "ttbasetheme",
+    "title": "Old/New Pricing",
+    "docRef": "",
+    "description": "General Settings for Product Pricing Module"
+  },
+  "properties": {
+    "ttbasetheme.pricing": {
+      "group": "ttbasetheme",
+      "subtab": "pageproduct",
+      "type": "boolean",
+      "title": "Allow Product Pricing module for TT Base Theme Extension",
+      "description": "Tavano Team Old/New Pricing module gives you the option to display lower price offering to your customers based on price levels definitions. Using strike through pricing visual treatment showing a line drawn through the original price (old price) of an item and a second lower price offering (new price). \nThe original price comes from the “Base Price ID” field under Old/New Pricing configuration and it’s displayed as the strike through price. \nThe new price comes from the set up price level configuration or customer designated price level (if customer is logged in) and it’s displayed as the highlighted price.",
+      "default": ""
+    }, 
+    "ttbasetheme.basePrice": {
+      "group": "ttbasetheme",
+      "subtab": "pageproduct",
+      "type": "string",
+      "title": "Base Price ID",
+      "description": "Enter the Internal ID for the price level that you want to show as original price with strikethrough styling. Please include the id value with formatted id. For example: pricelevel1_formatted",
+      "default": ""
+    }
+  }
+}

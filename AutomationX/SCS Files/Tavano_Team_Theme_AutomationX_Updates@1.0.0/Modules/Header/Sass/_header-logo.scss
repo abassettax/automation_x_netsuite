@@ -1,0 +1,85 @@
+.header-logo {
+	display: block;
+	line-height: $sc-main-nav-height;
+	height: $sc-main-nav-height;
+	margin-left:-$sc-margin-lv2;
+
+	@media (max-width: $screen-xs-min) {
+		max-width: 100%;
+	}
+
+	@media (min-width: $screen-sm-min) {
+		width: 100%;
+		margin:0px;
+	}
+}
+
+//TT New Styles
+.header-logo-wrapper {
+	width: 175px;
+	height: 75px;
+	// margin: 10px 15px 10px 0px;
+
+	@media (min-width: $screen-md-min) {
+		height: 75px;
+	}
+
+	@media (max-width: $screen-md-min) {
+		width: 210px;
+		height: auto;
+		max-height: 49px;
+	}
+
+	@media (max-width: $screen-xxs-min) {
+		width: 199px;
+		height: auto;
+		max-height: 49px;
+	}
+}
+
+a.header-logo {
+	@media (min-width: $screen-md-min) {
+		line-height: 83px;
+		height: 75px;
+	}
+
+	@media (max-width: $screen-md-min) {
+		//line-height: $sc-margin-lv1 * 5;
+		height: auto;
+		width: auto;
+		max-width: 210px;
+		max-height: 49px;
+		margin: 0;
+		display: inline-block;
+		outline: none;
+	}
+
+	@media (max-width: $screen-xxs-min) {
+		max-width: 199px;
+		max-height: 49px;
+	}
+}
+
+img.header-logo-image {
+	vertical-align: middle;
+	max-width: 290px;
+	max-height: 65px;
+
+	@media (min-width: $screen-md-min) {
+		width: auto;
+		height: auto;
+		margin: 0px;
+		display: inline-block;
+	}
+
+	@media (max-width: $screen-md-min) {
+		//@extend .header-sidebar-toggle-wrapper;
+		width: auto;
+		height: auto;
+		max-width: 100%;
+		max-height: 49px;
+		float: left;
+		margin: 0px;
+		margin-top: 8px;
+	}
+}

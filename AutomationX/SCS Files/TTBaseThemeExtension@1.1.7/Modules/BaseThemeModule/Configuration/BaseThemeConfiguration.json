@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "group": {
+    "id": "ttbasetheme",
+    "title": "TT Base Theme",
+    "docRef": "",
+    "description": "TT Base Theme Extension"
+  },
+  "properties": {
+    "ttbasetheme.allowExtension": {
+      "group": "ttbasetheme",
+      "type": "boolean",
+      "title": "Allow TT Base Theme Extension",
+      "description": "Check the box to allow the system to use the Tavano Team Base Theme Extension",
+      "default": ""
+    }
+  }
+}

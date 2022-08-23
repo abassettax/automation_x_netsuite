@@ -1,0 +1,16 @@
+/*
+	Sass Application Entry Point
+	Link all your sass dependencies in the right order
+
+	Example:
+	@import "other-sass-file.scss";
+	@import "../../<other module>/Sass/other-sass-file.scss";
+*/ 
+html, body, #main, .main {
+	*.tt-lazy-show {
+		opacity: 1;
+		position: relative;
+		top: 0px;
+		@include transition-duration(0.5s);
+	}
+}

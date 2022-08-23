@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "smartmerchand",
+    "group": "ttbasetheme",
+    "title": "Smart Merchand",
+    "docRef": "",
+    "description": "General Settings for Smart Merchand Module"
+  },
+  "properties": {
+    "ttbasetheme.smartMerchand": {
+      "group": "ttbasetheme",
+      "subtab": "smartmerchand",
+      "type": "boolean",
+      "title": "Allow Smart Merchand module for TT Base Theme Extension",
+      "description": "The Tavano Team  Smart Merchand module lets you add a carousel of products using Site Management Tools. Using Smart Merch you can display products based on item attributes to offer a dynamic shopping experience based on saved search results.",
+      "default": ""
+    }
+  }
+}

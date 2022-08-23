@@ -1,0 +1,185 @@
+// HTML Contents
+.tt-ext-header-menu-html-content {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	> div {
+		width: auto;
+		white-space: nowrap;
+		width: max-content;
+		width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+		width: -moz-max-content;    /* Firefox/Gecko */
+		width: -webkit-max-content; /* Chrome */
+	}
+	.tt-ext-menu-el {
+		@extend .clearfix;
+		display: inline-block;
+		vertical-align: middle;
+		width: 100px;
+	}
+	.tt-ext-menu-img {
+		display: block;
+		float: left;
+		width: 100%;
+	}
+	// Break
+	.tt-ext-menu-break {
+		display: block;
+	}
+	// Title Font Size
+	.tt-ext-menu-el:not(.remove-font-size) {
+		.tt-ext-menu-title {
+			font-size: $sc-font-size-l;
+		}
+	}
+	// Text Offset
+	.tt-ext-menu-el-text-offset {
+		position: relative;
+		display: table-cell;
+		a, p {
+			position: absolute;
+			width: 100%;
+		}
+	}
+	// HTML Alignment
+	.tt-ext-header-align-left {
+		text-align: left;
+		.tt-ext-menu-el-row {
+			margin-right: auto;
+		}
+	}
+	.tt-ext-header-align-center {
+		text-align: center;
+		.tt-ext-menu-el-row {
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+	.tt-ext-header-align-right {
+		text-align: right;
+		.tt-ext-menu-el-row {
+			margin-left: auto;
+		}
+	}
+}
+
+// HTML Contents - Normal & Thumbnail
+.tt-ext-header-menu-normal,
+.tt-ext-header-menu-thumbnail {
+	.tt-ext-header-menu-cetegories {
+		width: 100%;
+	}
+	.tt-ext-menu-html-pos-top,
+	.tt-ext-menu-html-pos-bottom {
+		.tt-ext-header-menu-html-content > div {
+				width: 100%;
+		}
+	}
+	.tt-ext-menu-html-pos-left,
+	.tt-ext-menu-html-pos-right {
+		display: -webkit-box;
+		display: -moz-box;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		display: flex;
+	}
+}
+
+// HTML Contents - Compact
+.tt-ext-header-menu-compact {
+	.tt-ext-menu-html-pos-top,
+	.tt-ext-menu-html-pos-bottom {
+		display: block;
+	}
+	// Border
+	.tt-ext-menu-html-pos-top {
+		.tt-ext-header-menu-html-content {
+			border-bottom: 1px solid $sc-main-navigation-submenu-heading-border-color;
+		}
+	}
+}
+
+// Extra Styles
+.tt-ext-header-menu-html-content {
+
+	//.remove-font-size {}
+
+	.text-align-left {
+		a, p {
+			text-align: left;
+		}
+	}
+	.text-align-center {
+		a, p {
+			text-align: center;
+		}
+	}
+	.text-align-right {
+		a, p {
+			text-align: right;
+		}
+	}
+	.text-weight-bold {
+		a, p {
+			font-weight: $sc-font-weight-bold;
+		}
+	}
+	.text-weight-semibold {
+		a, p {
+			font-weight: $sc-font-weight-semibold;
+		}
+	}
+	.text-weight-normal {
+		a, p {
+			font-weight: $sc-font-weight-normal;
+		}
+	}
+	.text-weight-light {
+		a, p {
+			font-weight: $sc-font-weight-light;
+		}
+	}
+	.border-bottom {
+		border-bottom: 1px solid $sc-color-theme-border;
+	}
+	.border-top {
+		border-top: 1px solid $sc-color-theme-border;
+	}
+	.border-left {
+		border-left: 1px solid $sc-color-theme-border;
+	}
+	.border-right {
+		border-right: 1px solid $sc-color-theme-border;
+	}
+	.border-bottom-light {
+		border-bottom: 1px solid $sc-color-theme-border-light;
+	}
+	.border-top-light {
+		border-top: 1px solid $sc-color-theme-border-light;
+	}
+	.border-left-light {
+		border-left: 1px solid $sc-color-theme-border-light;
+	}
+	.border-right-light {
+		border-right: 1px solid $sc-color-theme-border-light;
+	}
+	.img-circle img {
+		border-radius: 100%;
+	}
+	.img-border img {
+		border: 1px solid $sc-color-theme-border;
+		padding: 2px;
+	}
+	.img-border-light img {
+		border: 1px solid $sc-color-theme-border-light;
+		padding: 2px;
+	}
+	.element-shadow,
+	.img-shadow img {
+		-webkit-box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+		-moz-box-shadow:    0px 0px 7px rgba(0, 0, 0, 0.2);  /* Firefox 3.5 - 3.6 */
+		box-shadow:         0px 0px 7px rgba(0, 0, 0, 0.2);
+	}
+}

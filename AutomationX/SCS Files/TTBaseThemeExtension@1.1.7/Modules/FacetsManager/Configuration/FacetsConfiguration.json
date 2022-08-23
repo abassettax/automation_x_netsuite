@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "facets",
+    "group": "ttbasetheme",
+    "title": "Facets Manager",
+    "description": "General Settings for Facets Manager Module"
+  },
+  "properties": {
+    "theme.facet": {
+      "group": "ttbasetheme",
+      "subtab": "facets",
+      "type": "boolean",
+      "title": "Allow Facets Manager for TT Base Theme Extension",
+      "description": "Facets Manager module lets you exclude any custom field you select at narrow by section of facets search pages"
+    },
+    "theme.fields": {
+      "group": "ttbasetheme",
+      "subtab": "facets",
+      "type": "array",
+      "title": "Exclude Facets",
+      "docRef": "",
+      "description": "Add the internal Id of the custom fields to be excluded",
+      "items": {
+        "type": "string",
+        "title": "Field id",
+        "mandatory": true
+      },
+      "default": []
+    }
+  }
+}

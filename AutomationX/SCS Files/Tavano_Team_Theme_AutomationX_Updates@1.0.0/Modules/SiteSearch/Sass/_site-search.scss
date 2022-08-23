@@ -1,0 +1,115 @@
+header:not(.header-scroll) .header-site-search {
+	display: inline-block !important;
+}
+.header-site-search {
+	float: right;
+    width: 426px;
+	margin-top: 14px;
+	margin-bottom: 12px;
+
+	.custom-search-input.tt-input { 
+		color: $tt-theme-header-search-font-input; // Theme Variable
+	} 
+	.custom-search-input.tt-hint,
+	.custom-search-input.tt-input { 
+		border: none !important;
+		background-color: transparent;
+	}
+
+	@media (max-width: $screen-sm-max) {
+		width: 100%;
+		margin-top: $sc-margin-lv2;
+	}
+
+	input[type="search"] {
+		@include placeholder { color: $tt-theme-header-search-font-placeholder; } // Theme Variable
+	}
+	
+}
+
+.header-menu-search-icon,
+.header-menu-searchmobile-icon {
+    @extend .fa;
+    @extend %fa-search;
+}
+
+.header-menu-searchmobile-icon {
+    color: $sc-color-secondary;
+    font-size: $sc-font-size-l;
+    line-height: $sc-target-size;
+    min-width: $sc-target-size;
+}
+
+.site-search {
+	@extend .nav-search;
+	padding: 0px;
+	border: none;
+}
+
+.site-search-content {
+	@extend .nav-search-content;
+	width: auto;
+}
+
+.site-search-content-form {
+	height: 100%;
+	background-color: $tt-theme-header-search-background-color; // Theme Variable
+	border: 1px solid $tt-theme-header-search-color; // Theme Variable
+	border-radius: $sc-border-radius;
+}
+
+.site-search-content-input {
+	@extend .nav-search-content-input;
+	height: 100%;
+	.site-search-content-view {
+		height: 100%;
+	}
+	.itemssearcher-input {
+		border: none;
+	}
+	.itemssearcher-input:focus{
+		outline:none;
+		outline-style:none;
+		box-shadow:none;
+		border-color:transparent;
+	}
+}
+
+.site-search-input-icon {
+	@extend .nav-search-input-icon;
+	font-size: $sc-font-size-xxl;
+}
+
+.site-search-input-reset {
+	@extend .nav-search-input-reset;
+	right: 45px;
+}
+
+.site-search-button-submit {
+	@extend .nav-search-button-submit;
+    height: 100%;
+    width: 60px;
+}
+
+.site-search-button-close {
+	@extend .nav-search-button-close;
+}
+
+.site-search-input-reset-icon {
+	@extend .nav-search-input-reset-icon;
+	font-size: 18px;
+	color: $tt-theme-header-search-reset-icon-color; // Theme Variable
+}
+
+.nav-search-input-reset {
+    background-color: transparent;
+}
+
+// .nav-search-input-reset-icon {
+    // color: $sc-header-top-background-color;
+// }
+
+.nav-search-content:after,
+.site-search-content:after {
+    display: none;
+}

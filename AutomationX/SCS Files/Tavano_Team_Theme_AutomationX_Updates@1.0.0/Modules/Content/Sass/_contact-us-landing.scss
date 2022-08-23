@@ -1,0 +1,122 @@
+.contact-us-landing {
+	padding: $sc-padding-lv1 * 8 $sc-padding-lv3 0 $sc-padding-lv3;
+	h1 {
+		margin-top: 20px;
+		margin-bottom: 40px;
+	}
+}
+
+
+// // TT Alpha Contact Us Landing - Start
+// section#tt-alpha-contact-us {
+// 	margin-bottom: 0px;
+// 	margin-top: 0px;
+
+// 	.row.contact-us-content{margin-bottom:0px;}
+
+// 	.contact-us-title{
+// 		margin:$sc-padding-lv1 * 8 $sc-padding-lv5 $sc-padding-lv5 $sc-padding-lv5;
+// 		> div.row {margin: 0;padding: 0;}
+// 		h1{
+// 			margin-bottom:15px;
+// 			@media (max-width: $screen-md-min) { text-align: center; }
+// 		}
+// 	}
+
+// 	//Contact Us Info
+// 	div.contact-us-info {
+// 		@extend .this-full-width;
+// 		div.row {
+// 			border-top: none;
+// 			margin: 0;
+// 			padding: 0;
+// 			> div {
+// 				padding: 0;
+// 			}
+// 		}
+// 		@media (max-width: $screen-md-min) {
+// 			margin: $sc-padding-lv4 0;
+// 			div.row {
+// 				> div{
+// 					padding: $sc-padding-lv4 0;
+// 				}
+// 			}
+// 		}
+// 	@media (max-width: $screen-sm-min) { text-align: center; }
+// 	}
+
+// 	.contact-us-details{
+// 		> div{margin:0 0 20px 0;}
+// 		h3{margin-top:0px!important;}
+// 		i{@extend .fa; font-size:24px;}
+// 		.contact-us-address i{@extend %fa-map-marker;}
+// 		.contact-us-phone i{@extend %fa-phone;}
+// 		.contact-us-mail i{@extend %fa-envelope;}
+// 	}
+
+// 	.contact-us-map{
+// 		iframe{width:100%;}
+// 	}
+
+// 	// Form
+// 	div.contact-us-form {
+// 		@extend .this-full-width;
+// 		padding: 0px $sc-padding-lv1 * 3 $sc-padding-lv1 * 8 $sc-padding-lv1 * 3;
+// 		#alert-container{
+// 			width:100%;
+// 			margin-bottom: 10px;
+// 		}
+// 		div.contact-us-form-box {
+// 			max-width: 880px;
+// 			margin: 0 auto;
+// 			text-align: center;
+			
+// 			.contact-us-form-controls p {
+// 				color: $sc-color-error;
+// 				margin-bottom: $sc-padding-lv3;
+// 			}
+
+// 			// Fields
+// 			input, textarea {
+// 				@include transition-duration(.2s);
+// 				@include transition-timing-function(ease);
+// 				width: 100%;
+// 				margin-bottom: $sc-padding-lv1 * 2;
+// 				padding: 12px 2%;
+// 				background: transparent;
+// 				border: 1px solid $sc-color-theme-border;
+// 				text-align: left;
+// 				color: $sc-color-copy;
+			
+// 				&:focus {
+// 					outline: 0;
+// 					box-shadow: none;
+// 					border-color: $sc-color-primary;
+// 				}
+// 				&::-webkit-input-placeholder {
+// 					color:$sc-color-copy-light;
+// 				}
+// 				&:-moz-placeholder { /* Firefox 18- */
+// 					color: $sc-color-copy-light;
+// 				}
+// 				&::-moz-placeholder {  /* Firefox 19+ */
+// 					color: $sc-color-copy-light;
+// 				}
+// 				&:-ms-input-placeholder {
+// 					color: $sc-color-copy-light;
+// 				}
+// 			}
+// 			// Submit button
+// 			button {
+// 				@extend .button-primary;
+// 				@extend .button-medium;
+// 			}
+// 		}
+// 		@media (min-width: $screen-sm-min) {
+// 			div.container {
+// 				div.row { margin-bottom: 0; }
+// 			}
+// 		}
+// 	}
+// }
+// // TT Alpha Contact Us Landing - End

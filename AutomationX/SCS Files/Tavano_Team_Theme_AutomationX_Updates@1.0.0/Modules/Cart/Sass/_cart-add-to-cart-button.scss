@@ -1,0 +1,38 @@
+.cart-add-to-cart-button-button {
+	@extend .button-primary;
+	@extend .button-large;
+	width: 100%;
+ 	font-weight: $sc-font-weight-semibold;
+	margin-top: $sc-margin-lv3;
+	span {
+		cursor: pointer;
+		display: inline-block;
+		position: relative;
+		@include transition-duration(.2s);
+
+	  }
+	span:after {
+		content: '\00bb';
+		position: absolute;
+		opacity: 0;
+		top: 0;
+		right: -20px;
+		@include transition-duration(.2s);
+
+	  }
+	:hover span {
+		padding-right: 25px;
+	  }
+	:hover span:after {
+		opacity: 1;
+		right: 0;
+	  }
+}
+
+.cart-add-to-cart-button {
+	position: static;
+}
+
+.cart-add-to-cart-button-container {
+	@extend .col-sm-6;
+}

@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "slider",
+    "group": "ttbasetheme",
+    "title": "Slider",
+    "docRef": "",
+    "description": "General Settings for Slider Module"
+  },
+  "properties": {
+    "ttbasetheme.slider": {
+      "group": "ttbasetheme",
+      "subtab": "slider",
+      "type": "boolean",
+      "title": "Allow Slider module for TT Base Theme Extension",
+      "description": "The Tavano Team Slider module lets you add a carousel of images and/or videos to your website using Site Management Tools. Slider lets you add a carousel of up to 4 images to your web store. You can select various layout settings such as image overlay, text, and call-to-action buttons to give your slideshow the appearance and behavior you want without editing Sass or HTML templates.",
+      "default": ""
+    }
+  }
+}

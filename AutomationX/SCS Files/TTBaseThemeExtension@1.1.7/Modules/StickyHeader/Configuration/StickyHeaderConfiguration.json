@@ -1,0 +1,75 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "stickyHeader",
+    "group": "ttbasetheme",
+    "title": "Sticky Header",
+    "docRef": "",
+    "description": ""
+  },
+  "properties": {
+    "ttbasetheme.allowStickyHeader": {
+      "group": "ttbasetheme",
+      "subtab": "stickyHeader",
+      "type": "boolean",
+      "title": "Allow Sticky Header module for TT Base Theme Extension",
+      "description": "",
+      "default": ""
+    },
+    "ttbasetheme.scrollTogglePoint": {
+      "group": "ttbasetheme",
+      "subtab": "stickyHeader",
+      "type": "integer",
+      "title": "Scroll Toggle Point (px)",
+      "description": "",
+      "mandatory": true,
+      "default": 250
+    },
+    "ttbasetheme.stickyHeader.logoUrl": {
+      "group": "ttbasetheme",
+      "subtab": "stickyHeader",
+      "type": "string",
+      "title": "Logo Url",
+      "description": ""
+    },
+    "ttbasetheme.stickyHeader.logoWidth": {
+      "group": "ttbasetheme",
+      "subtab": "stickyHeader",
+      "type": "integer",
+      "title": "Logo Width",
+      "description": "",
+      "mandatory": true,
+      "default": 200
+    },
+    "ttbasetheme.stickyHeader.displayMediumScreen": {
+      "group": "ttbasetheme",
+      "subtab": "stickyHeader",
+      "type": "string",
+      "title": "Medium Screen",
+      "description": "",
+      "enum": ["Show Search", "Show Cart"],
+      "default": ["Show Search", "Show Cart"],
+      "multiselect": true
+    },
+    "ttbasetheme.stickyHeader.displayLargeScreen": {
+      "group": "ttbasetheme",
+      "subtab": "stickyHeader",
+      "type": "string",
+      "title": "Large Screen",
+      "description": "",
+      "enum": ["Show Search", "Show Cart"],
+      "default": ["Show Search", "Show Cart"],
+      "multiselect": true
+    },
+    "ttbasetheme.stickyHeader.linksPadding": {
+      "group": "ttbasetheme",
+      "subtab": "stickyHeader",
+      "type": "integer",
+      "title": "Links Padding",
+      "description": "",
+      "enum": ["unset","5", "7", "10", "15"],
+      "default": "unset",
+      "multiselect": false
+    }
+  }
+}

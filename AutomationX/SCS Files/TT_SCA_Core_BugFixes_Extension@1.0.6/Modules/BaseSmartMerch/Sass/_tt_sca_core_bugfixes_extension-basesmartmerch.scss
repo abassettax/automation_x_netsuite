@@ -1,0 +1,137 @@
+/*
+	Sass Application Entry Point
+	Link all your sass dependencies in the right order
+
+	Example:
+	@import "other-sass-file.scss";
+	@import "../../<other module>/Sass/other-sass-file.scss";
+*/
+
+$sc-tt-basesmartmerch-desktop-min: 			951px;
+$sc-tt-basesmartmerch-tablet-max: 			$sc-tt-basesmartmerch-desktop-min - 1px;
+$sc-tt-basesmartmerch-tablet-min: 			768px;
+$sc-tt-basesmartmerch-small-tablet-max: 	$sc-tt-basesmartmerch-tablet-min - 1px;
+$sc-tt-basesmartmerch-small-tablet-min: 	426px;
+$sc-tt-basesmartmerch-mobile-max: 			$sc-tt-basesmartmerch-small-tablet-min - 1px;
+
+@mixin tt-basesmartmerch-freeze {
+	-webkit-transform: translate3d(0, 0px, 0px) !important;
+		transform: translate3d(0, 0px, 0px) !important;
+}
+@mixin tt-basesmartmerch-4-items {
+	width: calc(25% / 100) !important;
+}
+@mixin tt-basesmartmerch-3-items {
+	width: calc(33.3% / 100) !important;
+}
+@mixin tt-basesmartmerch-2-items {
+	width: calc(50% / 100) !important;
+}
+@mixin tt-basesmartmerch-1-item {
+	width: calc(100% / 100) !important;
+}
+
+// Tavano Team - Theme Smart Merch fix
+.recently-viewed-items,
+.item-relations-related,
+.item-relations-correlated {
+	.bx-wrapper {
+		width: 90%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	.bx-viewport > ul {
+		width: calc(100% * 100) !important;
+	}
+
+	// Desktop - 4 items
+	@media (min-width: $sc-tt-basesmartmerch-desktop-min) {
+		.bx-viewport > ul > li {
+			@include tt-basesmartmerch-4-items;
+		}
+		// For less than 4 items
+		ul.tt-basesmartmerch-3-items > li {
+			@include tt-basesmartmerch-3-items;
+		}
+		ul.tt-basesmartmerch-2-items > li {
+			@include tt-basesmartmerch-2-items;
+		}
+		ul.tt-basesmartmerch-1-items > li {
+			@include tt-basesmartmerch-1-item;
+		}
+		ul.tt-basesmartmerch-4-items,
+		ul.tt-basesmartmerch-3-items,
+		ul.tt-basesmartmerch-2-items,
+		ul.tt-basesmartmerch-1-items {
+			@include tt-basesmartmerch-freeze;
+		}
+	}
+
+	// Tablet - 3 items
+	@media (max-width: $sc-tt-basesmartmerch-tablet-max) and (min-width: $sc-tt-basesmartmerch-tablet-min) {
+		.bx-viewport > ul > li {
+			@include tt-basesmartmerch-3-items;
+		}
+		// For less than 3 items
+		ul.tt-basesmartmerch-2-items > li {
+			@include tt-basesmartmerch-2-items;
+		}
+		ul.tt-basesmartmerch-1-items > li {
+			@include tt-basesmartmerch-1-item;
+		}
+		ul.tt-basesmartmerch-3-items,
+		ul.tt-basesmartmerch-2-items,
+		ul.tt-basesmartmerch-1-items {
+			@include tt-basesmartmerch-freeze;
+		}
+	}
+
+	// Small Tablet - 2 items
+	@media (max-width: $sc-tt-basesmartmerch-small-tablet-max) and (min-width: $sc-tt-basesmartmerch-small-tablet-min) {
+		.bx-wrapper { width: 80%; }
+		.bx-viewport > ul > li {
+			@include tt-basesmartmerch-2-items;
+		}
+		// For less than 2 items
+		ul.tt-basesmartmerch-1-items > li {
+			@include tt-basesmartmerch-1-item;
+		}
+		ul.tt-basesmartmerch-2-items,
+		ul.tt-basesmartmerch-1-items {
+			@include tt-basesmartmerch-freeze;
+		}
+	}
+	
+	// Mobile - 1 items
+	@media (max-width: $sc-tt-basesmartmerch-mobile-max) {
+		.bx-wrapper { width: 80%; }
+		.bx-viewport > ul > li {
+			@include tt-basesmartmerch-1-item;
+		}
+		// For only 1 item
+		ul.tt-basesmartmerch-1-items {
+			@include tt-basesmartmerch-freeze;
+		}
+	}
+
+	// Arrows
+	.bx-controls-direction a {
+		background-color: transparent !important;
+		border: transparent !important;
+		width: 35px;
+		height: 35px;
+		padding: 0;
+		margin: 0;
+		.carousel-prev-arrow,
+		.carousel-next-arrow {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			-ms-transform: translate(-50%, -50%);
+			-webkit-transform: translate(-50%, -50%);
+			font-size: 30px;
+			color: $sc-color-copy;
+		}
+	}
+}

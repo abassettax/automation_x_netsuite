@@ -1,0 +1,196 @@
+{
+    "name": "TTBaseThemeExtension",
+    "fantasyName": "Tavano Team Base Theme Extension",
+    "vendor": "Tavanoteam",
+    "type": "extension",
+    "cct": [
+        {
+            "icon": "img/cct_tavanoteam_slider_icon.svg",
+            "settings_record": "customrecord_tt_cct_slider",
+            "registercct_id": "cct_tt_slider",
+            "label": "Slider [TT]",
+            "description": "TavanoTeam Slider Extension CMS Content Type"
+        },
+        {
+            "icon": "img/cct_tavanoteam_banner_icon.svg",
+            "settings_record": "customrecord_tt_cct_banner",
+            "registercct_id": "cct_tt_banner",
+            "label": "Banner [TT]",
+            "description": "TavanoTeam Banner Extension CMS Content Type"
+        },
+        {
+            "icon": "img/cct_tavanoteam_banner_icon.svg",
+            "settings_record": "customrecord_tt_cct_smart_merchand",
+            "registercct_id": "cct_tt_smart_merchand",
+            "label": "Smart Merch [TT]",
+            "description": "TavanoTeam Smart Merchand Extension CMS Content Type"
+        }
+    ],
+    "target": "SCA,SCS",
+    "target_version": {
+        "SCA": ">=19.2.0",
+        "SCS": ">=19.2.0"
+    },
+    "version": "1.1.7",
+    "description": "Tavano Team Base Theme Extension",
+    "assets": {
+        "img": {
+            "files": [
+                "img/cct_tavanoteam_slider_icon.svg",
+                "img/cct_tavanoteam_banner_icon.svg"
+            ]
+        },
+        "fonts": {
+            "files": []
+        },
+        "services": {
+            "files": [
+                "services/SmartMerchand.Service.ss",
+                "services/BaseThemeModule.Service.ss"
+            ]
+        }
+    },
+    "configuration": {
+        "files": [
+            "Modules/BaseThemeModule/Configuration/BaseThemeConfiguration.json",
+            "Modules/ProductDetailPage/Configuration/ProductPageConfiguration.json",
+            "Modules/SmartMerchand/Configuration/SmartMerchandConfiguration.json",
+            "Modules/Banner/Configuration/BannerConfiguration.json",
+            "Modules/Slider/Configuration/SliderConfiguration.json",
+            "Modules/Footer/Configuration/FooterConfiguration.json",
+            "Modules/HeaderNavigation/Configuration/HeaderNavigationConfiguration.json",
+            "Modules/FacetsManager/Configuration/FacetsConfiguration.json",
+            "Modules/FacetsItemInfo/Configuration/FacetsItemInfoConfiguration.json",
+            "Modules/StickyHeader/Configuration/StickyHeaderConfiguration.json",
+            "Modules/LazyLoading/Configuration/LazyLoadingConfiguration.json",
+            "Modules/FixedBackToTop/Configuration/FixedBackToTopConfiguration.json",
+            "Modules/HeaderNavigation/Configuration/NavigationModifications.json"
+        ]
+    },
+    "templates": {
+        "application": {
+            "shopping": {
+                "files": [
+                    "Modules/SmartMerchand/Templates/tavanoteam_ttbasethemeextension_smartmerchand.tpl",
+                    "Modules/SmartMerchand/Templates/cms_merchandizing_cell.tpl",
+                    "Modules/Slider/Templates/tavanoteam_ttbasethemeextension_slider.tpl",
+                    "Modules/Banner/Templates/tavanoteam_ttbasethemeextension_banner.tpl",
+                    "Modules/ProductDetailPage/Templates/tavanoteam_ttbasethemeextension_productdetailpage.tpl",
+                    "Modules/FixedBackToTop/Templates/fixed_back_to_top.tpl",
+                    "Modules/HeaderNavigation/Templates/tavanoteam_ttbasethemeextension_headermenu_normal.tpl",
+                    "Modules/HeaderNavigation/Templates/tavanoteam_ttbasethemeextension_headermenu_thumbnail.tpl",
+                    "Modules/HeaderNavigation/Templates/tavanoteam_ttbasethemeextension_headermenu_compact.tpl",
+                    "Modules/StickyHeader/Templates/tavanoteam_ttbasethemeextension_stickyheader.tpl"
+                ]
+            },
+            "myaccount": {
+                "files": [
+                    "Modules/FixedBackToTop/Templates/fixed_back_to_top.tpl",
+                    "Modules/HeaderNavigation/Templates/tavanoteam_ttbasethemeextension_headermenu_normal.tpl",
+                    "Modules/HeaderNavigation/Templates/tavanoteam_ttbasethemeextension_headermenu_thumbnail.tpl",
+                    "Modules/HeaderNavigation/Templates/tavanoteam_ttbasethemeextension_headermenu_compact.tpl",
+                    "Modules/StickyHeader/Templates/tavanoteam_ttbasethemeextension_stickyheader.tpl"
+                ]
+            },
+            "checkout": {
+                "files": [
+                    "Modules/FixedBackToTop/Templates/fixed_back_to_top.tpl",
+                    "Modules/HeaderNavigation/Templates/tavanoteam_ttbasethemeextension_headermenu_normal.tpl",
+                    "Modules/HeaderNavigation/Templates/tavanoteam_ttbasethemeextension_headermenu_thumbnail.tpl",
+                    "Modules/HeaderNavigation/Templates/tavanoteam_ttbasethemeextension_headermenu_compact.tpl",
+                    "Modules/StickyHeader/Templates/tavanoteam_ttbasethemeextension_stickyheader.tpl"
+                ]
+            }
+        }
+    },
+    "sass": {
+        "entry_points": {
+            "shopping": "Modules/BaseThemeModule/Sass/_ttbasethemeextension-basethememodule.scss",
+            "myaccount": "Modules/BaseThemeModule/Sass/_ttbasethemeextension-basethememodule.scss",
+            "checkout": "Modules/BaseThemeModule/Sass/_ttbasethemeextension-basethememodule.scss"
+        },
+        "files": [
+            "Modules/BaseThemeModule/Sass/_ttbasethemeextension-basethememodule.scss",
+            "Modules/SmartMerchand/Sass/_ttbasethemeextension-smartmerchand.scss",
+            "Modules/Slider/Sass/_ttbasethemeextension-slider.scss",
+            "Modules/Banner/Sass/_ttbasethemeextension-banner.scss",
+            "Modules/LazyLoading/Sass/_ttbasethemeextension-lazyloading.scss",
+            "Modules/FixedBackToTop/Sass/_fixed-back-to-top.scss",
+            "Modules/HeaderNavigation/Sass/_ttbasethemeextension_headermenu_general.scss",
+            "Modules/HeaderNavigation/Sass/_ttbasethemeextension_headermenu_normal.scss",
+            "Modules/HeaderNavigation/Sass/_ttbasethemeextension_headermenu_compact.scss",
+            "Modules/HeaderNavigation/Sass/_ttbasethemeextension_headermenu_thumbnail.scss",
+            "Modules/HeaderNavigation/Sass/_ttbasethemeextension_headermenu_general_overrides.scss",
+            "Modules/BxSlider4.2.14/jquery.bxslider.scss",
+            "Modules/HeaderNavigation/Sass/_ttbasethemeextension_headermenu_html_contents.scss",
+            "Modules/StickyHeader/Sass/_ttbasethemeextension-stickyheader.scss"
+        ]
+    },
+    "javascript": {
+        "entry_points": {
+            "shopping": "Modules/BaseThemeModule/JavaScript/Tavanoteam.TTBaseThemeExtension.BaseThemeModuleShopping.js",
+            "myaccount": "Modules/BaseThemeModule/JavaScript/Tavanoteam.TTBaseThemeExtension.BaseThemeModule.js",
+            "checkout": "Modules/BaseThemeModule/JavaScript/Tavanoteam.TTBaseThemeExtension.BaseThemeModule.js"
+        },
+        "application": {
+            "shopping": {
+                "files": [
+                    "Modules/BaseThemeModule/JavaScript/Tavanoteam.TTBaseThemeExtension.BaseThemeModuleShopping.js",
+                    "Modules/Footer/JavaScript/Tavanoteam.TTBaseThemeExtension.Footer.js",
+                    "Modules/ProductDetailPage/JavaScript/Tavanoteam.TTBaseThemeExtension.ProductDetailPage.js",
+                    "Modules/ProductDetailPage/JavaScript/ProductDetailPage.View.js",
+                    "Modules/SmartMerchand/JavaScript/Tavanoteam.TTBaseThemeExtension.SmartMerchand.js",
+                    "Modules/SmartMerchand/JavaScript/SmartMerchand.View.js",
+                    "Modules/SmartMerchand/JavaScript/SmartMerchand.Cell.View.js",
+                    "Modules/Slider/JavaScript/Tavanoteam.TTBaseThemeExtension.Slider.js",
+                    "Modules/Slider/JavaScript/Slider.View.js",
+                    "Modules/Banner/JavaScript/Tavanoteam.TTBaseThemeExtension.Banner.js",
+                    "Modules/Banner/JavaScript/Banner.View.js",
+                    "Modules/HeaderNavigation/JavaScript/HeaderNavigation.View.js",
+                    "Modules/ProductDetailPage/JavaScript/ProductListPage.View.js",
+                    "Modules/FacetsManager/JavaScript/Tavanoteam.TTBaseThemeExtension.FacetsManager.js",
+                    "Modules/FacetsItemInfo/JavaScript/Tavanoteam.TTBaseThemeExtension.FacetsItemInfo.js",
+                    "Modules/AnchorScroll/JavaScript/Tavanoteam.TTBaseThemeExtension.AnchorScroll.js",
+                    "Modules/StickyHeader/JavaScript/Tavanoteam.TTBaseThemeExtension.StickyHeader.js",
+                    "Modules/LazyLoading/JavaScript/Tavanoteam.TTBaseThemeExtension.LazyLoading.js",
+                    "Modules/FixedBackToTop/JavaScript/Tavanoteam.TTBaseThemeExtension.FixedBackToTop.js",
+                    "Modules/BxSlider4.2.14/jquery.bxslider.js",
+                    "Modules/StickyHeader/JavaScript/StickyHeader.View.js"
+                ]
+            },
+            "myaccount": {
+                "files": [
+                    "Modules/BaseThemeModule/JavaScript/Tavanoteam.TTBaseThemeExtension.BaseThemeModule.js",
+                    "Modules/Footer/JavaScript/Tavanoteam.TTBaseThemeExtension.Footer.js",
+                    "Modules/HeaderNavigation/JavaScript/HeaderNavigation.View.js",
+                    "Modules/StickyHeader/JavaScript/Tavanoteam.TTBaseThemeExtension.StickyHeader.js",
+                    "Modules/FixedBackToTop/JavaScript/Tavanoteam.TTBaseThemeExtension.FixedBackToTop.js",
+                    "Modules/BxSlider4.2.14/jquery.bxslider.js",
+                    "Modules/StickyHeader/JavaScript/StickyHeader.View.js"
+                ]
+            },
+            "checkout": {
+                "files": [
+                    "Modules/BaseThemeModule/JavaScript/Tavanoteam.TTBaseThemeExtension.BaseThemeModule.js",
+                    "Modules/Footer/JavaScript/Tavanoteam.TTBaseThemeExtension.Footer.js",
+                    "Modules/HeaderNavigation/JavaScript/HeaderNavigation.View.js",
+                    "Modules/StickyHeader/JavaScript/Tavanoteam.TTBaseThemeExtension.StickyHeader.js",
+                    "Modules/FixedBackToTop/JavaScript/Tavanoteam.TTBaseThemeExtension.FixedBackToTop.js",
+                    "Modules/BxSlider4.2.14/jquery.bxslider.js",
+                    "Modules/StickyHeader/JavaScript/StickyHeader.View.js"
+                ]
+            }
+        }
+    },
+    "ssp-libraries": {
+        "entry_point": "Modules/BaseThemeModule/SuiteScript/Tavanoteam.TTBaseThemeExtension.BaseThemeModuleShopping.js",
+        "files": [
+            "Modules/BaseThemeModule/SuiteScript/Tavanoteam.TTBaseThemeExtension.BaseThemeModuleShopping.js",
+            "Modules/BaseThemeModule/SuiteScript/BaseThemeModule.ServiceController.js",
+            "Modules/SmartMerchand/SuiteScript/Tavanoteam.TTBaseThemeExtension.SmartMerchand.js",
+            "Modules/SmartMerchand/SuiteScript/SmartMerchand.ServiceController.js",
+            "Modules/SmartMerchand/SuiteScript/SmartMerchand.Model.js",
+            "BackendScript/_tt_pull_ss_results.js"
+        ]
+    }
+}

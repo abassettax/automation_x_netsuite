@@ -1,0 +1,81 @@
+// Item Name
+.cells-item-name {
+	text-transform: uppercase;
+	color: $sc-color-copy;
+	height: auto;
+	overflow: hidden;
+	font-size: $sc-font-size-base;
+	letter-spacing:normal;
+	font-weight:$sc-font-weight-normal;
+}
+
+//Item Price
+.cells-item-price {
+	font-weight: $sc-font-weight-normal;
+	color: $sc-color-primary;
+	font-size:$sc-font-size-m;
+	.product-views-price .product-views-price-lead{
+		font-weight: $sc-font-weight-semibold;
+		font-size: $sc-font-size-m;
+		color: $sc-color-primary;
+		display:inline-block;
+		margin-bottom:0px;
+	}
+	.product-views-price-old {
+		font-size:$sc-font-size-base;
+	}
+}
+
+// Brief Description
+.brief-description-content {
+	font-size: $sc-font-size-s;
+	div, p, span { font-size: $sc-font-size-s; }
+	margin-bottom: $sc-margin-lv2;
+}
+
+// Sku
+.item-details-sku-container,
+.item-details-mpn-container{
+	margin: 0 0 $sc-padding-lv1 0;
+	text-transform: uppercase;
+	text-align:left;
+	color: $sc-color-copy;
+	font-size: $sc-font-size-s - 1px;
+	span.item-details-sku { font-weight: $sc-font-weight-semibold; }
+}
+
+// Stock
+.cells-item-stock {
+	height: $sc-padding-lv1 * 8;
+	margin-bottom: 12px;
+	background-color: $sc-color-error;
+	color: $sc-color-theme-100;
+}
+
+// Stock
+.item-views-stock-msg-out {
+	color: $sc-color-theme-100;
+	background-color: $sc-color-error;
+	text-transform: uppercase;
+	border-radius: 0;
+}
+
+// Quick View btn.
+div[class$="quick-view-wrapper"] {
+	top: 50%;
+	margin-top: -16px;
+	padding: 0 $sc-padding-lv1 * 4;
+	> a {
+		display: inline-block;
+		background: $tt-theme-quickview-button-background-color;
+		color: $tt-theme-quickview-button-font-color;
+		font-size: $sc-font-size-s;
+		border-radius: 0;
+		text-transform: uppercase;
+		border: none;
+		&:hover {
+			background: $tt-theme-quickview-button-background-color;
+			color: $tt-theme-quickview-button-font-color;
+		}
+	}
+}

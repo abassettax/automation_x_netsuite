@@ -1,0 +1,130 @@
+.item-relations-related, aside.recently-viewed-items,  .item-relations-correlated{
+	text-align: center;
+	padding-top: $sc-padding-lv3;
+	margin-bottom: $sc-margin-lv8;
+	// Title
+	h3{
+		// font-size: $sc-font-size-l;
+		@extend %pdp-title-size;
+		//color: $sc-color-secondary;
+		margin-top: 0;
+		margin-bottom: $sc-margin-lv6;
+ 		//font-weight: normal;
+		//border-bottom: 1px solid $sc-color-theme-border-light;
+		text-transform: uppercase;
+		text-align:left;
+	}
+	.item-relations-related-item-title {
+		text-align: center;
+		font-weight: normal;
+		// text-transform: uppercase;
+		font-size:$sc-font-size-m;
+		color:$sc-color-copy;
+		min-height:40px;
+	}
+	.item-relations-related-item-rate{
+		width:100%;
+		float:none;
+		text-align:center;
+		.global-views-star-rating{
+			float:none;
+			display:inline-block;
+		}
+		.global-views-star-rating-container{
+			display:inline-block;
+		}
+	}
+}
+
+.cart-detailed-related { margin-bottom: 40px; }
+
+// Item
+.item-relations-related-item-price .product-views-price .product-views-price-lead, .item-relations-correlated-item-price .product-views-price .product-views-price-lead{
+	font-size:$sc-font-size-m!important;
+	margin:5px;
+	span{
+		color:$sc-color-primary;
+	}
+}
+
+li.item-relations-cell, li.recently-viewed-cell-item{
+	> div{
+		width:95%; margin:0 auto;
+	}
+	// Item Name
+	a.item-views-related-item-title {
+		color: $sc-color-primary;
+		text-transform: uppercase;
+	}
+	// Item Price
+	span.item-views-price-lead { 
+		color: $sc-color-primary;
+		span{color:$sc-color-primary;}
+	}
+	// Item Rating
+	div.global-views-star-rating {
+		width: auto;
+		i {
+			color: $sc-color-star-filled;
+			&.global-views-star-rating-empty { opacity: 0.25; }
+		}
+	}
+}
+
+.item-relations-related-item-thumbnail{
+	height:180px;
+	line-height:180px;
+	vertical-align: middle;
+	position: relative;
+    overflow: hidden;
+	padding-bottom: calc(100% - 12px);
+	
+	img{
+		width:auto;
+		height:auto;
+		max-width: calc(100% - 20px);
+		max-height: calc(100% - 20px);
+		position: absolute;
+    	top: 50%;
+    	left: 50%;
+    	transform: translate(-50%, -50%);
+	}
+}
+
+// Carousel Controls
+aside.item-relations-related, aside.item-relations-correlated {
+	div.bx-controls-direction {
+		a[class*="item-details-carousel"] {
+			background: transparent;
+			border: none;
+			padding: 0;
+			color: $sc-color-secondary;
+			i { font-size: 50px; }
+			&:hover, &:focus { i { color: $sc-color-primary; } }
+			// Prev
+			&[class$="prev"] {
+				left: -$sc-padding-lv1 * 4;
+				@media (max-width: $screen-md-min) { left: 0; }
+			}
+			// Next
+			&[class$="next"] {
+				right: -$sc-padding-lv1 * 4;
+				@media (max-width: $screen-md-min) { right: 0; }
+			}
+		}
+	}
+}
+
+.item-details-carousel-next, .item-details-carousel-prev{
+	background: #FFF;
+	&:hover, &:focus {
+		i{ color: #FFF; }
+	}
+}
+
+.item-relations-related-row, .recently-viewed-items, .item-relations-correlated-row {
+	.item-views-related-item-title > span {
+    max-width: 90%;
+    display: inline-block;
+	}
+}

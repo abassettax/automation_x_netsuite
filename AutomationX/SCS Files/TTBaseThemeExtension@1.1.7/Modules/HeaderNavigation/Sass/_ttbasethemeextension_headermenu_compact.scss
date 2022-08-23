@@ -1,0 +1,149 @@
+.tt-ext-header-menu-compact .cms-menu {
+    position: relative !important;
+
+    .tt-ext-compact-menu-position {
+        position: absolute !important;
+        bottom: 0;
+    }
+}
+
+// Menu Opened
+.open {
+    .tt-ext-compact-header-menu-level-container { display: block; }
+}
+
+.header-menu-level1 li.menu-side-left .tt-ext-compact-menu-position {
+    right: 0 !important;
+}
+.header-menu-level1 li.menu-side-left .tt-ext-compact-header-menu-level-container {
+    right: 0 !important;
+    left: initial !important;
+}
+
+.tt-ext-compact-header-menu-level-container {
+    background-color: $sc-main-navigation-submenu-background-color;
+    display: none;
+    position: absolute;
+    top: 0px;
+    left: 0;
+    text-align: left;
+    min-height: 0;
+    z-index: 1003;
+    padding: 0;
+    border-top: 1px solid $sc-main-navigation-submenu-heading-border-color;
+    @include box-shadow(6px 6px 12px transparentize($sc-neutral-shade-500, 1-0.175));
+    
+    > li {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        border: none !important;
+    }
+}
+
+//menu level level 2 and 3
+.tt-ext-compact-header-menu-level2 {
+    border-left: 1px solid $sc-main-navigation-submenu-heading-border-color;
+    border-right: 1px solid $sc-main-navigation-submenu-heading-border-color;
+}
+.tt-ext-compact-header-menu-level3 {
+    border-right: 1px solid $sc-main-navigation-submenu-heading-border-color;
+}
+
+//menu anchors level 2 and 3
+.tt-ext-compact-header-menu-level2 > li > a.header-menu-level2-anchor,
+.tt-ext-compact-header-menu-level3 > li > a.header-menu-level3-anchor {
+    // display: block;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+
+    align-items: center;
+    justify-items: center;
+    width: 250px;
+    padding: $tt-ext-header-spacing * 2 $tt-ext-header-spacing * 2;
+    // line-height: 36px;
+    margin-bottom: 0;
+    font-weight: $sc-font-weight-normal;
+    pointer-events: auto;
+    color: $sc-main-navigation-submenu-link-color;
+    border-bottom: 1px solid $sc-main-navigation-submenu-heading-border-color;
+    font-size: $sc-font-size-m;
+    font-weight: $sc-font-weight-normal;
+    
+    &:hover,&:focus {
+        color: $sc-main-navigation-submenu-link-hover-color;
+    }
+    &:active,&.active {
+        color: $sc-main-navigation-submenu-link-active-color;
+    }
+
+    span {
+        max-width: 200px;
+    }
+}
+
+//menu level 2
+.tt-ext-compact-header-menu-level2 > .tt-ext-compact-header-menu-block {
+    position: relative !important;
+}
+
+.tt-ext-compact-header-menu-level2 > li > a.header-menu-level2-anchor {
+    width: 100%;
+    min-width: 250px;
+    text-transform: $sc-main-navigation-submenu-heading-text-transform;
+    text-decoration: $sc-main-navigation-submenu-heading-text-decoration;
+    color: $sc-main-navigation-submenu-heading-color;
+
+    &:hover,&:focus,&:active,&.active {
+        color: $sc-main-navigation-submenu-heading-color;
+    }
+
+    i.tt-ext-compact-header-menu-level2-anchor-icon {
+        color: $sc-main-navigation-submenu-heading-color;
+        margin-left: auto;
+        @extend .icon-angle-right;
+    }
+}
+
+// Open menu level 3
+.tt-ext-compact-header-menu-level2 > .tt-ext-compact-header-menu-block:hover {
+    .tt-ext-compact-header-menu-level3 { display: block; }
+}
+
+//menu level 3
+.tt-ext-compact-header-menu-level3-wrapper {
+    position: absolute;
+    top: -1px;
+    right: 0px;
+}
+.tt-ext-compact-header-menu-level3 {
+    display: none;
+    position: absolute;
+    left: 0px;
+    background-color: $sc-main-navigation-submenu-background-color;
+    border-top: 1px solid $sc-main-navigation-submenu-heading-border-color;
+    @include box-shadow(6px 6px 12px transparentize($sc-neutral-shade-500, 1-0.175));
+}
+
+// Compact Thumbnail Image
+.tt-ext-compact-thumbnail.tt-ext-compact-header-menu-block {
+    .header-menu-level2-anchor,
+    .header-menu-level3-anchor {
+        img {
+            display: inline-block;
+            width: auto;
+            min-height: 30px;
+            height: 30px;
+            max-height: 90px;
+            margin-right: 6px;
+        }
+        span {
+            max-width: 200px;
+        }
+    }
+}

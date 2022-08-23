@@ -1,0 +1,10 @@
+.facets-items-collection-view-row {
+	@extend .row;
+	padding-bottom:$sc-padding-lv3;
+}
+
+//TT new styles
+div.facets-items-collection-view-row {
+	// margin: 0 -$sc-margin-lv2;
+	padding:0px;
+}

@@ -1,0 +1,101 @@
+// Primary button variables
+$sc-button-primary-background-color: $theme-button-primary-background-color; /* editable({"type": "color", "label": "Background"}) */
+$sc-button-primary-text-color: $theme-button-primary-text-color; /* editable({"type": "color", "label": "Text"}) */
+$sc-button-primary-border-color: $theme-button-primary-border-color; /* editable({"type": "color", "label": "Border"}) */
+$sc-button-primary-border-radius: $theme-button-primary-border-radius; /* editable({"type": "string", "label": "Border radius"}) */
+
+$sc-button-primary-hover-background-color: $theme-button-primary-hover-background-color; /* editable({"type": "color", "label": "Hover background"}) */
+$sc-button-primary-hover-text-color: $theme-button-primary-hover-text-color; /* editable({"type": "color", "label": "Hover text"}) */
+$sc-button-primary-hover-border-color: $theme-button-primary-hover-border-color; /* editable({"type": "color", "label": "Hover border"}) */
+
+$sc-button-primary-active-background-color: $theme-button-primary-active-background-color; /* editable({"type": "color", "label": "Active background"}) */
+$sc-button-primary-active-text-color: $theme-button-primary-active-text-color; /* editable({"type": "color", "label": "Active text"}) */
+$sc-button-primary-active-border-color: $theme-button-primary-active-border-color; /* editable({"type": "color", "label": "Active border"}) */
+
+$sc-button-primary-text-transform: none; /* editable({
+	"type": "string",
+	"label": "Text transform",
+	"options": [
+		{"value": "none", "text": "none"},
+		{"value": "uppercase", "text": "uppercase"},
+		{"value": "lowercase", "text": "lowercase"},
+		{"value": "capitalize", "text": "capitalize"}
+	]
+}) */
+
+// Secondary button variables
+$sc-button-secondary-background-color: $theme-button-secondary-background-color; /* editable({"type": "color", "label": "Background"}) */
+$sc-button-secondary-text-color: $theme-button-secondary-text-color; /* editable({"type": "color", "label": "Text"}) */
+$sc-button-secondary-border-color: $theme-button-secondary-border-color; /* editable({"type": "color", "label": "Border"}) */
+$sc-button-secondary-border-radius: $theme-button-secondary-border-radius; /* editable({"type": "string", "label": "Border radius"}) */
+
+$sc-button-secondary-hover-background-color: $theme-button-secondary-hover-background-color; /* editable({"type": "color", "label": "Hover background"}) */
+$sc-button-secondary-hover-text-color: $theme-button-secondary-hover-text-color; /* editable({"type": "color", "label": "Hover text"}) */
+$sc-button-secondary-hover-border-color: $theme-button-secondary-hover-border-color; /* editable({"type": "color", "label": "Hover border"}) */
+
+$sc-button-secondary-active-background-color: $theme-button-secondary-active-background-color; /* editable({"type": "color", "label": "Active background"}) */
+$sc-button-secondary-active-text-color: $theme-button-secondary-active-text-color; /* editable({"type": "color", "label": "Active text"}) */
+$sc-button-secondary-active-border-color: $theme-button-secondary-active-border-color; /* editable({"type": "color", "label": "Active border"}) */
+
+$sc-button-secondary-text-transform: none; /* editable({
+	"type": "string",
+	"label": "Text transform",
+	"options": [
+		{"value": "none", "text": "none"},
+		{"value": "uppercase", "text": "uppercase"},
+		{"value": "lowercase", "text": "lowercase"},
+		{"value": "capitalize", "text": "capitalize"}
+	]
+}) */
+
+// Tertiary button variables
+$sc-button-tertiary-background-color: $theme-button-tertiary-background-color; /* editable({"type": "color", "label": "Background"}) */
+$sc-button-tertiary-text-color: $theme-button-tertiary-text-color; /* editable({"type": "color", "label": "Text"}) */
+$sc-button-tertiary-border-color: $theme-button-tertiary-border-color; /* editable({"type": "color", "label": "Border"}) */
+$sc-button-tertiary-border-radius: $theme-button-tertiary-border-radius; /* editable({"type": "string", "label": "Border radius"}) */
+
+$sc-button-tertiary-hover-background-color: $theme-button-tertiary-hover-background-color; /* editable({"type": "color", "label": "Hover background"}) */
+$sc-button-tertiary-hover-text-color: $theme-button-tertiary-hover-text-color; /* editable({"type": "color", "label": "Hover text"}) */
+$sc-button-tertiary-hover-border-color: $theme-button-tertiary-hover-border-color; /* editable({"type": "color", "label": "Hover border"}) */
+
+$sc-button-tertiary-active-background-color: $theme-button-tertiary-active-background-color; /* editable({"type": "color", "label": "Active background"}) */
+$sc-button-tertiary-active-text-color: $theme-button-tertiary-active-text-color; /* editable({"type": "color", "label": "Active text"}) */
+$sc-button-tertiary-active-border-color: $theme-button-tertiary-active-border-color; /* editable({"type": "color", "label": "Active border"}) */
+
+$sc-button-tertiary-text-transform: none; /* editable({
+	"type": "string",
+	"label": "Text transform",
+	"options": [
+		{"value": "none", "text": "none"},
+		{"value": "uppercase", "text": "uppercase"},
+		{"value": "lowercase", "text": "lowercase"},
+		{"value": "capitalize", "text": "capitalize"}
+	]
+}) */
+
+// Large button
+$sc-button-large-padding-v: $sc-padding-lv3; /* editable({"type": "string", "label": "Vertical padding"}) */
+$sc-button-large-padding-h: $sc-padding-lv6; /* editable({"type": "string", "label": "Horizontal padding"}) */
+$sc-button-large-font-size: $sc-font-size-s;//$sc-font-size-l; /* editable({"type": "string", "label": "Font size"}) */
+$sc-button-large-line-height: 1; /* editable({"type": "string", "label": "Line height"}) */
+$sc-button-large-letter-spacing: 1px; /* editable({"type": "string", "label": "Letter spacing"}) */
+$sc-button-large-mobile-width: 100%; /* editable({"type": "string", "label": "Mobile width"}) */
+$sc-button-large-desktop-width: auto; /* editable({"type": "string", "label": "Desktop width"}) */
+
+// Medium button
+$sc-button-medium-padding-v: $sc-padding-lv2; /* editable({"type": "string", "label": "Vertical padding"}) */
+$sc-button-medium-padding-h: $sc-padding-lv4; /* editable({"type": "string", "label": "Horizontal padding"}) */
+$sc-button-medium-font-size: $sc-font-size-s;//$sc-font-size-m /* editable({"type": "string", "label": "Font size"}) */
+$sc-button-medium-line-height: 1; /* editable({"type": "string", "label": "Line height"}) */
+$sc-button-medium-letter-spacing: 0.5px; /* editable({"type": "string", "label": "Letter spacing"}) */
+$sc-button-medium-mobile-width: 100%; /* editable({"type": "string", "label": "Mobile width"}) */
+$sc-button-medium-desktop-width: auto; /* editable({"type": "string", "label": "Desktop width"}) */
+
+// Small button
+$sc-button-small-padding-v: $sc-padding-lv2; /* editable({"type": "string", "label": "Vertical padding"}) */
+$sc-button-small-padding-h: $sc-padding-lv3; /* editable({"type": "string", "label": "Horizontal padding"}) */
+$sc-button-small-font-size: $sc-font-size-s; /* editable({"type": "string", "label": "Font size"}) */
+$sc-button-small-line-height: 1; /* editable({"type": "string", "label": "Line height"}) */
+$sc-button-small-letter-spacing: normal; /* editable({"type": "string", "label": "Letter spacing"}) */
+$sc-button-small-mobile-width: auto; /* editable({"type": "string", "label": "Mobile width"}) */
+$sc-button-small-desktop-width: auto; /* editable({"type": "string", "label": "Desktop width"}) */

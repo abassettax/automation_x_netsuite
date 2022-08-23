@@ -1,0 +1,85 @@
+// TT Alpha About Us Landing - Start
+.tt-alpha-about-us {
+  padding: 0;
+  // width: 100%;
+  // padding: $sc-padding-lv1 * 8 0;
+  // Title
+  h1 {
+    margin-bottom: $sc-padding-lv1 * 8;
+  }
+  // Content
+  div#about-us-column-text {
+    width: 100%;
+    margin-bottom: $sc-padding-lv1 * 8;
+    line-height: 22px;
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 50px;
+    -moz-column-gap: 50px;
+    column-gap: 50px;
+    color: $sc-color-copy;
+    @media (max-width: $screen-sm-min) { width: 100%; }
+    @media (max-width: $screen-xs-min) {
+      -webkit-column-count: 1;
+      -moz-column-count: 1;
+      column-count: 1;
+      font-size: $sc-font-size-s;
+      line-height: 20px;
+    }
+  }
+  
+  // Boxes
+  div#about-us-boxes {
+    margin-top: $sc-padding-lv1 * 8;
+    div#top-row {
+      margin-top: -15px;
+      // Heading
+      #about-us-box-title {
+        text-transform: uppercase;
+        margin-bottom: $sc-padding-lv3;
+        color: $sc-color-copy;
+      }
+      @media (max-width: $screen-md-min) { margin-bottom: $sc-padding-lv8; }
+    }
+    div#bottom-row {
+      div.boxes {
+        // Box Title
+        .about-us-box-title {
+          text-transform: uppercase;
+          //letter-spacing: 1px;
+          margin-bottom: $sc-padding-lv1;
+          color: $sc-color-copy;
+          span { font-weight: $sc-font-weight-semibold; margin-right: $sc-padding-lv1; }
+        }
+        // Box Content
+        p.about-us-box-content {
+          color: $sc-color-copy;
+          margin-bottom: $sc-padding-lv1 * 3;
+        }
+        @media (max-width: $screen-xs-min) { width: 100%; }
+      }
+    }
+  }
+
+  img {
+    margin: $sc-margin-lv8 0;
+  }
+
+  p {
+    margin-bottom: $sc-margin-lv3;
+  }
+
+  a { color: $sc-color-primary};
+
+  .video {
+    width:100%;
+    max-width:1170px;
+    height:100vh;
+    max-height:658px;
+    margin:0 auto;
+    padding:0;
+  }
+  
+}
+// TT Alpha About Us Landing - End

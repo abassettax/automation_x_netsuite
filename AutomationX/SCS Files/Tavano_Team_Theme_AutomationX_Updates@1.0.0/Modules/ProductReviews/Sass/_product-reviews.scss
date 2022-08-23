@@ -1,0 +1,188 @@
+// Item Detail - Product Reviews Container
+div.product-reviews-center-content {
+    background: $sc-color-theme-background;
+    @media (min-width: $screen-sm-min) {
+        border: 1px solid $sc-color-primary;
+        margin-top: 0;
+        background: none;
+    } // Ratings & Reviews
+    div.product-reviews-center-container {
+        width: 100%;
+        @media (min-width: $screen-sm-min) {
+            background: transparent;
+            border: none;
+            width: 100%;
+        }
+        @media (min-width: $screen-lg-min) {
+            width: 100%;
+        } // Header
+        div.product-reviews-center-container-header {
+            h3,
+            h4 {
+                color: $sc-color-secondary;
+                font-weight: $sc-font-weight-normal;
+            }
+        }
+    }
+}
+
+.product-reviews-center-container {
+    width: 100%;
+    padding: 0;
+}
+
+// .product-reviews-center-more-info-content-container {
+//     background: $sc-color-theme-background;
+// }
+
+// Ratings & Reviews pusher button (<768px.)
+button.item-details-product-review-pusher {
+    color: $sc-color-primary;
+    font-size: $sc-font-size-base;
+    font-weight: $sc-font-weight-normal;
+    line-height: 28px;
+    .global-views-star-rating-area {
+        margin-top: -1px;
+    }
+    .item-details-product-review-pusher-rating {
+        margin-top: -4px;
+    }
+}
+
+.product-reviews-review-review-rating {
+    .product-review-rating-per-attribute {
+        @media (min-width: $screen-sm-min) {
+            float: left;
+            margin: 10px 0;
+        }
+    }
+}
+
+// Ratings & Reviews filters
+section.product-reviews-center-list {
+    @media (min-width: $screen-lg-min) {
+        width:100%;
+        padding: 0px;
+    }
+    width:100%;
+    margin: $sc-margin-lv6 0;
+    @media (min-width: $screen-md-min) {
+        border-top: 1px solid $sc-color-theme-border-light;
+    }
+    div[data-view="ListHeader.View"] {
+        margin-bottom: $sc-padding-lv1 * 6;
+        @media (min-width: $screen-md-min) {
+            border-bottom: 1px solid $sc-color-theme-border-light;
+        }
+        div.list-header-view-accordion-body {
+            @media (min-width: $screen-sm-min) {
+                margin-top: $sc-padding-lv1 * 5;
+            } // Filters
+            select {
+                background-position-y: 90%;
+                // min-width: 140px;
+            }
+        }
+    }
+}
+
+//Buttons
+a.product-reviews-center-container-button,
+.product-reviews-center-container-footer-button {
+    // @include btn($sc-color-link);
+    // background: $sc-color-link;
+}
+
+//Starts
+.global-views-star-rating-empty,
+.global-views-star-rating-filled,
+.global-views-star-rating-error,
+[data-validation-error] i.global-views-star-rating-empty {
+    font-size: 17px;
+}
+
+.global-views-star-rating-filled {
+    color: $sc-color-star-filled;
+}
+
+.global-views-star-rating-empty {
+    color: $sc-color-star-filled;
+    opacity: 0.25;
+}
+
+//Progress Bar
+.global-views-rating-by-star-percentage-area-progress-bar-filled {
+    background: $sc-color-primary;
+}
+
+.product-reviews-review-comment-footer-button {
+    // background: transparent;
+    // color: $sc-color-secondary;
+    cursor: pointer;
+}
+
+// .product-reviews-review-comment-item-cell-date {
+//     margin-left: $sc-padding-lv1;
+// }
+
+//Reviews in mobile
+.product-reviews-center {
+    margin: 0 auto;
+    // @media (max-width: $screen-md-min) {
+        .list-header-view-filter-button {
+            position: relative;
+            width: 100%;
+            text-align: left;
+            @extend .button-tertiary;
+            @extend .button-medium;
+            background-color: $sc-button-secondary-background-color;
+            color: $sc-button-primary-text-color;
+            padding-top: 15px;
+            padding-bottom: 15px;
+
+            &:hover, &:active, &:focus {
+                background: $sc-button-secondary-background-color;
+                color: $sc-button-secondary-text-color;
+                border: 1px solid $sc-button-secondary-border-color;
+            }
+
+            .list-header-view-filter-button-icon {
+                position: absolute;
+                right: $sc-padding-lv3;
+                top: 0px;
+                color: $sc-button-primary-text-color;
+            }
+        }
+    // }
+    @media (max-width: $screen-sm-min) {
+        .list-header-view {
+            background: transparent;
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+        .product-reviews-center-list {
+            margin: 0;
+            padding: 0;
+        }
+        .list-header-view-accordion-body {
+            margin: 0px;
+        }
+        .list-header-view-accordion-header {
+            margin-bottom: 0px;
+            width: 100%;
+        }
+        .list-header-view-accordion-body-header {
+            background-color: transparent;
+            margin-top: 0;
+        }
+    }
+}
+
+// Review Condirmation
+div.product-reviews-form-confirmation-message {
+    background: transparent;
+    padding: 0;
+    @media (max-width: $screen-sm-min) {
+        padding: $sc-padding-lv1 * 3;
+    }
+}

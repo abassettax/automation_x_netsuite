@@ -1,0 +1,265 @@
+/*
+	Sass Application Entry Point
+	Link all your sass dependencies in the right order
+
+	Example:
+	@import "other-sass-file.scss";
+	@import "../../<other module>/Sass/other-sass-file.scss";
+*/ 
+
+// Variables
+
+$merch-max-width-three-items: $screen-md-max;
+$merch-max-width-two-items: 950px;
+$merch-max-width-one-items: 640px;
+
+$merch-pager-link-dark-color: rgba(0, 0, 0, 0.4);
+$merch-pager-link-dark-color-active: rgb(0, 0, 0);
+$merch-pager-link-dark-shadow: 0px 0px 5px black;
+
+$merch-pager-link-light-color: rgba(255, 255, 255, 0.4);
+$merch-pager-link-light-color-active: rgb(255, 255, 255);
+$merch-pager-link-light-shadow: 0px 0px 5px black;
+
+$merch-arrows-dark-color: rgb(0, 0, 0);
+$merch-arrows-dark-shadow: 0px 0px 5px black;
+
+$merch-arrows-light-color: rgb(255, 255, 255);
+$merch-arrows-light-shadow: 0px 0px 5px black;
+
+// $merch-title-font-size: $sc-font-size-xl;
+// $merch-title-font-size-mobile: $sc-font-size-l;
+
+// Styles
+
+.smartmerchand-info-card {
+    @extend .info-card;
+}
+
+.smartmerchand-info-card-content {
+    @extend .info-card-content;
+    color: $sc-color-secondary;
+    font-weight: bold;
+}
+
+.TavanoTeam-smartMerch {
+	@extend .container;
+	margin-top: $sc-margin-lv4 * 4;
+	margin-bottom: $sc-margin-lv4 * 4;
+	padding-left: 0;
+	padding-right: 0;
+
+	.merchandising-zone-container {
+		text-align: center;
+		h3 { // Title
+			//padding-bottom: $sc-padding-lv5;
+
+			// font-size: $merch-title-font-size;
+			// @media (max-width: $screen-md-max) { font-size: $merch-title-font-size-mobile; }
+			margin-bottom: 0;
+		}
+	}
+
+	.bx-wrapper {
+		max-width: 1088px !important;
+		.merchandising-zone-cell-template {
+			$merch-items-width: 1088px / 4;
+			width: $merch-items-width !important;
+		}
+		
+		.tt-smart-merch-item-cell {
+			padding: 0 $sc-padding-lv2;
+
+			& > div {
+				@extend .clearfix;
+				padding: $sc-padding-lv6 * 2 0 $sc-padding-lv4 0;
+			}
+		}
+
+		// Smart Merch screens width
+		@media (max-width: $merch-max-width-three-items) {
+			max-width: 896px !important;
+			.merchandising-zone-cell-template {
+				$merch-items-width: 896px / 3;
+				width: $merch-items-width !important;
+			}
+			.tt-smart-merch-item-cell {
+				padding: 0 $sc-padding-lv5;
+			}
+		}
+		@media (max-width: $merch-max-width-two-items) {
+			max-width: 580px !important;
+			.merchandising-zone-cell-template {
+				$merch-items-width: 580px / 2;
+				width: $merch-items-width !important;
+			}
+		}
+		@media (max-width: $merch-max-width-one-items) {
+			max-width: 270px !important;
+			.merchandising-zone-cell-template {
+				width: 270px !important;
+			}
+			.tt-smart-merch-item-cell {
+				padding: 0 $sc-padding-lv3;
+			}
+		}
+
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.item-relations-related-item-title {
+		padding: 0 $sc-padding-lv3;
+		min-height: 72px;
+		span { font-size: $sc-font-size-m; }
+	}
+
+	.item-relations-related-item-thumbnail {
+		display: block;
+		height: auto;
+		min-height: 150px;
+		line-height: inherit;
+
+		img {
+			height: 100%;
+		}
+	}
+
+	.item-see-more {
+		display: block;
+	}
+
+	// Items border
+	.smartmerch-items-border {
+		.tt-smart-merch-item-cell > div {
+			border: 1px solid $sc-color-theme-border-light;
+		}
+	}
+
+	// Add to Cart
+	.cart-add-to-cart-button-container{
+		width: 100%;
+		padding-left: 0;
+		padding-right: 0;
+	
+		@media(max-width: $screen-xs-min){
+			padding-right: 0 !important;
+			.cart-add-to-cart-button-button { width: 100%; };
+		}
+	}
+	
+	// Buttons Style
+	.button-style {
+		&-primary {		.cart-add-to-cart-button-button, .item-see-more-button	{ @extend .button-primary; } }
+		&-secondary {	.cart-add-to-cart-button-button, .item-see-more-button	{ @extend .button-secondary; } }
+		&-tertiary {	.cart-add-to-cart-button-button, .item-see-more-button	{ @extend .button-tertiary; } }
+		&-quaternary {	.cart-add-to-cart-button-button, .item-see-more-button	{ @extend .button-quaternary !optional; } }
+
+		&-primary, &-secondary, &-tertiary, &-quaternary {
+			.cart-add-to-cart-button-button,
+			.item-see-more-button {
+				@extend .button-medium;
+				width: auto;
+				margin-top: 0px;
+			}
+		}
+	}
+
+	//Controls Style
+	.bx-pager {
+		@media (max-width: $merch-max-width-one-items) { display: none !important; }
+	}
+
+	.bx-controls {
+		.bx-gallery-custom-prev-icon,
+		.bx-gallery-custom-next-icon {
+			position: absolute;
+			top: 40%;
+			width: 30px;
+			height: auto;
+			font-size: 50px;
+			text-align: center;
+		}
+
+		.bx-gallery-custom-prev-icon {
+			left: -20px;
+			text-align: left;
+			@extend .icon-angle-left;
+		}
+		.bx-gallery-custom-next-icon {
+			right: -20px;
+			text-align: right;
+			@extend .icon-angle-right;
+		}
+
+		.bx-pager-link {
+			// Show links as numbers
+			// border-radius: 0;
+			// background-color: transparent;
+
+			// Show links as Dots
+			color: transparent;
+			font-size: 0px;
+			padding: 5px;
+			border-radius: 10px;
+		}
+	}
+
+	.controls-style-default,
+	.controls-style-dark {
+		.bx-pager-link {
+			background-color: $merch-pager-link-dark-color;
+
+			&.active { background-color: $merch-pager-link-dark-color-active; }
+		}
+		.bx-gallery-custom-prev-icon,
+		.bx-gallery-custom-next-icon {
+			color: $merch-arrows-dark-color;
+		}
+
+		&.controls-style-shadows {
+			.bx-pager-link { box-shadow: $merch-pager-link-dark-shadow; }
+
+			.bx-gallery-custom-prev-icon,
+			.bx-gallery-custom-next-icon {
+				text-shadow: $merch-arrows-dark-shadow;
+			}
+		}
+	}
+	.controls-style-light {
+		.bx-pager-link {
+			background-color: $merch-pager-link-light-color;
+
+			&.active { background-color: $merch-pager-link-light-color-active; }
+		}
+		.bx-gallery-custom-prev-icon,
+		.bx-gallery-custom-next-icon {
+			color: $merch-arrows-light-color;
+		}
+
+		&.controls-style-shadows {
+			.bx-pager-link { box-shadow: $merch-pager-link-light-shadow; }
+
+			.bx-gallery-custom-prev-icon,
+			.bx-gallery-custom-next-icon {
+				text-shadow: $merch-arrows-light-shadow;
+			}
+		}
+	}
+
+	.control-bottom-arrows {
+		.bx-controls-direction {
+			text-align: center;
+		}
+
+		.bx-gallery-custom-prev-icon,
+		.bx-gallery-custom-next-icon {
+			position: relative;
+			left: 0;
+			right: 0;
+			padding: 0 $sc-padding-lv2;
+			text-align: center;
+			font-size: 35px;
+		}
+	}
+}

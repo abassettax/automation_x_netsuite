@@ -1,0 +1,131 @@
+// TT Alpha Careers Landing - Start
+.tt-alpha-careers {
+  padding: $sc-padding-lv1 * 8 $sc-padding-lv3 0 $sc-padding-lv3;
+  margin-bottom: $sc-margin-lv3;
+  // width: 100%;
+  // padding: $sc-padding-lv1 * 8 0;
+  // Title
+  h1 {
+    margin-bottom: $sc-padding-lv1 * 8;
+  }
+  h2, h3 {
+    @extend %titles-left-border;
+  }
+
+  .quotes-testimonials {
+    color:$tt-theme-heading-border-color;
+    font-weight: $sc-font-weight-bold;
+    font-size: $sc-font-size-xxl;
+    }
+
+    .author {
+    font-weight: $sc-font-weight-semibold;
+    margin-top: $sc-margin-lv2;
+    }
+
+    #top-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 356px;
+    }
+
+    .text-center-box {
+        text-align:center;
+        min-height:110px;
+        margin-bottom: $sc-margin-lv8;
+        h3 {
+            font-size:$sc-font-size-m;
+        }
+    }
+
+  // Content
+  div#careers-column-text {
+    width: 100%;
+    margin-bottom: $sc-padding-lv1 * 8;
+    line-height: 22px;
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 50px;
+    -moz-column-gap: 50px;
+    column-gap: 50px;
+    color: $sc-color-copy;
+    @media (max-width: $screen-sm-min) { width: 100%; }
+    @media (max-width: $screen-xs-min) {
+      -webkit-column-count: 1;
+      -moz-column-count: 1;
+      column-count: 1;
+      font-size: $sc-font-size-s;
+      line-height: 20px;
+    }
+    
+  }
+  
+  // Boxes
+  div#careers-boxes {
+    margin-top: $sc-padding-lv1 * 8;
+    div#top-row {
+      // Heading
+      #careers-box-title {
+        text-transform: uppercase;
+        margin-bottom: $sc-padding-lv3;
+        color: $sc-color-copy;
+      }
+      @media (max-width: $screen-md-min) { margin-bottom: $sc-padding-lv8; }
+
+      // Box Content
+      p.careers-box-content {
+        color: $sc-color-copy;
+        margin-bottom: $sc-padding-lv1 * 3;
+      }
+    }
+    div#bottom-row {
+      div.boxes {
+        // Box Title
+        .careers-box-title {
+          text-transform: uppercase;
+          //letter-spacing: 1px;
+          margin-bottom: $sc-padding-lv1;
+          color: $sc-color-copy;
+          span { font-weight: $sc-font-weight-semibold; margin-right: $sc-padding-lv1; }
+        }
+        // Box Content
+        p.careers-box-content {
+          color: $sc-color-copy;
+          margin-bottom: $sc-padding-lv1 * 3;
+        }
+        @media (max-width: $screen-xs-min) { width: 100%; }
+      }
+    }
+  }
+
+  img {
+    margin: $sc-margin-lv8 0;
+  }
+
+  p {
+    margin-bottom: $sc-margin-lv3;
+  }
+
+  a { color: $sc-color-primary};
+
+  .video {
+    width:100%;
+    max-width:1170px;
+    height:100vh;
+    max-height:658px;
+    margin:0 auto;
+    padding:0;
+  }
+
+  h3.columnscct-column-caption {
+		display:none;
+	}
+
+	.values {
+		margin-bottom: $sc-margin-lv6;
+	}
+  
+}
+// TT Alpha Careers Landing - End

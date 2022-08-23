@@ -1,0 +1,26 @@
+// Header variables
+$sc-header-background-color: $theme-header-background-color; /* editable({"type": "color", "label": "Background"}) */
+$sc-header-shadow-color: $theme-header-shadow-color;
+$sc-header-border-color: $theme-header-border-color; /* editable({"type": "color", "label": "Border"}) */
+$sc-header-border-width: 0;
+
+// Header links variables
+$sc-header-link-text-color: $theme-header-link-text-color; /* editable({"type": "color", "label": "Link"}) */
+$sc-header-link-hover-text-color: $theme-header-link-text-color-hover; /* editable({"type": "color", "label": "Link hover"}) */
+$sc-header-link-active-text-color: $theme-header-link-text-color-active; /* editable({"type": "color", "label": "Link active"}) */
+$sc-header-link-text-transform: none;
+
+// Header cart link variables
+$sc-header-cart-link-text-color: $theme-header-cart-link-text-color; /* editable({"type": "color", "label": "Cart link"}) */
+$sc-header-cart-link-text-color-hover: $theme-header-cart-link-text-color-hover; /* editable({"type": "color", "label": "Cart link hover"}) */
+$sc-header-cart-link-text-color-active: $theme-header-cart-link-text-color-active; /* editable({"type": "color", "label": "Cart link active"}) */
+
+
+// Mobile header icons
+$sc-mobile-header-icon-color: $tt-theme-header-mobile-font-color;
+$sc-mobile-header-icon-active-color: $tt-theme-header-mobile-font-color;
+$sc-mobile-header-cart-icon-color: $tt-theme-header-mobile-font-color;
+$sc-mobile-header-cart-icon-active-color: $tt-theme-header-mobile-font-color;
+
+$sc-mobile-header-border-color: $theme-header-mobile-border-color;
+$sc-mobile-header-border-width: 0;

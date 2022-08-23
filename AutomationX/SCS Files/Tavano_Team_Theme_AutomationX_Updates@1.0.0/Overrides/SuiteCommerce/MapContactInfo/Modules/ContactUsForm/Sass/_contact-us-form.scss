@@ -1,0 +1,74 @@
+$contact-us-form-container-bg-color: $sc-color-theme-100; /* editable({"type": "color", "label": "Background color"}) */
+$contact-us-form-container-padding: $sc-margin-base * 6; /* editable({"type": "string", "label": "Padding"}) */
+
+.contact-us-form {
+  //margin-bottom: $sc-margin-lv4;
+
+  @extend .container;
+
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+
+  form {
+    //margin-bottom: $sc-margin-lv4;
+
+    > div:not([data-view="InputFields.Collection"]) {
+      text-align: center;
+    }
+  }
+
+  &-background {
+    background-color: $contact-us-form-container-bg-color;
+    padding: $contact-us-form-container-padding;
+  }
+
+  &-general-information {
+    margin-bottom: $sc-margin-lv8;
+    text-align: center;
+    
+    h2 {
+      margin-top: 70px;
+    }
+  }
+
+  &-required-field-reference {
+    display: block;
+    margin-bottom: $sc-margin-lv4;
+
+    &-symbol {
+      @extend .input-required;
+    }
+  }
+
+  &-primary-submit-button {
+    @extend .button-large;
+    @extend .button-primary;
+  }
+
+  &-secondary-submit-button {
+    @extend .button-large;
+    @extend .button-secondary;
+  }
+
+  &-tertiary-submit-button {
+    @extend .button-large;
+    @extend .button-tertiary;
+  }
+
+  &-feedback-message .global-views-message {
+    margin-bottom: 0;
+  }
+}
+
+/*
+group({
+  "id": "contact-us-form",
+  "label": "Contact Us Form",
+  "description": "",
+  "children": [
+    "$contact-us-form-container-bg-color",
+    "$contact-us-form-container-padding"
+  ]
+})
+*/

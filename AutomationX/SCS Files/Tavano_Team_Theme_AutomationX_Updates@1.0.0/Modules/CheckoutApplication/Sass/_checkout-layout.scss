@@ -1,0 +1,35 @@
+.checkout-layout {
+	@extend %sc-layout;
+}
+
+.checkout-layout-header {
+	// margin-bottom: $sc-margin-lv4;
+
+	// @media (min-width: $screen-sm-min) {
+	// 	margin-bottom: $sc-margin-lv8;
+	// }
+}
+
+.checkout-layout-content, .checkout-layout-notifications {
+	@extend .container;
+	margin-top: $sc-margin-lv4;
+}
+
+.checkout-layout-content {
+	margin-bottom: $sc-margin-lv8 * 2;
+}
+
+.checkout-layout-footer {
+	@extend %sc-footer !optional;
+	& .footer-cms-list-header.newsletter{
+		display: none;
+	}
+}
+
+
+
+
+.checkout-layout-no-javascript-msg {
+	@extend .message-warning;
+	width: 100%;
+}

@@ -1,0 +1,226 @@
+$tt-ext-header-line-height: 58px;
+
+header.header-scroll {
+  .tt-ext-sticky-header {
+    top: 0 !important;
+  }
+}
+
+.tt-ext-sticky-header {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  top: -150px;
+  left: 0;
+  right: 0;
+  background-color: $sc-header-background-color;
+  border-bottom: 1px solid $sc-header-border-color;
+
+  @media (min-width: $screen-md-min) {
+    display: block;
+  }
+
+  -webkit-transition: all 300ms;
+  -moz-transition: all 300ms;
+  -o-transition: all 300ms;
+  transition: all 300ms;
+
+  .tt-ext-sticky-header-container {
+    @extend .container;
+
+    padding-top: $sc-padding-lv2;
+    padding-bottom: $sc-padding-lv2;
+  }
+}
+
+// Logo
+.tt-ext-sticky-header-logo {
+  height: auto;
+  float: left;
+  margin-right: $sc-margin-lv4;
+  max-width: 100px;
+
+  .header-logo {
+    height: auto;
+    line-height: $tt-ext-header-line-height;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  // @media (max-width: $screen-md-max) {}
+}
+
+// Nav Menu
+.tt-ext-sticky-header-menu {
+  width: 100%;
+
+  .header-menu-secondary-nav {
+    width: auto;
+    padding: 0;
+  }
+
+  .header-menu-right-button {
+    display: none;
+  }
+}
+
+.tt-ext-sticky-header-links-p {
+  &-5 a.header-menu-level1-anchor {
+    padding: 0 5px !important;
+  }
+
+  &-7 a.header-menu-level1-anchor {
+    padding: 0 7px !important;
+  }
+
+  &-10 a.header-menu-level1-anchor {
+    padding: 0 10px !important;
+  }
+
+  &-15 a.header-menu-level1-anchor {
+    padding: 0 15px !important;
+  }
+}
+
+// Icons Container
+.tt-ext-sticky-header-icons {
+  float: right;
+}
+
+// Cart
+.tt-ext-sticky-header-cart {
+  display: none;
+  // display: inline-block;
+  position: relative;
+
+  .header-mini-cart-menu-cart-legend,
+  .header-mini-cart-menu-cart-icon {
+    display: inline-block;
+    height: auto;
+  }
+
+  .header-mini-cart-menu-cart-link {
+    overflow: auto;
+    display: inline;
+    line-height: 60px;
+  }
+
+  .header-mini-cart-menu-cart-legend,
+  .header-mini-cart-menu-cart-icon {
+    font-size: $sc-font-size-m;
+    color: $sc-main-navigation-link-color;
+  }
+
+  .header-mini-cart-menu-cart-icon {
+    min-width: 0;
+    padding-left: $sc-padding-lv2;
+  }
+
+  .header-mini-cart-menu-cart-legend {
+    display: none;
+  }
+
+  .header-mini-cart {
+    top: 50px;
+  }
+}
+
+// Search Icon
+.tt-ext-sticky-header-search {
+  // display: inline-block;
+  display: none;
+}
+
+.tt-ext-sticky-header-search-link {
+  display: inline-block;
+  background-color: transparent;
+  line-height: 60px;
+
+  &:hover,
+  &:active,
+  &:focus {
+    outline: none;
+  }
+}
+
+.tt-ext-sticky-header-search-icon {
+  @extend .fa;
+  @extend %fa-search;
+  font-size: $sc-font-size-m;
+  color: $sc-main-navigation-link-color;
+}
+
+// Search Box
+header.header-scroll .search-container {
+  position: fixed;
+  z-index: 1001;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: 0px;
+  pointer-events: none;
+  @extend .container;
+
+  .header-site-search {
+    display: none;
+    float: left;
+    margin: 0;
+    padding: 0;
+    padding-right: 0px;
+    width: calc(100% - 70px);
+    pointer-events: initial;
+  }
+
+  .header-menu-search-icon {
+    display: none;
+  }
+
+  .site-search-content-form {
+    border-radius: 0;
+    border: none;
+    background-color: $sc-header-background-color;
+  }
+
+  .site-search-button-submit {
+    border-radius: 0;
+    background-color: $tt-theme-header-search-font-input;
+  }
+
+  .site-search-button-submit::before {
+    color: $sc-header-background-color;
+    content: 'GO';
+    line-height: 80px;
+  }
+
+  .site-search-content {
+    height: 80px;
+  }
+
+  .site-search-input-reset {
+    padding: 20px 5px;
+    top: 10px;
+  }
+}
+
+// Display Screen Options
+.tt-ext-sticky-header-screen-medium {
+  @media (max-width: $screen-md-max) {
+    display: inline-block;
+  }
+}
+
+.tt-ext-sticky-header-screen-large {
+  @media (min-width: $screen-lg-min) {
+    display: inline-block;
+  }
+}
+
+// Fixes for versions with Sticky Header styles on Theme
+// Hide Logo fix
+.header-scroll-fixed {
+  .header-logo-wrapper {
+    display: inline-block;
+  }
+}

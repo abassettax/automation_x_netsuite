@@ -1,0 +1,99 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "fixedbacktotop",
+    "group": "ttbasetheme",
+    "title": "Fixed Back To Top",
+    "docRef": "",
+    "description": "General Settings for Fixed Back To Top"
+  },
+  "properties": {
+
+    "ttbasetheme.fixedbacktotop": {
+      "group": "ttbasetheme",
+      "subtab": "fixedbacktotop",
+      "type": "boolean",
+      "title": "Allow Fixed Back To Top module for TT Base Theme Extension",
+      "description": "Check the box to allow the system to use the Tavano Team Fixed Back To Top",
+      "default": ""
+    },
+
+    "ttbasetheme.backtotoptogglepoint": {
+      "group": "ttbasetheme",
+      "subtab": "fixedbacktotop",
+      "type": "integer",
+      "title": "Scroll Toggle Point (px)",
+      "description": "",
+      "default": 200,
+      "mandatory": true
+    },
+
+    "ttbasetheme.backtotopbgopacity": {
+      "group": "ttbasetheme",
+      "subtab": "fixedbacktotop",
+      "type": "integer",
+      "title": "Background Opacity (%)",
+      "description": "",
+      "default": 50,
+      "mandatory": true
+    },
+    "ttbasetheme.backtotopbgcolor": {
+      "group": "ttbasetheme",
+      "subtab": "fixedbacktotop",
+      "type": "string",
+      "title": "Background Color",
+      "description": "",
+      "default": "#000000",
+      "mandatory": true
+    },
+    "ttbasetheme.backtotopcolor": {
+      "group": "ttbasetheme",
+      "subtab": "fixedbacktotop",
+      "type": "string",
+      "title": "Arrow Color",
+      "description": "",
+      "default": "#ffffff",
+      "mandatory": true
+    },
+
+    "ttbasetheme.backtotopbottomoffset": {
+      "group": "ttbasetheme",
+      "subtab": "fixedbacktotop",
+      "type": "integer",
+      "title": "Bottom Offset (px)",
+      "description": "",
+      "default": 20,
+      "mandatory": true
+    },
+    "ttbasetheme.backtotopside0ffset": {
+      "group": "ttbasetheme",
+      "subtab": "fixedbacktotop",
+      "type": "integer",
+      "title": "Side Offset (px)",
+      "description": "",
+      "default": 20,
+      "mandatory": true
+    },
+
+    "ttbasetheme.backtotopside": {
+      "group": "ttbasetheme",
+      "subtab": "fixedbacktotop",
+      "type": "string",
+      "title": "Side",
+      "description": "",
+      "enum": ["Right", "Left"],
+      "default": ["Right"],
+      "multiselect": false
+    },
+
+    "ttbasetheme.backtotopborderRadius": {
+      "group": "ttbasetheme",
+      "subtab": "fixedbacktotop",
+      "type": "integer",
+      "title": "Border Radius (px)",
+      "description": "",
+      "default": 100,
+      "mandatory": true
+    }
+  }
+}

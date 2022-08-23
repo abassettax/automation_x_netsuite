@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "banner",
+    "group": "ttbasetheme",
+    "title": "Banner",
+    "docRef": "",
+    "description": "General Settings for Banner Full Width Module"
+  },
+  "properties": {
+    "ttbasetheme.banner": {
+      "group": "ttbasetheme",
+      "subtab": "banner",
+      "type": "boolean",
+      "title": "Allow Banner module for TT Base Theme Extension",
+      "description": "The Tavano Team Banner module lets you add an image and text that displays over the image using Site Management Tools.  You can: choose the text color and opt to have text-shadow based on your Theme Settings, select the position of your content, add a call-to-action button and select the button style.",
+      "default": ""
+    }
+  }
+}

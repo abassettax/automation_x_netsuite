@@ -1,0 +1,98 @@
+.tt-ext-header-menu-normal {
+    .tt-ext-menu-full-width {
+        @extend .container;
+        padding-left: 5px;
+    }
+}
+
+.tt-ext-normal-header-menu-level-container {
+    position: relative;
+    min-height: 0;
+    max-height: 0;
+    padding: 0;
+    text-align: left;
+    background-color: $sc-main-navigation-submenu-background-color;
+    z-index: 1003;
+    overflow: hidden;
+    @include box-shadow(0 6px 12px transparentize($sc-neutral-shade-500, 1-0.175));
+    @include transition-duration(0.2s);
+    
+    >li {
+        border-top: 5px solid $sc-main-navigation-link-active-background-color;
+
+        // Dropdown Category Title
+        a.tt-ext-normal-header-menu-level2-anchor {
+            border-bottom: 1px solid $sc-main-navigation-submenu-heading-border-color;
+            padding: $tt-ext-header-spacing 0;
+            pointer-events: auto !important;
+            margin-bottom: $tt-ext-header-spacing;
+            color: $sc-main-navigation-submenu-heading-color;
+        }
+    }
+
+    // Second Level Button (See All Categories)
+    .tt-ext-normal-header-menu-level2-btn-container {
+        clear: both;
+		text-align: right;
+        padding: $tt-ext-header-spacing * 2;
+		border-top: 1px solid $sc-main-navigation-submenu-heading-border-color;
+
+		a.tt-ext-normal-header-menu-level2-btn { @extend .tt-ext-button-header-nav; }
+    }
+}
+
+// Menu Opened
+.open {
+    .tt-ext-normal-header-menu-level-container {
+        max-height: 100vh;
+    }
+}
+
+//menu level 2
+.tt-ext-normal-header-menu-level2 {
+    @extend .clearfix;
+    padding: $tt-ext-header-spacing * 2;
+
+    >li {
+        float: left;
+        padding-right: $tt-ext-header-spacing * 6;
+        padding-bottom: $tt-ext-header-spacing * 2;
+    }
+
+    .tt-ext-normal-header-menu-level2-anchor {
+        text-transform: $sc-main-navigation-submenu-heading-text-transform;
+        text-decoration: $sc-main-navigation-submenu-heading-text-decoration;
+        font-weight: $sc-font-weight-semibold;
+        color: $sc-main-navigation-submenu-heading-color;
+        padding-bottom: $tt-ext-header-spacing;
+        margin-bottom: $tt-ext-header-spacing * 2;
+        border-bottom: 1px solid $sc-main-navigation-submenu-heading-border-color;
+        display: block;
+    }
+}
+
+//menu level 3
+.tt-ext-normal-header-menu-level3 {
+    .tt-ext-normal-header-menu-level3-anchor {
+        display: block;
+        padding: $tt-ext-header-spacing 0;
+        color: $sc-main-navigation-submenu-link-color;
+        border: none;
+        line-height: 1.6;
+
+        &:hover,
+        &:focus {
+            color: $sc-main-navigation-submenu-link-hover-color;
+        }
+
+        &:active,
+        &.active {
+            color: $sc-main-navigation-submenu-link-active-color;
+        }
+    }
+    // Third Level Button (See All Categories)
+    .tt-ext-normal-header-menu-level3-btn {
+        @extend .tt-ext-button-header-nav;
+        margin-top: $tt-ext-header-spacing;
+    }
+}

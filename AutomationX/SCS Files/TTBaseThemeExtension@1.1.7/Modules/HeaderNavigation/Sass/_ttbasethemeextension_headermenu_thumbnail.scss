@@ -1,0 +1,73 @@
+.tt-ext-thumbnail-header-menu-level-container {    
+    // Full-width or container
+    width: 100%;
+    position: absolute;
+    max-height: 0;
+    top: 0px;
+    left: 0;
+    right: 0;
+    padding: 0;
+    background-color: $sc-main-navigation-submenu-background-color;
+    overflow: hidden;
+    text-align: left;
+    z-index: 1003;
+    @include box-shadow(0 6px 12px transparentize($sc-neutral-shade-500, 1-0.175));
+    @include transition-duration(0.2s);
+
+    li {
+        @extend .container;
+        display: block;
+        padding: 0;
+    }
+
+    // Second Level Button (See All Categories)
+    div.tt-ext-thumbnail-header-menu-level2-btn-conatiner {
+        @extend .container;
+        clear: both;
+        text-align: right;
+        padding: $tt-ext-header-spacing * 2 0;
+
+        border-top: 1px solid $sc-main-navigation-submenu-heading-border-color;
+        
+        .tt-ext-thumbnail-header-menu-level2-btn {
+            @extend .tt-ext-button-header-nav;
+        }
+    }
+}
+
+//Menu Opened
+.open {
+    .tt-ext-thumbnail-header-menu-level-container { max-height: 100vh; }
+}
+
+//menu level 2
+.tt-ext-thumbnail-header-menu-level2 {
+    @extend .clearfix;
+    padding: $tt-ext-header-spacing * 2;
+
+    li.tt-ext-thumbnail-header-menu-block {
+        display: inline-block;
+        width: 200px;
+        padding: $tt-ext-header-spacing * 2;
+    }
+    .header-menu-level2-anchor.tt-ext-thumbnail-header-menu-level2-anchor-thumbnail {
+        border: none;
+        padding: 0;
+
+        span {
+            display: block;
+            padding-bottom: $tt-ext-header-spacing * 3;
+            text-transform: $sc-main-navigation-submenu-heading-text-transform;
+            text-decoration: $sc-main-navigation-submenu-heading-text-decoration;
+            font-weight: $sc-font-weight-semibold;
+            color: $sc-main-navigation-submenu-heading-color;
+            text-align: center;
+            line-height: normal;
+        }
+
+        img {
+            display: block;
+            width: 100%;
+        }
+    }
+}

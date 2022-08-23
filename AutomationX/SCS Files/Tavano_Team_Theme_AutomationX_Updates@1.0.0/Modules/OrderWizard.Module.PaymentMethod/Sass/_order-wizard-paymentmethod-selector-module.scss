@@ -1,0 +1,40 @@
+.order-wizard-paymentmethod-selector-module {
+	@extend .box-column;
+
+	.creditcard-edit-form {
+	  clear: both;
+	}
+	.creditcard-edit-form-securitycode {
+		padding: 0;
+	}
+}
+
+.order-wizard-paymentmethod-selector-module-header {
+	margin-bottom: $sc-margin-lv3;
+	color: $sc-color-theme-700;
+}
+
+.order-wizard-paymentmethod-selector-module-header-nav {
+	margin-bottom: $sc-margin-lv4;
+	position:relative;
+}
+
+.order-wizard-paymentmethod-selector-module-button-group {
+	@extend .pill-button-group;
+}
+
+.order-wizard-paymentmethod-selector-module-button {
+	@extend .button-medium;
+	@extend .button-tertiary;
+	// @extend .pill-button;
+	margin-bottom: $sc-margin-lv2;
+	@media (min-width: $screen-md-min) {
+		margin-bottom: 0;
+	}
+}
+
+.order-wizard-paymentmethod-selector-module-button.selected {
+	@extend .button-medium;
+	@extend .button-secondary;
+	// @extend .pill-button-active;
+}

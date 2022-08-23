@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": { 
+        "ResetButton.config": {
+            "group": "extensions",
+            "subtab": "ResetButton_subtab",
+            "type": "string",
+            "title": "ResetButton_Title",
+            "description": "Config description example",
+            "default": "Default config example"
+        }
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "name": "ExcludeItemsFromSite",
+    "fantasyName": "Exclude Items from Website",
+    "vendor": "Tavano",
+    "type": "extension",
+    "target": "SCA,SCS",
+    "target_version": {
+        "SCA": ">=20.1.0",
+        "SCS": ">=20.1.0"
+    },
+    "version": "1.0.0",
+    "description": "Exclude items from website based on limit online display to customer store field",
+    "assets": {
+        "img": {
+            "files": []
+        },
+        "fonts": {
+            "files": []
+        }
+    },
+    "javascript": {
+        "entry_points": {
+            "shopping": "Modules/ExcludeItemsFromSite/JavaScript/Tavano.ExcludeItemsFromSite.ExcludeItemsFromSite.js"
+        },
+        "application": {
+            "shopping": {
+                "files": [
+                    "Modules/ExcludeItemsFromSite/JavaScript/Tavano.ExcludeItemsFromSite.ExcludeItemsFromSite.js"
+                ]
+            }
+        }
+    },
+    "suitescript2": {
+        "files": []
+    }
+}

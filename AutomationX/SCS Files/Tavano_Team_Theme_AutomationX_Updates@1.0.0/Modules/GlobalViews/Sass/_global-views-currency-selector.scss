@@ -1,0 +1,17 @@
+.global-views-currency-selector{
+	@extend .selector;
+}
+
+.global-views-currency-selector-addon{
+	@extend .selector-icon;
+	border: none;
+	font-size: $sc-font-size-l;
+	border-top-left-radius: $sc-border-radius;
+	border-bottom-left-radius: $sc-border-radius;
+}
+
+.global-views-currency-selector-select{
+	@extend .selector-select;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}

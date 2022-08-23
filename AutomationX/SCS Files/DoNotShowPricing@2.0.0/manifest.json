@@ -1,0 +1,51 @@
+{
+    "name": "DoNotShowPricing",
+    "fantasyName": "Do Not Show Pricing",
+    "vendor": "Tavano",
+    "type": "extension",
+    "target": "SCA,SCS",
+    "target_version": {
+        "SCA": "",
+        "SCS": ""
+    },
+    "version": "2.0.0",
+    "description": "Do Not Show Pricing Feature",
+    "assets": {
+        "img": {
+            "files": []
+        },
+        "fonts": {
+            "files": []
+        },
+        "services": {
+            "files": []
+        }
+    },
+    "javascript": {
+        "entry_points": {
+            "shopping": "Modules/DoNotShowPricing/JavaScript/Tavano.DoNotShowPricing.DoNotShowPricing.js",
+            "myaccount": "Modules/DoNotShowPricing/JavaScript/Tavano.DoNotShowPricing.DoNotShowPricing.js",
+            "checkout": "Modules/DoNotShowPricing/JavaScript/Tavano.DoNotShowPricing.DoNotShowPricing.js"
+        },
+        "application": {
+            "shopping": {
+                "files": [
+                    "Modules/DoNotShowPricing/JavaScript/Tavano.DoNotShowPricing.DoNotShowPricing.js"
+                ]
+            },
+            "myaccount": {
+                "files": [
+                    "Modules/DoNotShowPricing/JavaScript/Tavano.DoNotShowPricing.DoNotShowPricing.js"
+                ]
+            },
+            "checkout": {
+                "files": [
+                    "Modules/DoNotShowPricing/JavaScript/Tavano.DoNotShowPricing.DoNotShowPricing.js"
+                ]
+            }
+        }
+    },
+    "suitescript2": {
+        "files": []
+    }
+}

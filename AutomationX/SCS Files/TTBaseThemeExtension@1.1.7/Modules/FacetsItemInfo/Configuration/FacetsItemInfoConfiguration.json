@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "facetsiteminfo",
+    "group": "ttbasetheme",
+    "title": "Facets Item Info",
+    "docRef": "",
+    "description": "General Settings for Facets Item Info"
+  },
+  "properties": {
+    "ttbasetheme.facetsiteminfo": {
+      "group": "ttbasetheme",
+      "subtab": "facetsiteminfo",
+      "type": "boolean",
+      "title": "Allow Facets Item Info module for TT Base Theme Extension",
+      "description": "By using the Tavano Team Facets Item Info module you can expose extra fields of your items at faceted search level (commerce category page or search results) over list, table and grid view item cell displays.",
+      "default": ""
+    }
+    ,"ttbasetheme.itemfields": {
+      "group": "ttbasetheme",
+      "subtab": "facetsiteminfo",
+      "type": "array",
+      "title": "Item Fields Id",
+      "description": "Use 'extensionFacetsItemFields.templateVariableName' to call the field on the template",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fieldId": {
+            "type": "string",
+            "title": "item field id",
+            "description": "Netsuite item field id, something like 'custitem31'",
+            "mandatory": true
+          },
+          "variableName": {
+              "type": "string",
+              "title": "Template Variable",
+              "description": "Name of the variable to use on the Facets Ttem Cell template. Example: 'extensionFacetsItemFields.templateVariableName'",
+              "mandatory": true
+          },
+          "enableField": {
+            "type": "string",
+            "title": "enable field",
+            "description": "Allow to use this item field",
+            "enum": ["Yes", "No"],
+            "default": ["Yes"],
+            "multiselect": false
+          }
+        }
+      }
+    }
+  }
+}

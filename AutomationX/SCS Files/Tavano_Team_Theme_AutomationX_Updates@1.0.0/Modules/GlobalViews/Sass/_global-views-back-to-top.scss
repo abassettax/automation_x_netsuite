@@ -1,0 +1,27 @@
+.global-views-back-to-top {
+    background: $tt-theme-footer-back-to-top-background-color;
+    border-top: 1px solid $tt-theme-footer-back-to-top-border-color;
+    display: block;
+    text-align:center;
+    padding-bottom: $sc-padding-lv3;
+    
+    a {
+        color: $tt-theme-footer-back-to-top-font-color;
+        font-size: $sc-font-size-xs;
+        text-transform: uppercase;
+    }
+
+    @media (min-width: $screen-sm-min) {
+        display: none;
+    }
+}
+.global-views-back-to-top a:hover {
+    text-decoration: none;
+}
+.global-views-back-to-top-icon {
+    @extend .icon-angle-up;
+    color: $tt-theme-footer-back-to-top-font-color;
+    display: block;
+    font-size: 22px;
+    padding: $sc-padding-lv2 0 0;
+}

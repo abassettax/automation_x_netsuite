@@ -1,0 +1,98 @@
+.category-main-image {
+	// float: left;
+	//width: 30%;
+	display: none;
+
+	@media (min-width: $screen-md-min) {
+		display: inherit;
+	}
+
+}
+
+.category-main-description {
+	// float: left;
+	width: auto;
+	margin: $sc-margin-lv2;
+
+	@media (min-width: $screen-md-min) {
+		//width: 60%;
+		margin-left: $sc-margin-lv4;
+	}
+}
+
+.category-main-description h3 {
+	text-transform: none;
+	font-weight: normal;
+}
+
+.category-list-header {
+	display: table;
+	padding-bottom: $sc-padding-lv3;
+	/*margin-bottom: $sc-margin-lv4;
+	@media (min-width: $screen-md-min) {
+		width: 75%;
+		float: right;
+	}*/
+}
+
+
+//TT new styles
+// Category name title
+div.facets-category-browse-results {
+	header.facets-facet-browse-header {
+		h1.facets-category-browse-title {
+			font-size: $sc-font-size-m;
+			//font-weight: $sc-font-weight-normal !important;
+			//color: $sc-color-primary !important;
+			border-bottom: 1px solid $sc-color-theme-border-light;
+			padding-bottom: $sc-margin-lv4;
+			margin-bottom: $sc-margin-lv6;
+		}
+		@media (max-width: $screen-md-min) {
+			border: none;
+		}
+	}
+	@media (max-width: $screen-md-min) {
+		margin-top: $sc-margin-lv6;
+	}
+}
+
+.facets-browse-category-heading-main-description{margin-left:0px; margin-right:0px;}
+.facets-browse-category-heading-main-description{
+	p{margin:$sc-margin-lv3 0;}
+}
+// Category cell
+div.facets-category-cell {
+	margin-bottom: $sc-margin-lv8; // Category thumbnail image
+	div.facets-category-cell-thumbnail {
+		display:none;
+		margin-bottom: $sc-margin-lv1;
+		a {
+			display: block;
+			img {
+				width:auto;
+				max-width: 100%;
+				max-height: 180px;
+			}
+		}
+	} // Category cell title
+	div.facets-category-cell-title {
+		a {
+			display: block;
+			text-align: center;
+			padding-top: $sc-margin-lv3;
+			border-top: 1px solid $sc-color-theme-border-light;
+			font-size: $sc-font-size-base;
+			color: $sc-color-copy;
+			@extend %links-left-arrow;
+		}
+		&:hover {
+			font-weight: $sc-font-weight-semibold;
+		}
+	}
+}
+
+h1.facets-empty-title {
+	padding: 0 !important;
+	border: 0 !important;
+}

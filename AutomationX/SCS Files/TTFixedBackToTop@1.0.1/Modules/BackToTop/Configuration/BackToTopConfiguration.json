@@ -1,0 +1,88 @@
+{
+  "type": "object",
+  "group": {
+    "id": "ttfixedbacktotop",
+    "title": "TT Fixed Back To Top",
+    "docRef": "",
+    "description": "TT Fixed Back To Top"
+  },
+  "properties": {
+    "ttfixedbacktotop.allowExtension": {
+      "group": "ttfixedbacktotop",
+      "type": "boolean",
+      "title": "Allow TT Fixed Back To Top",
+      "description": "Check the box to allow the system to use the Tavano Team Fixed Back To Top",
+      "default": ""
+    },
+
+    "ttfixedbacktotop.togglepoint": {
+      "group": "ttfixedbacktotop",
+      "type": "integer",
+      "title": "Scroll Toggle Point (px)",
+      "description": "",
+      "default": 200,
+      "mandatory": true
+    },
+
+    "ttfixedbacktotop.bgopacity": {
+      "group": "ttfixedbacktotop",
+      "type": "integer",
+      "title": "Background Opacity (%)",
+      "description": "",
+      "default": 50,
+      "mandatory": true
+    },
+    "ttfixedbacktotop.bgcolor": {
+      "group": "ttfixedbacktotop",
+      "type": "string",
+      "title": "Background Color",
+      "description": "",
+      "default": "#000000",
+      "mandatory": true
+    },
+    "ttfixedbacktotop.color": {
+      "group": "ttfixedbacktotop",
+      "type": "string",
+      "title": "Arrow Color",
+      "description": "",
+      "default": "#ffffff",
+      "mandatory": true
+    },
+
+    "ttfixedbacktotop.bottomoffset": {
+      "group": "ttfixedbacktotop",
+      "type": "integer",
+      "title": "Bottom Offset (px)",
+      "description": "",
+      "default": 20,
+      "mandatory": true
+    },
+    "ttfixedbacktotop.side0ffset": {
+      "group": "ttfixedbacktotop",
+      "type": "integer",
+      "title": "Side Offset (px)",
+      "description": "",
+      "default": 20,
+      "mandatory": true
+    },
+
+    "ttfixedbacktotop.side": {
+      "group": "ttfixedbacktotop",
+      "type": "string",
+      "title": "Side",
+      "description": "",
+      "enum": ["Right", "Left"],
+      "default": ["Right"],
+      "multiselect": false
+    },
+
+    "ttfixedbacktotop.borderRadius": {
+      "group": "ttfixedbacktotop",
+      "type": "integer",
+      "title": "Border Radius (px)",
+      "description": "",
+      "default": 100,
+      "mandatory": true
+    }
+  }
+}

@@ -1,0 +1,46 @@
+.header-simplified-header {
+    min-height: $tt-theme-header-height-simplified;
+    // background-color: $sc-top-menu-background-color;
+}
+
+.header-simplified-header-logo {
+    text-align: center;
+
+    .header-logo-image {
+        width: auto;
+    }
+}
+
+//TT new styles
+header.checkout-layout-header {
+    nav.header-simplified-header {
+        background: $sc-header-background-color;
+        border-bottom: 1px solid $sc-header-border-color;
+
+        div.header-simplified-header-logo {
+            max-width: 1170px;
+            margin: 0 auto;
+            padding: 0 20 * 3;
+
+            a.header-logo {
+                img {
+                    margin-right: 0;
+                    max-height: 30px;
+
+                    @media (max-width: $screen-md-min) {
+                        max-width: 200px;
+                        margin: 13px 0 !important;
+                    }
+                }
+
+                @media (max-width: $screen-md-min) {
+                    margin: 0;
+                }
+            }
+
+            @media (max-width: $screen-lg-min) {
+                max-width: 970px;
+            }
+        }
+    }
+}

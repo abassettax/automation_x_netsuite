@@ -1,0 +1,90 @@
+// TT Alpha Terms And Conditions Landing - Start
+
+div#tt-alpha-terms-conditions {
+	padding: 0 $sc-padding-lv3 0 $sc-padding-lv3;
+	// Title
+	h1 {
+		letter-spacing: 2px;
+		margin-bottom: $sc-padding-lv1 * 8;
+		@media (max-width: $screen-xs-min) { font-size: 25px; }
+	}
+	h2{
+		margin-bottom: 10px;
+		margin-top: 20px;
+	}
+	p {
+			padding: 10px 0;
+	}
+	a {
+			//color: rgb(64, 64, 64);
+			text-decoration: underline;
+	}
+	// Content
+	div.row {
+		margin-bottom: $sc-padding-lv1 * 5;
+		div.col-md-6 {
+			@media (max-width: $screen-md-min) { margin-bottom: $sc-padding-lv1 * 3; }
+		}
+		&:last-of-type { margin-bottom: 0; }
+	}
+	.p-t-20{
+		iframe{
+			@media(max-width: $screen-sm-min){
+				width: 100%;
+			}
+		}
+	}
+	div.top-text-section {
+		border-top: 1px solid $sc-color-theme-border-light;
+		border-bottom: 1px solid $sc-color-theme-border-light;
+		padding: $sc-padding-lv1 * 4 0;
+		margin-bottom: $sc-padding-lv1 * 4;
+		strong {
+			display: block;
+			margin-bottom: $sc-padding-lv1 * 2;
+			@media (max-width: $screen-xs-min) {
+				font-size: $sc-font-size-s;
+				line-height: 20px;
+			}
+		}
+	}
+	p.terms-content-title {
+		font-size: $sc-font-size-m;
+		font-weight: $sc-font-weight-semibold;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		margin-bottom: $sc-padding-lv1 * 3;
+	}
+	p.terms-content-content {
+		font-weight: $sc-font-weight-light;
+		@media (max-width: $screen-xs-min) { font-size: $sc-font-size-s; }
+	}
+	li {
+		list-style-type: disc;
+		font-weight: $sc-font-weight-light;
+		@media (max-width: $screen-xs-min) {
+			font-size: $sc-font-size-s;
+			margin-bottom: $sc-padding-lv1 * 2;
+		}
+	}
+	table{
+		margin: 25px 0;
+		border:1px solid $sc-color-theme-border-light;
+		tr{
+			border-bottom:1px solid $sc-color-theme-border-light;
+			th{
+				padding: 5px 15px;
+				border-right: 1px solid $sc-color-theme-border-light;
+				color:$sc-color-copy;
+				font-size: 17px;
+				background: #fff;
+			}
+			td{
+				padding: 5px 15px;
+				border-right: 1px solid $sc-color-theme-border-light;
+			}
+		}
+	}
+}
+
+// TT Alpha Terms And Conditions Landing - End

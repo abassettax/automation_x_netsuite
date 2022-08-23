@@ -1,0 +1,16 @@
+{
+    "type": "object",
+    "modifications": [
+        {
+            "target": "$.properties[navigationData].items.properties",
+            "action": "add",
+            "value": {
+                "parentclassnames": {
+                    "type": "string",
+                    "title": "parent class names",
+                    "description": "extra HTML parent class names to add to this entry"
+                }
+            }
+        }
+    ]
+}

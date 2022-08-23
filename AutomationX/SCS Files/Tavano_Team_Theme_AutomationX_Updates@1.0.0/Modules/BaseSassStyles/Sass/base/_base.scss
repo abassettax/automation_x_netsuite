@@ -1,0 +1,102 @@
+.main,
+.layout-container {
+    min-height: 100%;
+    height: auto;
+    width: 100%;
+}
+
+%sc-layout {
+    min-height: 100%;
+}
+
+%sc-footer {}
+
+.layout-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+//TT new styles
+
+.this-full-width {
+    width: 100%;
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+.sec_home #main-container {
+    @media (min-width: $screen-md-min) {
+        //padding-top: 145px;
+    }
+}
+
+.header-message,
+#layout.layout {
+    padding: 0 !important;
+}
+
+// #layout.layout {
+//     &.sec_login_register #main-container .checkout-layout-breadcrumb, // Login Register Stiky Header
+//     &.sec_LoginRegister #main-container .checkout-layout-breadcrumb, // Login Register Stiky Header
+//     #main-container .shopping-layout-breadcrumb, // Shopping Register Stiky Header
+//     #main-container .myaccount-layout-breadcrumb { // My Account Register Stiky Header
+//         @media (min-width: $screen-md-min) { padding-top: $tt-theme-header-height; }
+//     }
+// }
+
+.sec_wizard {
+    #main-container {
+        @media (min-width: $screen-md-min) {
+            padding-top: 90px;
+        }
+    }
+}
+
+//Media Queries
+$screen-xxs-min: 360px;
+$screen-xlg-min: 1440px;
+
+//Custom Badges Labels at FS, QV, PDP
+.custombadge {
+    position: absolute;
+    width: auto;
+    height: auto;
+    padding: 5px 10px;
+    font-size: 12px;
+    background:#20b24c;
+    color: #fff;
+}
+
+.qv-badge,
+.pdp-badge {
+    float: left;
+    width: 100%;
+    height: auto;
+
+    @media (max-width: $screen-sm-min) {
+        text-align: center;
+    }
+
+    .custombadge {
+        display: inline-block;
+        position: initial;
+        margin: 5px 0;
+    }
+}
+
+// Reset Styles - Google buttons
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+    border-radius: 0px;
+}
+
+.page-not-found {
+    padding: $sc-padding-lv1*8 0 120px 0;
+}

@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "footer",
+    "group": "ttbasetheme",
+    "title": "Footer",
+    "docRef": "",
+    "description": "General Settings for Footer Module"
+  },
+  "properties": {
+    "ttbasetheme.footer": {
+      "group": "ttbasetheme",
+      "subtab": "footer",
+      "type": "boolean",
+      "title": "Allow Footer module for TT Base Theme Extension",
+      "description": "Tavano Team Footer module lets you include custom copyright information including year dynamically.",
+      "default": ""
+    },
+    "ttbasetheme.copyright": {
+      "group": "ttbasetheme",
+      "subtab": "footer",
+      "type": "string",
+      "title": "Copyright Text",
+      "description": "Enter the text to be used in the Copyright section in the site Footer.",
+      "default": ""
+    }
+  }
+}

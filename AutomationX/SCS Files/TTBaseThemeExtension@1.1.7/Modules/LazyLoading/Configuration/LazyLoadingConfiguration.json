@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "lazyloading",
+    "group": "ttbasetheme",
+    "title": "Lazy Loading",
+    "docRef": "",
+    "description": "General Settings for Lazy Loading"
+  },
+  "properties": {
+    "ttbasetheme.lazyloading": {
+      "group": "ttbasetheme",
+      "subtab": "lazyloading",
+      "type": "boolean",
+      "title": "Allow Lazy Loading module for TT Base Theme Extension",
+      "description": "",
+      "default": ""
+    }
+    ,"ttbasetheme.lazyloadingitems": {
+      "group": "ttbasetheme",
+      "subtab": "lazyloading",
+      "type": "array",
+      "title": "Elements",
+      "description": "",
+      "items": {
+        "type": "object",
+        "properties": {
+          "lazyloadingselector": {
+            "type": "string",
+            "title": "Element Selector (jQuery)",
+            "description": "",
+            "mandatory": true
+          },
+          "lazyloadingchildren": {
+            "type": "string",
+            "title": "apply to childrens",
+            "description": "",
+            "enum": ["Yes", "No"],
+            "default": ["Yes"],
+            "multiselect": false
+          }
+        }
+      }
+    }
+  }
+}

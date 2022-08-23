@@ -1,0 +1,27 @@
+{
+    "name": "TT_CommerceCategory_SEO_Fix",
+    "fantasyName": "Tavano Team Commerce Category SEO Fix",
+    "vendor": "Tavanoteam",
+    "type": "extension",
+    "target": "SCA,SCS",
+    "target_version": {
+        "SCA": ">=19.2.0",
+        "SCS": ">=19.2.0"
+    },
+    "version": "1.0.1",
+    "description": "Fix page title and meta data information display on Commerce Category pages",
+    "assets": {
+        "img": {
+            "files": []
+        },
+        "fonts": {
+            "files": []
+        }
+    },
+    "ssp-libraries": {
+        "entry_point": "Modules/CommerceCategorySEO/SuiteScript/Tavanoteam.TT_CommerceCategory_SEO_Fix.CommerceCategorySEO.js",
+        "files": [
+            "Modules/CommerceCategorySEO/SuiteScript/Tavanoteam.TT_CommerceCategory_SEO_Fix.CommerceCategorySEO.js"
+        ]
+    }
+}

@@ -1,0 +1,82 @@
+{
+    "name": "TTFixedBackToTop",
+    "fantasyName": "Tavano Team Fixed Back To Top",
+    "vendor": "Tavanoteam",
+    "type": "extension",
+    "target": "SCA,SCS",
+    "target_version": {
+        "SCA": ">=19.2.0",
+        "SCS": ">=19.2.0"
+    },
+    "version": "1.0.1",
+    "description": "Tavano Team Fixed Back To Top",
+    "assets": {
+        "img": {
+            "files": []
+        },
+        "fonts": {
+            "files": []
+        },
+        "services": {
+            "files": []
+        }
+    },
+    "configuration": {
+        "files": [
+            "Modules/BackToTop/Configuration/BackToTopConfiguration.json"
+        ]
+    },
+    "templates": {
+        "application": {
+            "shopping": {
+                "files": [
+                    "Modules/BackToTop/Templates/back_to_top.tpl"
+                ]
+            },
+            "myaccount": {
+                "files": [
+                    "Modules/BackToTop/Templates/back_to_top.tpl"
+                ]
+            },
+            "checkout": {
+                "files": [
+                    "Modules/BackToTop/Templates/back_to_top.tpl"
+                ]
+            }
+        }
+    },
+    "sass": {
+        "entry_points": {
+            "shopping": "Modules/BackToTop/Sass/_back-to-top.scss",
+            "myaccount": "Modules/BackToTop/Sass/_back-to-top.scss",
+            "checkout": "Modules/BackToTop/Sass/_back-to-top.scss"
+        },
+        "files": [
+            "Modules/BackToTop/Sass/_back-to-top.scss"
+        ]
+    },
+    "javascript": {
+        "entry_points": {
+            "shopping": "Modules/BackToTop/JavaScript/Tavanoteam.TTFixedBackToTop.BackToTop.js",
+            "myaccount": "Modules/BackToTop/JavaScript/Tavanoteam.TTFixedBackToTop.BackToTop.js",
+            "checkout": "Modules/BackToTop/JavaScript/Tavanoteam.TTFixedBackToTop.BackToTop.js"
+        },
+        "application": {
+            "shopping": {
+                "files": [
+                    "Modules/BackToTop/JavaScript/Tavanoteam.TTFixedBackToTop.BackToTop.js"
+                ]
+            },
+            "myaccount": {
+                "files": [
+                    "Modules/BackToTop/JavaScript/Tavanoteam.TTFixedBackToTop.BackToTop.js"
+                ]
+            },
+            "checkout": {
+                "files": [
+                    "Modules/BackToTop/JavaScript/Tavanoteam.TTFixedBackToTop.BackToTop.js"
+                ]
+            }
+        }
+    }
+}

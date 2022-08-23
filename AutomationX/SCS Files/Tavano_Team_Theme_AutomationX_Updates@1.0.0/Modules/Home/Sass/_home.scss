@@ -1,0 +1,569 @@
+.home {
+  // @extend .container;
+}
+
+.home-banner-top {
+  margin-top: $sc-padding-lv4;
+}
+
+.home-banner-top-message {
+  @extend .message-info;
+  @extend .message-large;
+}
+
+// TT Three Columns - Start
+// .tt-three-columns {
+//   background-color: $sc-color-primary; // $sc-color-theme-100;
+//   padding: 40px 0px;
+
+//   .container div {
+//     text-align: center;
+//     padding: $sc-padding-lv2 $sc-padding-lv3;
+//   }
+// }
+// TT Three Columns - End
+
+// TT Quick Finder - Start
+.tt-quickfinder {
+  width: 100%;
+  padding: 40px 0;
+  background: $sc-neutral-shade-500;
+
+  .tt-quickfinder-wrappper {
+    @extend .container;
+  }
+
+  h2 {
+    @extend .col-xs-12;
+    @extend .col-sm-12;
+    @extend .col-md-3;
+    @extend .col-lg-3;
+    display: inline-block;
+    height: auto;
+    color: $sc-neutral-shade-0;
+    font-size: $sc-font-size-l;
+    padding-right: $sc-padding-lv1;
+    text-align: right;
+    margin: $sc-margin-lv1 0;
+  }
+
+  div.qf-container {
+    @extend .col-xs-12;
+    @extend .col-sm-12;
+    @extend .col-md-6;
+    @extend .col-lg-6;
+    text-align: center;
+  }
+
+  select {
+    height: 35px;
+    margin: 0;
+    margin-right: $sc-padding-lv1;
+    padding: 0 $sc-padding-lv2;
+    background-position: 100% 154%;
+    width: calc(33% - 10px);
+    display: inline-block;
+    // @extend .col-xs-12;
+    // @extend .col-sm-12;
+    // @extend .col-md-4;
+    // @extend .col-lg-4;
+  }
+
+  .qf-button {
+    @extend .col-xs-12;
+    @extend .col-sm-12;
+    @extend .col-md-3;
+    @extend .col-lg-3;
+    text-align: left;
+    padding-left: 0;
+  }
+
+  button {
+    width: auto;
+    @extend .button-small;
+    @extend .button-secondary;
+  }
+
+  @media (max-width: $screen-md-min) {
+    h2 {
+      margin-bottom: $sc-margin-lv2;
+      text-align: center;
+    }
+
+    .qf-container {
+      .row {
+        padding: 0 $sc-padding-lv2;
+      }
+    }
+
+    .qf-button {
+      padding: 0 $sc-padding-lv2;
+      text-align: center;
+
+      button {
+        width: auto;
+        padding: 10px;
+        margin: $sc-margin-lv2 0 $sc-margin-lv1 0;
+        text-align: center;
+        float: none;
+        display: inline-block;
+      }
+    }
+
+    select {
+      width: 100%;
+      ;
+      text-align: center;
+      margin: $sc-margin-lv1 0px;
+    }
+
+  }
+}
+
+// TT Quick Finder - End
+
+
+// TT Top Categories - Start
+
+.tt-top-category {
+  @extend .container;
+  margin-top: $sc-margin-lv8 * 2;
+  margin-bottom: $sc-margin-lv8 + $sc-margin-lv4;
+
+  h3 {
+    @extend .row;
+    text-align: center;
+    margin-bottom: $sc-margin-lv6;
+    font-weight: $sc-font-weight-normal;
+    width: fit-content;
+    float: none;
+    margin: 0 auto;
+    padding-left: $sc-padding-lv2;
+    border-left: 5px solid $tt-theme-heading-border-color;
+  }
+
+  .tt-top-category-categories {
+    @extend .row;
+    padding-left: $sc-padding-lv4;
+    padding-right: $sc-padding-lv4;
+    text-align: center;
+  }
+
+  .tt-top-category-categories-cell {
+    @extend .col-sm-6;
+    @extend .col-md-3;
+
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    padding: $sc-padding-lv4;
+
+    div {
+      display: inline-block;
+      text-align: left;
+
+      @media (max-width: $screen-md-min) {
+        max-width: 300px;
+      }
+    }
+
+    img {
+      width: 100%;
+      max-height: 300px;
+    }
+
+    h4 {
+      font-size: $sc-font-size-m;
+      text-transform: capitalize;
+    }
+
+    p {
+      color: $sc-color-copy-dark;
+    }
+
+    a {
+      @extend .button-small;
+      @extend .button-tertiary;
+      margin-top: $sc-margin-lv2;
+    }
+  }
+}
+
+// TT Top Categories - End
+
+// TT Two Half Banners - Start
+
+.tt-two-half-banners {
+  @extend .container;
+  @include banner-font-shadow;
+  padding-top: $sc-padding-lv4;
+  // padding-bottom: $sc-padding-lv4;
+
+  .tt-two-half-banners-content {
+    position: relative;
+    height: 300px;
+    padding: $sc-padding-lv4;
+    padding-bottom: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    h3 {
+      color: rgb(255, 255, 255);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      @include translate(-50%, -50%);
+
+      font-size: $sc-font-size-xxxl !important;
+
+      @media (max-width: $screen-md-max) {
+        font-size: $sc-font-size-xl !important;
+      }
+    }
+  }
+
+  .tt-two-half-banners-title {
+    font-size: $sc-font-size-xxxl;
+    line-height: $sc-font-size-xxxl;
+    color: rgb(255, 255, 255);
+    @include banner-font-shadow;
+
+    @media (max-width: $screen-sm-max) {
+      font-size: $sc-font-size-xl;
+      line-height: $sc-font-size-xl;
+    }
+  }
+}
+
+// TT Two Half Banners - End
+
+// TT Hero Banner - Start
+
+.tt-hero-banner {
+  display: inline-block;
+  margin-bottom: -6px;
+  width: 100%;
+  height: 450px;
+
+  @media (max-width: $screen-sm-max) {
+    height: auto;
+  }
+
+  .tt-hero-banner-right {
+    position: relative;
+    width: 65%;
+    height: 100%;
+    float: left;
+
+    @media (max-width: $screen-sm-max) {
+      width: 100%;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .tt-hero-banner-mobile {
+      display: none;
+    }
+
+    @media (max-width: $screen-sm-max) {
+      img {
+        display: none;
+      }
+
+      .tt-hero-banner-mobile {
+        display: block;
+      }
+    }
+
+  }
+
+  .tt-hero-banner-left {
+    width: 35%;
+    height: 100%;
+    padding: 0px;
+    float: left;
+
+    @media (max-width: $screen-sm-max) {
+      width: 100%;
+    }
+  }
+
+  .tt-hero-banner-left-banner {
+    position: relative;
+    width: 100%;
+    height: 50%;
+    display: block;
+
+    @media (max-width: $screen-sm-max) and (min-width: $screen-sm-min) {
+      width: 50%;
+      float: left;
+    }
+
+    @media (max-width: $screen-md-max) and (min-width: $screen-sm-max) {
+      h2 {
+        font-size: $sc-font-size-xxxl - 10px;
+      }
+
+      p {
+        font-size: $sc-font-size-xxxl - 10px;
+      }
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+  }
+
+  .tt-hero-banner-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    @include translate(-50%, -50%);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 1px #fff;
+    text-align: center;
+    width: 100%;
+
+    h2,
+    p,
+    a {
+      margin-bottom: $sc-margin-lv2;
+      color: rgb(255, 255, 255);
+    }
+
+    h2 {
+      font-size: $sc-font-size-xxxl;
+      line-height: $sc-font-size-xxxl;
+      color: rgb(255, 255, 255);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 1px #fff;
+      text-align: center;
+
+      @media (max-width: $screen-sm-max) {
+        font-size: $sc-font-size-xl;
+        line-height: $sc-font-size-xl;
+      }
+    }
+
+    p {
+      font-size: $sc-font-size-xxl !important;
+      line-height: $sc-font-size-xxl !important;
+
+      @media (max-width: $screen-md-max) {
+        font-size: $sc-font-size-l !important;
+        line-height: $sc-font-size-l !important;
+      }
+    }
+  }
+  @media (min-width: 1400px) {
+    height: 650px;
+  }
+}
+
+// TT Hero Banner - End
+
+.banner-title {
+  font-size: $sc-font-size-xxxl;
+  line-height: $sc-font-size-xxxl;
+  color: rgb(255, 255, 255);
+  @include banner-font-shadow;
+
+  @media (max-width: $screen-sm-max) {
+    font-size: $sc-font-size-xl;
+    line-height: $sc-font-size-xl;
+  }
+}
+
+.banner-description {
+  @extend %home-title-size;
+}
+
+.columnscct-text-container h1,
+h3.home-section-title,
+h3.merchandising-title,
+.logolistcct-layout h3,
+.tt-top-category h3,
+.merchandising-zone-container h3 {
+  @extend %home-title-size;
+  @extend %titles-left-border;
+  margin: 0 auto;
+  font-weight: $sc-font-weight-normal;
+  font-size: $sc-font-size-xxl !important;
+  line-height: $sc-font-size-xxl * 1.5 !important;
+
+  @media (max-width: $screen-md-max) {
+    font-size: $sc-font-size-xl !important;
+    line-height: $sc-font-size-xl * 1.5 !important;
+  }
+}
+
+// TT Top Categories Six Boxes - Start
+
+.tt-top-categories-six-boxes-container {
+  @extend .container;
+  margin-top: $sc-margin-lv4 * 4;
+  margin-bottom: $sc-margin-lv4 * 4;
+  padding-left: 0px;
+  padding-right: 0px;
+
+  .tt-top-categories-title {
+    @extend .row;
+    text-align: center;
+    //margin-top: $sc-margin-lv6;
+    margin-bottom: $sc-margin-lv6 * 2;
+
+    h3 {
+      font-weight: $sc-font-weight-light;
+      font-size: $sc-font-size-xxl !important;
+      line-height: $sc-font-size-xxl * 1.5 !important;
+
+      @media (max-width: $screen-md-max) {
+        font-size: $sc-font-size-xl !important;
+        line-height: $sc-font-size-xl * 1.5 !important;
+      }
+    }
+  }
+
+  .tt-top-categories-content {
+    @extend .row;
+    margin-left: 0;
+    margin-right: 0;
+
+    div {
+      float: none;
+      display: inline-block;
+      margin-right: -4px; // Clear display inline-block whitespace
+      vertical-align: top;
+      margin-bottom: $sc-margin-lv2;
+    }
+  }
+
+  .tt-top-categories-content-links {
+    padding-right: 0;
+  }
+
+  .tt-top-categories-content-img {
+    @extend .col-xs-4;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .tt-top-categories-content-links {
+    @extend .col-xs-8;
+
+    li {
+      line-height: 19px;
+      font-size: $theme-font-size-s;
+      margin-bottom: $sc-margin-lv1;
+
+      & a {
+        @extend %links-left-arrow;
+      }
+
+      &:first-of-type {
+        font-weight: bold;
+        color: $sc-color-primary;
+        font-size: $theme-font-size-m;
+      }
+
+    }
+
+
+  }
+}
+
+// TT Top Categories Six Boxes - End
+.tt-hero-banner-full {
+  background: $theme-secondary-color;
+  position: relative;
+  float: left;
+  overflow: hidden;
+
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+
+  img {
+    opacity: 0.7;
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+    -webkit-transform: scale3d(1.05, 1.05, 1);
+    transform: scale3d(1.05, 1.05, 1);
+  }
+
+  &:hover img {
+    opacity: 1;
+    -webkit-transform: scale3d(1.15, 1.15, 1.15);
+    transform: scale3d(1.15, 1.15, 1.15);
+  }
+
+  .tt-hero-banner-mobile {
+    display: none;
+  }
+  @media (max-width: $screen-md) {
+    img {
+      display: none;
+      &.tt-hero-banner-mobile {
+        display: block;
+      }
+    }
+  }
+
+}
+
+.tt-hero-banner-right {
+  background: $theme-secondary-color;
+  position: relative;
+  float: left;
+  overflow: hidden;
+
+  img {
+    opacity: 0.7;
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+    -webkit-transform: scale3d(1.05, 1.05, 1);
+    transform: scale3d(1.05, 1.05, 1);
+  }
+
+  &:hover img {
+    opacity: 1;
+    -webkit-transform: scale3d(1.15, 1.15, 1.15);
+    transform: scale3d(1.15, 1.15, 1.15);
+  }
+}
+
+.tt-hero-banner-left {
+  background: $theme-secondary-color;
+  position: relative;
+  float: left;
+  overflow: hidden;
+
+  img {
+    opacity: 0.75;
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+    -webkit-transform: scale3d(1.05, 1.05, 1);
+    transform: scale3d(1.05, 1.05, 1);
+  }
+
+  :hover img {
+    opacity: 1;
+    -webkit-transform: scale3d(1.15, 1.15, 1.15);
+    transform: scale3d(1.15, 1.15, 1.15);
+  }
+}

@@ -1,0 +1,23 @@
+.item-relations-correlated {
+    position: relative;
+    .product-views-price {
+        width: 100%;
+    }
+}
+
+.item-relations-correlated .bx-controls-direction {
+    text-align: right;
+	margin-bottom: $sc-margin-lv3;
+}
+
+.item-relations-correlated h3 {
+    margin-bottom: $sc-margin-lv8;
+    @extend %titles-left-border;
+}
+
+.item-relations-correlated .global-views-star-rating {
+    margin: 0 auto;
+    display: inline-block;
+}
+.item-relations-correlated-row{
+}

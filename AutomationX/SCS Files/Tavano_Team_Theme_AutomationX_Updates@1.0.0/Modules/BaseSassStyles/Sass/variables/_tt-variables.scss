@@ -1,0 +1,484 @@
+//// Tavano Team Variables ////
+
+// - IMPORTANT -
+// Variables in this style sheet are for editing reference or created by Tavano Team.
+
+// Reference variables:
+// Directly applied to SC default variables (referenced in the variable comments).
+// SC default variables should be used.
+
+// Tavano Team Variables:
+// They have 'TT Variable' in their comment.
+// They can be used in the Theme.
+
+//// GENERAL ELEMENTS ////
+$tt-color-primary: #191919;
+/// Main Color Palette - Client Colors ///
+// (SC Variable: $sc-color-primary) Client Identity Primary Color: Primary buttons, add to cart, price color
+$theme-primary-color: $tt-color-primary; // old: rgb(236, 122, 92)
+// (SC Variable: $sc-color-secondary) Client Identity Secondary Color: Secondary buttons, see more, add to wishlist, edit,...
+$theme-secondary-color: #000;
+
+/// Site Backgrounds ///
+// (SC Variable: $sc-color-body-background) Body Background
+$theme-color-body-background: rgb(255, 255, 255);
+
+/// Boxes & Elements ///
+// (SC Variable: $sc-color-theme) Theme Palette Color: Base variable of Theme Pallete (500). Theme Palette scale is from 1000 (dark) to 0 (light)
+$theme-color-theme: #000;
+// (SC Variables: $sc-color-theme-background) Secondary Background Color: Boxes and containers, highlight background colors, boxes background, transaction history hover back
+$theme-color-theme-background: rgb(240, 240, 240);
+
+/// Borders ///
+// (SC Variable: $sc-color-theme-border) Border Color: Box elements borders
+$theme-border-colors: rgb(235, 235, 235);
+// (SC Variable: $sc-color-theme-border-light) Border Color Light: divider lines
+$theme-border-colors-light: rgb(235, 235, 235);
+// (SC Variable: $sc-border-radius) Border Radius: For buttons & elements
+$theme-border-radius: 4px;
+
+
+//// FONTS ////
+
+/// Font Imports ///
+// @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800&display=swap');//
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
+
+/// Font Family ///
+// (SC Variable: $sc-font-family) Primary Font Family: body, h4, h5, h6
+$theme-font-family-primary: 'Montserrat', Helvetica, Arial, sans-serif;
+
+// (TT Variable) Secondary Font Family: h1, h2, h3
+$tt-theme-font-family-secondary: 'Montserrat', Helvetica, Arial, sans-serif;
+
+/// Font Size ///
+// (SC Variable: $sc-font-size-base) Regular Font Size (body, normal fonts, general typos)
+$theme-font-size-base: 15px;
+// (SC Variable: $sc-font-size-xxs) Header top ecommerce links, footer copyright info
+$theme-font-size-xxs: 10px;
+// (SC Variable: $sc-font-size-xs) xsmall-title-navigable, old price
+$theme-font-size-xs: 11px;
+// (SC Variable: $sc-font-size-s) Footer links
+$theme-font-size-s: 12px;
+// (SC Variable: $sc-font-size-m) Regular font size, Footer titles
+$theme-font-size-m: $theme-font-size-base;
+// (SC Variable: $sc-font-size-l) Global h3 titles
+$theme-font-size-l: 18px;
+// (SC Variable: $sc-font-size-xl) Global h2 titles + Slider & Banners 2nd line text, icons font-size, lead price
+$theme-font-size-xl: 21px;
+// (SC Variable: $sc-font-size-xxl) Global h1 titles + Homepage Titles font-size __ push btn icon, cart icon
+$theme-font-size-xxl: 26px;
+// (SC Variable: $sc-font-size-xxxl) Slider & Banners title __ checkout/my account icon-plus, 
+$theme-font-size-xxxl: 50px;
+
+/// Font Colors ///
+// (SC Variable: $sc-color-copy) - Regular site content font color: p, a, h4, h5, h6
+$theme-font-color: rgb(48, 48, 48);
+// (TT Variable) - Color for H1, H2, H3
+$tt-theme-font-color-secondary: #191919; /* editable({"type": "color", "label": "Titles Color"}) */
+
+// (SC Variable: $sc-color-paragraph)
+$theme-color-paragraph: $theme-font-color;
+// (SC Variable: $sc-color-blockquote)
+$theme-color-blockquote: $theme-font-color;
+
+/// NS copy vars gradients ///
+// (SC Variable: $sc-color-copy-light) Help small texts
+//theme-font-color-light: lighten($theme-font-color, 50%);
+$theme-font-color-light:lighten($theme-font-color, 50%);
+// (SC Variable: $sc-color-copy-dark) General ns titles: h4, h5, h6
+$theme-font-color-dark: darken($theme-font-color, 50%);
+
+/// Titles color definition ///
+// (SC Variable: $sc-color-h1) Title h1 color
+$theme-color-h1: $tt-theme-font-color-secondary;
+// (SC Variable: $sc-color-h2) Title h2 color
+$theme-color-h2: $tt-theme-font-color-secondary;
+// (SC Variable: $sc-color-h3) Title h3 color
+$theme-color-h3: $tt-theme-font-color-secondary;
+// (SC Variable: $sc-color-h4) Title h4 color
+$theme-color-h4: $theme-font-color-dark;
+// (SC Variable: $sc-color-h5) Title h5 color
+$theme-color-h5: $theme-font-color-dark;
+// (SC Variable: $sc-color-h6) Title h6 color
+$theme-color-h6: $theme-font-color-dark;
+
+/// Link Color ///
+// (SC Variable: $sc-color-link) Font color for "a" link
+$theme-link-color: #000;
+// (SC Variable: $sc-color-link-hover) Font color for "a" hover
+$theme-link-color-hover: #000;
+// (SC Variable: $sc-color-link-active) Font color for "a" active
+$theme-link-color-active: #000;
+
+/// Font Weight ///
+// (SC Variable: $sc-font-weight-light) Font weight light
+$theme-font-weight-light: 300;
+// (SC Variable: $sc-font-weight-normal) Font weight normal
+$theme-font-weight-normal: 400;
+// (SC Variable: $sc-font-weight-semibold) Font weight semibold
+$theme-font-weight-semibold: 600;
+// (SC Variable: $sc-font-weight-bold) Font weight bold
+$theme-font-weight-bold: 700;
+
+/// Text Selection ///
+// (TT Variable) Site selected text font color
+$tt-theme-text-selected-font-color: rgb(255, 255, 255);
+// (TT Variable) Site selected text background color
+$tt-theme-text-selected-background-color: #000;
+
+
+//// BUTTONS ////
+
+// (SC Variables) Primary Button: Add to cart, continue
+$theme-button-primary-background-color: #e5a82e;
+$theme-button-primary-text-color: #000;
+$theme-button-primary-border-color: #e5a82e;
+$theme-button-primary-border-radius: 3px;
+
+$theme-button-primary-hover-background-color: #000; 
+$theme-button-primary-hover-text-color:#e5a82e;
+$theme-button-primary-hover-border-color: #000;
+
+$theme-button-primary-active-background-color: #000; 
+$theme-button-primary-active-text-color: #e5a82e; 
+$theme-button-primary-active-border-color: #000;
+
+$theme-button-primary-text-transform: none;
+
+// (SC Variables) Secondary Button: Add to quote, add to wishlist, cancel
+$theme-button-secondary-background-color: $tt-color-primary; 
+$theme-button-secondary-text-color: rgb(255, 255, 255);
+$theme-button-secondary-border-color: $tt-color-primary;
+$theme-button-secondary-border-radius: 3px;
+
+$theme-button-secondary-hover-background-color: transparent; 
+$theme-button-secondary-hover-text-color: $tt-color-primary;
+$theme-button-secondary-hover-border-color: $tt-color-primary;
+
+$theme-button-secondary-active-background-color: transparent; 
+$theme-button-secondary-active-text-color: $tt-color-primary;
+$theme-button-secondary-active-border-color: $tt-color-primary;
+
+$theme-button-secondary-text-transform: none;
+
+// (SC Variables) Tertiary Button: Edit
+$theme-button-tertiary-background-color: transparent; 
+$theme-button-tertiary-text-color: #000;
+$theme-button-tertiary-border-color: #000;
+$theme-button-tertiary-border-radius: 3px;
+
+$theme-button-tertiary-hover-background-color: #000;
+$theme-button-tertiary-hover-text-color: rgb(255, 255, 255); 
+$theme-button-tertiary-hover-border-color: #000;
+
+$theme-button-tertiary-active-background-color: #000;
+$theme-button-tertiary-active-text-color: rgb(255, 255, 255); 
+$theme-button-tertiary-active-border-color: #000;
+
+$theme-button-tertiary-text-transform: none;
+
+// (TT variables) Quaternary Button: Banners and slider button
+$tt-theme-button-quaternary-background-color: transparent; /* editable({"type": "color", "label": "Background"}) */
+$tt-theme-button-quaternary-text-color: $tt-color-primary; /* editable({"type": "color", "label": "Text"}) */
+$tt-theme-button-quaternary-border-color: $tt-color-primary; /* editable({"type": "color", "label": "Border"}) */
+$tt-theme-button-quaternary-border-radius: 3px; /* editable({"type": "string", "label": "Border radius"}) */
+
+$tt-theme-button-quaternary-hover-background-color: $tt-color-primary; /* editable({"type": "color", "label": "Hover background"}) */
+$tt-theme-button-quaternary-hover-text-color: rgb(255, 255, 255); /* editable({"type": "color", "label": "Hover text"}) */
+$tt-theme-button-quaternary-hover-border-color: $tt-color-primary; /* editable({"type": "color", "label": "Hover border"}) */
+
+$tt-theme-button-quaternary-active-background-color: $tt-color-primary; /* editable({"type": "color", "label": "Active background"}) */
+$tt-theme-button-quaternary-active-text-color: rgb(255, 255, 255); /* editable({"type": "color", "label": "Active text"}) */
+$tt-theme-button-quaternary-active-border-color: $tt-color-primary; /* editable({"type": "color", "label": "Active border"}) */
+
+$tt-theme-button-quaternary-text-transform: none; /* editable({
+	"type": "string",
+	"label": "Text transform",
+	"options": [
+		{"value": "none", "text": "none"},
+		{"value": "uppercase", "text": "uppercase"},
+		{"value": "lowercase", "text": "lowercase"},
+		{"value": "capitalize", "text": "capitalize"}
+	]
+}) */
+
+
+//// HEADER ////
+
+// (TT Variable) For Sticky header
+// $tt-theme-header-height: 182px;
+// (TT Variable) For Sticky header simplified
+$tt-theme-header-height-simplified: 55px;
+
+/// Header - Top Ecommerce section ///
+// (SC Variable: $sc-top-menu-link-text-color) Header ecommerce links color old-> rgb(224, 218, 214)
+$theme-top-menu-link-text-color: rgb(255, 255, 255);
+// (SC Variable: $sc-top-menu-background-color) Header ecommerce bar background color
+$theme-top-menu-background-color: #000;
+// (SC Variable: $sc-top-menu-border-color) Header ecommerce bar border color
+$theme-top-menu-border-color: #000;
+
+/// Header - Main Section ///
+// (SC Varriable: $sc-header-background-color) Main Header Backgrond color
+$theme-header-background-color: rgb(255, 255, 255);
+// (SC Variable: $sc-header-shadow-color) Header shadow color
+$theme-header-shadow-color: transparent;
+// (SC Variabe: $sc-header-border-color) Header divider lines color
+$theme-header-border-color: rgb(216, 216, 216);
+
+// (TT Variable) Main Header font color
+$tt-theme-header-font-color: #000;
+// (TT Variable) Main nav hover background
+$tt-theme-header-font-color-active: rgb(68, 68, 68);
+
+// (TT Variable) Header Main nav sub-links color
+$tt-theme-header-menu-font-color: #000;
+
+// (SC Variable: $sc-header-link-text-color) Header link highlights Landmark //
+$theme-header-link-text-color: #e5a82e;
+// (SC Variable: $sc-header-link-hover-text-color) Header link highlight hover
+$theme-header-link-text-color-hover: lighten($theme-header-link-text-color, 10%);
+// (SC Variable: $sc-header-link-active-text-color) Header link highlight active
+$theme-header-link-text-color-active: lighten($theme-header-link-text-color, 10%);
+
+/// Header Button ///
+// (TT Variable) Header button font color
+$tt-theme-header-button-font-color: #000; /* editable({"type": "color", "label": "Button Text"}) */
+// (TT Variable) Header button background color
+$tt-theme-header-button-background-color:  rgb(255, 255, 255); /* editable({"type": "color", "label": "Button Background"}) */
+// (TT Variable) Header button background color
+$tt-theme-header-button-border-color: #000; /* editable({"type": "color", "label": "Button Border"}) */
+
+/// Header CMS Message ///
+// (TT Variable) Header top promo message font color
+$tt-theme-header-msg-title-color: $tt-color-primary; /* editable({"type": "color", "label": "CMS Msg Title"}) */
+// (TT Variable) Header top promo message background
+$tt-theme-header-msg-color: rgb(255, 255, 255); /* editable({"type": "color", "label": "CMS Msg Text"}) */
+
+/// Header Search Typeahead ///
+// (TT Variable) Search field border and button background
+$tt-theme-header-search-color: rgb(243, 243, 243); /* editable({"type": "color", "label": "Search Box"}) */
+// (TT Variable) Search box input text
+$tt-theme-header-search-font-input: rgb(30, 30, 30); /* editable({"type": "color", "label": "Search Box Font"}) */
+// (TT Variable) Search input typeahead text
+$tt-theme-header-search-font-placeholder: rgb(116, 117, 118); /* editable({"type": "color", "label": "Search Box Placeholder"}) */
+// (TT Variable) Search box reset color
+$tt-theme-header-search-reset-icon-color: rgb(187, 187, 187); /* editable({"type": "color", "label": "Search Box Reset Icon"}) */
+// (TT Variable) Search box background
+$tt-theme-header-search-background-color: rgb(243, 243, 243); /* editable({"type": "color", "label": "Search Box Background"}) */
+// (TT Variable) Search box button font color
+$tt-theme-header-search-button-font-color: #000; /* editable({"type": "color", "label": "Search Box Button Icon"}) */
+
+/// Header Mini Cart Icon ///
+// (TT Variable) Header: Cart Button Background Color
+$tt-theme-header-cart-link-background-color: transparent;
+// (SC Variable: $sc-header-cart-link-text-color) Header: Cart Icon and font Color
+$theme-header-cart-link-text-color: $theme-top-menu-link-text-color;
+// (SC Variable: $sc-header-cart-link-text-color-hover) Header: Cart Icon and font Color hover
+$theme-header-cart-link-text-color-hover: desaturate(lighten($theme-header-cart-link-text-color, 10), 9);
+// (SC Variable: $sc-header-cart-link-text-color-active) Header: Cart Icon and font Color active
+$theme-header-cart-link-text-color-active: desaturate(darken($theme-header-cart-link-text-color, 5), 10);
+
+/// Header Navigation ///
+// (SC Variable: $sc-main-navigation-background-color) Header Main Nav Background Color
+$theme-main-navigation-background-color: rgb(255, 255, 255);
+// (SC Variable: $sc-main-navigation-link-color) Header Main Nav Link Color 
+$theme-main-navigation-link-color: #000;
+// (SC Variable: $sc-main-navigation-link-hover-background-color) Header Main Nav Link Hover Background Color
+$theme-main-navigation-link-hover-background-color: transparent; /* editable({"type": "color", "label": "Link hover background"}) */
+// (SC Variable: $sc-main-navigation-link-hover-color) Header Main Nav Link Hover Color
+$theme-main-navigation-link-hover-color: #e5a82e;
+// (SC Variable: $sc-main-navigation-link-active-background-color) Header Main Nav Link Active Background Color
+$theme-main-navigation-link-active-background-color: transparent;/* editable({"type": "color", "label": "Link active background"}) */
+// (SC Variable: $sc-main-navigation-link-active-color) Header Main Nav Link Active Color
+$theme-main-navigation-link-active-color:  #000;
+// (SC Variable: $sc-main-navigation-submenu-background-color) Header Main Nav menu background color
+$theme-main-navigation-submenu-background-color: rgb(255, 255, 255); /* editable({"type": "color", "label": "Sub Menu background"}) */
+// (SC Variable: $sc-main-navigation-submenu-heading-color) Header Main Nav menu headings color
+$theme-main-navigation-submenu-heading-color: #000; /* editable({"type": "color", "label": "Sub Menu heading"}) */
+// (SC Variable: $sc-main-navigation-submenu-heading-border-color) Header Main Nav menu headings border color
+$theme-main-navigation-submenu-heading-border-color: rgb(228, 228, 228); /* editable({"type": "color", "label": "Sub Menu Link border"}) */
+// (SC Variable: $sc-main-navigation-submenu-link-color) Header Main Nav menu links color
+$theme-main-navigation-submenu-link-color: #000; /* editable({"type": "color", "label": "Sub Menu Link"}) */
+// (SC Variable: $sc-main-navigation-submenu-link-hover-color) Header Main Nav menu links Hover color
+$theme-main-navigation-submenu-link-hover-color: #000; /* editable({"type": "color", "label": "Sub Menu Link hover"}) */
+// (SC Variable: $sc-main-navigation-submenu-link-active-color) Header Main Nav menu links Active color
+$theme-main-navigation-submenu-link-active-color: #000; /* editable({"type": "color", "label": "Sub Menu Link active"}) */
+
+/// Header Mobile /////
+// (SC Variable: $sc-mobile-navigation-hamburger-icon-color) Mobile hamburger icon color
+$theme-mobile-navigation-hamburger-icon-color: rgb(29, 29, 29);
+// (SC Variable: $sc-mobile-navigation-background-color) Mobile menu navigation background color
+$theme-mobile-navigation-background-color: rgb(255, 255, 255);
+// (SC Variable: $sc-mobile-navigation-border-color) Mobile menu navigation border color
+$theme-mobile-navigation-border-color: rgb(228, 228, 228);
+
+// (TT Variable) Mobile menu background
+$tt-theme-header-mobile-background-color: rgb(45, 45, 45);
+// (TT Variable) Mobile menu highlighted nav
+$tt-theme-header-mobile-background-color-active: lighten($tt-theme-header-mobile-background-color, 20%);
+// (TT Variable) Mobile menu font color
+$tt-theme-header-mobile-font-color: $theme-top-menu-link-text-color;
+// (SC Variable: $sc-mobile-header-border-color) Mobile menu links border color 
+$theme-header-mobile-border-color: rgb(255, 255, 255);
+
+/// Header Mobile Sidebar ///
+// (SC Variable: $sc-mobile-navigation-link-background-color) Mobile menu navigation link background
+$theme-mobile-navigation-link-background-color: rgb(45, 45, 45);
+// (SC Variable: $sc-mobile-navigation-link-color) Mobile menu navigation link color
+$theme-mobile-navigation-link-color: rgb(255, 255, 255);
+// (SC Variable: $sc-mobile-navigation-link-hover-color) Mobile menu navigation link hover color
+$theme-mobile-navigation-link-hover-color: rgb(255, 255, 255);
+// (SC Variable: $sc-mobile-navigation-link-active-color) Mobile menu navigation link active color
+$theme-mobile-navigation-link-active-color: rgb(255, 255, 255);
+
+
+//// FOOTER ////
+
+/// Footer Main Section ///
+// (SC Variable: $sc-footer-background-color) Footer global background (client color)
+$theme-footer-background-color: rgb(255, 255, 255);
+// (SC Variable: $sc-footer-border-color) Footer border color (client color)
+$theme-footer-border-color: rgb(228, 228, 228);
+
+// (SC Variable: $sc-footer-text-color) Footer global font color
+$theme-footer-font-color: #000;
+// (SC Variable: $sc-footer-headings-color) Footer column titles color
+$theme-footer-headings-color: #000;
+
+// (SC Variable: $sc-footer-link-color) Footer columns links color 
+$theme-footer-link-color: #000;
+// (SC Variable: $sc-footer-link-color-hover) Footer columns links hover color
+$theme-footer-link-color-hover: #000;
+// (SC Variable: $sc-footer-link-color-active) Footer columns links active color
+$theme-footer-link-color-active: #000;
+// (TT Variable) Footer Support icons font color
+$tt-theme-footer-icon-support-color: rgb(255, 255, 255);
+
+/// Footer Social ///
+// (TT Variable) Footer social icons buttons font color
+$tt-theme-footer-font-color-social: #000;
+// (TT Variable) Footer social icons buttons background color
+$tt-theme-footer-background-color-social: #e5a82e;
+
+/// Footer Field ///
+// (SC Variable: $sc-footer-fields-background-color) Footer subscribe input background color
+$theme-footer-fields-background-color: transparent; /* editable({"type": "color", "label": "Input background"}) */
+// (SC Variable: $sc-footer-fields-text-color) Footer subscribe input border color
+$theme-footer-fields-text-color: #000; /* editable({"type": "color", "label": "Input text"}) */
+// (SC Variable: $sc-footer-fields-border-color) Footer subscribe input font color
+$theme-footer-fields-border-color: rgb(189, 189, 189); /* editable({"type": "color", "label": "Input border"}) */
+
+/// Footer Button ///
+// (SC Variable: $sc-footer-buttons-text-color) Footer subscribe button font color
+$theme-footer-buttons-text-color:rgb(255, 255, 255);
+// (SC Variable: $sc-footer-buttons-background-color) Footer subscribe button background color
+$theme-footer-buttons-background-color: #000;
+// (SC Variable: $sc-footer-buttons-text-color) Footer subscribe button background color
+$theme-footer-buttons-border-color: #000;
+
+/// Footer Bottom Section ///
+// (SC Variable: $sc-footer-copyright-text-color) Footer bottom label copyright section font color
+$theme-footer-copyright-text-color: rgb(238, 238, 238);
+// (TT Variable) Footer border color (client color)
+$tt-theme-footer-copyright-border-color: #000; /* editable({"type": "color", "label": "Copyright border"}) */
+// (TT Variable) Footer global background (client color)
+$tt-theme-footer-copyright-background-color: #000; /* editable({"type": "color", "label": "Copyright background"}) */
+
+/// Footer Back to Top ///
+// (TT Variable) Footer Back to Top background color
+$tt-theme-footer-back-to-top-background-color: #000;
+// (TT Variable) Footer Back to Top font color
+$tt-theme-footer-back-to-top-font-color: rgb(235, 235, 235);
+// (TT Variable) Footer Back to Top border color
+$tt-theme-footer-back-to-top-border-color: rgb(78, 78, 78);
+
+
+//// OTHERS ////
+
+/// Social Share ///
+// (SC Variable: $sc-color-social-sharing-flyout-content-social-facebook-icon) Social Share Facebook icon color 
+$theme-color-social-sharing-flyout-content-social-facebook-icon: $tt-color-primary;
+// (SC Variable: $sc-color-social-sharing-flyout-content-social-twitter-icon) Social Share Twitter icon color
+$theme-color-social-sharing-flyout-content-social-twitter-icon: $tt-color-primary;
+// (SC Variable: $sc-color-social-sharing-flyout-content-social-google-icon) Social Share Google icon color
+$theme-color-social-sharing-flyout-content-social-google-icon: $tt-color-primary;
+// (SC Variable: $sc-color-social-sharing-flyout-content-social-pinterest-icon) Social Share Pinterest icon color
+$theme-color-social-sharing-flyout-content-social-pinterest-icon: $tt-color-primary;
+
+/// Pusher element ///
+// (TT Variable) Mobile Pusher background color
+$tt-theme-pusher-background: rgb(51, 51, 51);
+// (TT Variable) Mobile Pusher font color
+$tt-theme-pusher-font-color:rgb(255, 255, 255);
+
+/// Input ///
+// (TT Variable) Inputs Font - color
+$tt-theme-input-font-color: #000;
+// (TT Variable) Input Font - color disabled
+$tt-theme-input-font-color-disabled: rgb(66, 66, 66);
+// (TT Variable) Input Font - color placeholder
+$tt-theme-input-font-color-placeholder: rgb(80, 80, 80);
+// (TT Variable) Input Background - color
+$tt-theme-input-background-color: rgb(255, 255, 255);
+// (TT Variable) Input Border - color
+$tt-theme-input-border-color: #000;
+// (TT Variable) Input Border - color disabled
+$tt-theme-input-border-color-disabled: rgb(75, 75, 75);
+// (TT Variable) Input Border - weight
+$tt-theme-input-border-weight: 1px;
+// (TT Variable) Input Border - radius
+$tt-theme-input-border-radius: $theme-border-radius;
+// (TT Variable) Input Icon - font color
+$tt-theme-input-icon-font: rgb(255, 255, 255);
+// (TT Variable) Input Icon - background color
+$tt-theme-input-icon-background: #000;
+
+/// Quick View Button ///
+// (TT Variable) Quick View Button Font Color
+$tt-theme-quickview-button-font-color: #000;
+// (TT Variable) Quick View Button Background Color
+$tt-theme-quickview-button-background-color: #e5a82e;
+
+/// Info Colors ///
+// (SC Variable: $sc-color-success) Theme Success Color
+$theme-color-success: rgb(74, 127, 53);
+// (SC Variable: $sc-color-warning) Theme Warning Color
+$theme-color-warning: rgb(148, 106, 0);
+// (SC Variable: $sc-color-out) Theme Out Color
+$theme-color-out: rgb(192, 26, 41);
+// (SC Variable: $sc-color-info) Theme Info Color
+$theme-color-info: rgb(67, 69, 78);
+
+/// Rating & Reviews - Stars color ///
+// (SC Variable: $sc-color-star-filled) Review Stars Color
+$theme-rating-stars-color: #000; /* editable({"type": "color", "label": "Rating Stars Color"}) */
+
+/// Heading border color ///
+$tt-theme-heading-border-color:#e5a82e
+
+//// SPACING ////
+
+/// Padding variables (reference) ///
+// $sc-padding-base	> 5px
+// $sc-padding-lv1	> 5px
+// $sc-padding-lv2	> 10px
+// $sc-padding-lv3	> 15px
+// $sc-padding-lv4	> 20px
+// $sc-padding-lv5	> 25px
+// $sc-padding-lv6	> 30px
+// $sc-padding-lv7	> 35px
+// $sc-padding-lv8	> 40px
+
+/// Margin variables (reference) ///
+// $sc-margin-base	> 5px
+// $sc-margin-lv1	> 5px
+// $sc-margin-lv2	> 10px
+// $sc-margin-lv3	> 15px
+// $sc-margin-lv4	> 20px
+// $sc-margin-lv5	> 25px
+// $sc-margin-lv6	> 30px
+// $sc-margin-lv7	> 35px
+// $sc-margin-lv8	> 40px

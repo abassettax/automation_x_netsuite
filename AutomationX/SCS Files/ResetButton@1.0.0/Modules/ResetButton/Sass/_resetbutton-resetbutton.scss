@@ -1,0 +1,24 @@
+/*
+	Sass Application Entry Point
+	Link all your sass dependencies in the right order
+
+	Example:
+	@import "other-sass-file.scss";
+	@import "../../<other module>/Sass/other-sass-file.scss";
+*/ 
+
+.resetbutton-info-card {
+    @extend .info-card;
+}
+
+.resetbutton-info-card-content {
+    @extend .info-card-content;
+    color: $sc-color-secondary;
+    font-weight: bold;
+}
+
+.quote-details {
+	.product-line-stock-msg-not-available {
+		display: none;
+	}
+}

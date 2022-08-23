@@ -1,0 +1,92 @@
+{
+    "name": "TT_SCA_Core_BugFixes_Extension",
+    "fantasyName": "Tavano Team SCA Core Bug Fixes Extension",
+    "vendor": "Tavanoteam",
+    "type": "extension",
+    "target": "SCA,SCS",
+    "target_version": {
+        "SCA": ">=19.2.0",
+        "SCS": ">=19.2.0"
+    },
+    "version": "1.0.6",
+    "description": "Tavano Team SCA Core Bug Fixes",
+    "assets": {
+        "img": {
+            "files": []
+        },
+        "fonts": {
+            "files": []
+        }
+    },
+    "configuration": {
+        "files": []
+    },
+    "sass": {
+        "entry_points": {
+            "shopping": "Modules/BaseModule/Sass/_tt_sca_core_bugfixes_extension-basemodule.scss",
+            "myaccount": "Modules/BaseModule/Sass/_tt_sca_core_bugfixes_extension-basemodule.scss",
+            "checkout": "Modules/BaseModule/Sass/_tt_sca_core_bugfixes_extension-basemodule.scss"
+        },
+        "files": [
+            "Modules/BaseModule/Sass/_tt_sca_core_bugfixes_extension-basemodule.scss",
+            "Modules/BaseSmartMerch/Sass/_tt_sca_core_bugfixes_extension-basesmartmerch.scss"
+        ]
+    },
+    "javascript": {
+        "entry_points": {
+            "shopping": "Modules/BaseModule/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseModuleShopping.js",
+            "myaccount": "Modules/BaseModule/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseModule.js",
+            "checkout": "Modules/BaseModule/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseModule.js"
+        },
+        "application": {
+            "shopping": {
+                "files": [
+                    "Modules/BaseModule/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseModule.js",
+                    "Modules/BaseModule/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseModuleShopping.js",
+                    "Modules/FooterContentCheckout/JavaScript/Newsletter.Checkout.Model.js",
+                    "Modules/FooterContentCheckout/JavaScript/Newsletter.Checkout.View.js",
+                    "Modules/FooterContentCheckout/JavaScript/Tavanoteam.TTBaseThemeExtension.FooterContentCheckout.js",
+                    "Modules/Layout/JavaScript/Tavanoteam.TTBaseThemeExtension.Layout.js",
+                    "Modules/SiteSearch/JavaScript/Tavanoteam.TTBaseThemeExtension.SiteSearch.View.js",
+                    "Modules/LogoUrl/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.LogoUrl.View.js",
+                    "Modules/QuantityPricing/JavaScript/QuantityPricing.View.js",
+                    "Modules/QuantityPricing/JavaScript/QuantityPricingUtils.Utils.js",
+                    "Modules/BaseSmartMerch/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseSmartMerch.js",
+                    "Modules/Cart/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.QuickAddToCart.js"
+                ]
+            },
+            "myaccount": {
+                "files": [
+                    "Modules/BaseModule/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseModule.js",
+                    "Modules/BaseModule/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseModuleShopping.js",
+                    "Modules/FooterContentCheckout/JavaScript/Newsletter.Checkout.Model.js",
+                    "Modules/FooterContentCheckout/JavaScript/Newsletter.Checkout.View.js",
+                    "Modules/FooterContentCheckout/JavaScript/Tavanoteam.TTBaseThemeExtension.FooterContentCheckout.js",
+                    "Modules/Layout/JavaScript/Tavanoteam.TTBaseThemeExtension.Layout.js",
+                    "Modules/SiteSearch/JavaScript/Tavanoteam.TTBaseThemeExtension.SiteSearch.View.js",
+                    "Modules/LogoUrl/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.LogoUrl.View.js",
+                    "Modules/QuantityPricing/JavaScript/QuantityPricing.View.js",
+                    "Modules/QuantityPricing/JavaScript/QuantityPricingUtils.Utils.js",
+                    "Modules/BaseSmartMerch/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseSmartMerch.js",
+                    "Modules/Cart/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.QuickAddToCart.js"
+                ]
+            },
+            "checkout": {
+                "files": [
+                    "Modules/BaseModule/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseModule.js",
+                    "Modules/BaseModule/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseModuleShopping.js",
+                    "Modules/FooterContentCheckout/JavaScript/Newsletter.Checkout.Model.js",
+                    "Modules/FooterContentCheckout/JavaScript/Newsletter.Checkout.View.js",
+                    "Modules/FooterContentCheckout/JavaScript/Tavanoteam.TTBaseThemeExtension.FooterContentCheckout.js",
+                    "Modules/Layout/JavaScript/Tavanoteam.TTBaseThemeExtension.Layout.js",
+                    "Modules/SiteSearch/JavaScript/Tavanoteam.TTBaseThemeExtension.SiteSearch.View.js",
+                    "Modules/LogoUrl/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.LogoUrl.View.js",
+                    "Modules/QuantityPricing/JavaScript/QuantityPricing.View.js",
+                    "Modules/QuantityPricing/JavaScript/QuantityPricingUtils.Utils.js",
+                    "Modules/BaseSmartMerch/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.BaseSmartMerch.js",
+                    "Modules/Cart/JavaScript/Tavanoteam.TT_SCA_Core_BugFixes_Extension.QuickAddToCart.js"
+                ]
+            }
+        }
+    }
+}

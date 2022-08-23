@@ -1,0 +1,246 @@
+{
+  "type": "object",
+  "subtab": {
+    "id": "headernavigation",
+    "group": "ttbasetheme",
+    "title": "Header Navigation",
+    "docRef": "",
+    "description": "General Settings for Header Navigation Module"
+  },
+  "properties": {
+    "ttbasetheme.navigation": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "boolean",
+      "title": "Allow Navigation Header module for TT Base Theme Extension",
+      "description": "Using the Tavano Team Header Navigation module you can define the main navigation visual display. You can choose to handle it by hover or click, and also determine “see more” links for sub-categories display (mainly used if you have a wide sub-category tree).",
+      "default": ""
+    },
+    "ttbasetheme.navigationBanners": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "boolean",
+      "title": "Allow Navigation Banners",
+      "description": "",
+      "default": ""
+    },
+    "ttbasetheme.navigationClickToOpen": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "boolean",
+      "title": "Use click option to navigate the menu",
+      "description": "Check the box to display the menu by clicking it otherwise it will use the native behaviour.",
+      "default": ""
+    },
+    "ttbasetheme.navigationMenuType": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "string",
+      "title": "navigation menu type",
+      "description": "Select the navigation menu type to use",
+      "enum": ["Main Theme", "Normal", "Compact", "Thumbnails", "Compact with Thumbnails"],
+      "default": ["Main Theme"],
+      "multiselect": false
+    },
+    "ttbasetheme.navigationMenuTopOffset": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "integer",
+      "title": "Menu Navigation Top Offset (px)",
+      "description": "Set a top offset for the menu navigation",
+      "default": 0,
+      "mandatory": true
+    },
+    "ttbasetheme.navigationThumbnailsWidth": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "integer",
+      "title": "Thumbnail Nav columns width (px)",
+      "description": "Set a thumbnails width for Thumbnails Menu Type",
+      "default": 200,
+      "mandatory": true
+    },
+    "ttbasetheme.navigationMenu.compactThumbnailsHeight": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "integer",
+      "title": "Compact and Thumbnail Nav columns height (30px to 90px)",
+      "description": "Set a thumbnails height for Compact with Thumbnails Menu Type",
+      "default": 30,
+      "mandatory": true
+    },
+
+    "ttbasetheme.numberCategoryToShowMain": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "string",
+      "title": "2nd Level Number of Categories",
+      "description": "Use this variable to change the number of level-2 categories to show on the header",
+      "default": ""
+    },
+    "ttbasetheme.btnAllCategory": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "string",
+      "title": "2nd Level Category See All button text",
+      "description": "Enter a text in order to show it in the button for all the categories.",
+      "default": ""
+    },
+    "ttbasetheme.numberCategoryToShow": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "string",
+      "title": "3rd Level Number of Categories",
+      "description": "Use this variable to change the number of level-3 categories to show on the header",
+      "default": ""
+    },
+    "ttbasetheme.btnCategory": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "string",
+      "title": "3rd Level Category See All button text",
+      "description": "Enter a text in order to show it in the category button.",
+      "default": ""
+    },
+
+    "ttbasetheme.headernavigation.htmlPosition": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "string",
+      "title": "Navigation Banners Position",
+      "description": "Select the Navigation Banners position",
+      "enum": ["Top", "Right", "Bottom", "Left"],
+      "default": ["Top"],
+      "multiselect": false
+    },
+    "ttbasetheme.headernavigation.htmlFields": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "array",
+      "title": "Navigation Banner Contents",
+      "description": "",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Header Link Name",
+            "description": "",
+            "mandatory": true
+          },
+          "group": {
+            "type": "integer",
+            "title": "Container No.",
+            "description": "",
+            "default": 1,
+            "mandatory": true
+          },
+          "position": {
+            "type": "integer",
+            "title": "Element Position",
+            "description": "",
+            "default": 1,
+            "mandatory": true
+          },
+          "tag": {
+            "type": "string",
+            "title": "Element Type",
+            "description": "",
+            "enum": ["Image", "Title", "Description", "Link"],
+            "default": ["Image"],
+            "multiselect": false,
+            "mandatory": true
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Image Source, Title Text, Description Text, Link Text",
+            "mandatory": true
+          },
+          "hyperlink": {
+            "type": "string",
+            "title": "Hyperlink",
+            "description": "Hyperlink for the content type"
+          },
+          "break": {
+            "type": "boolean",
+            "title": "Break Line",
+            "description": ""
+          },
+          "width": {
+            "type": "string",
+            "title": "Width",
+            "description": "",
+            "default": "100px",
+            "mandatory": true
+          },
+          "padding": {
+            "type": "string",
+            "title": "Padding",
+            "description": ""
+          },
+          "textOffset": {
+            "type": "integer",
+            "title": "Text Offset",
+            "description": ""
+          },
+          "textColor": {
+            "type": "string",
+            "title": "Text Color",
+            "description": ""
+          },
+          "additionalClass": {
+            "type": "string",
+            "title": "Additional Class",
+            "description": ""
+          }
+        }
+      }
+    },
+    "ttbasetheme.headernavigation.htmlStyles": {
+      "group": "ttbasetheme",
+      "subtab": "headernavigation",
+      "type": "array",
+      "title": "Navigation Banner Containers Styles",
+      "description": "",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "title": "Header Link Name",
+            "description": "",
+            "mandatory": true
+          },
+          "group": {
+            "type": "integer",
+            "title": "Container No.",
+            "mandatory": true
+          },
+          "alignment": {
+            "type": "string",
+            "title": "Alignment",
+            "enum": ["Left", "Center", "Right"],
+            "default": ["Left"],
+            "multiselect": false
+          },
+          "padding": {
+            "type": "string",
+            "title": "Padding",
+            "description": ""
+          },
+          "backgroundColor": {
+            "type": "string",
+            "title": "Background Color",
+            "description": ""
+          },
+          "additionalClass": {
+            "type": "string",
+            "title": "Additional Class",
+            "description": ""
+          }
+        }
+      }
+    }
+  }
+}

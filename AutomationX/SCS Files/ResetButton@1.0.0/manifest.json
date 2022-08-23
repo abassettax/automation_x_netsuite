@@ -1,0 +1,74 @@
+{
+    "name": "ResetButton",
+    "fantasyName": "Reset Button",
+    "vendor": "Tavano",
+    "type": "extension",
+    "target": "SCA,SCS",
+    "target_version": {
+        "SCA": ">=20.1.0",
+        "SCS": ">=20.1.0"
+    },
+    "version": "1.0.0",
+    "description": "fix Reset button my account",
+    "assets": {
+        "img": {
+            "files": []
+        },
+        "fonts": {
+            "files": []
+        },
+        "services": {
+            "files": [
+                "services/ResetButton.Service.ss"
+            ]
+        }
+    },
+    "configuration": {
+        "files": [
+            "Modules/ResetButton/Configuration/ResetButton.json"
+        ]
+    },
+    "templates": {
+        "application": {
+            "myaccount": {
+                "files": [
+                    "Modules/ResetButton/Templates/tavano_resetbutton_resetbutton.tpl"
+                ]
+            }
+        }
+    },
+    "sass": {
+        "entry_points": {
+            "myaccount": "Modules/ResetButton/Sass/_resetbutton-resetbutton.scss"
+        },
+        "files": [
+            "Modules/ResetButton/Sass/_resetbutton-resetbutton.scss"
+        ]
+    },
+    "javascript": {
+        "entry_points": {
+            "myaccount": "Modules/ResetButton/JavaScript/ResetButton.View.js"
+        },
+        "application": {
+            "myaccount": {
+                "files": [
+                    "Modules/ResetButton/JavaScript/ResetButton.View.js",
+                    "Modules/ResetButton/JavaScript/Tavano.ResetButton.ResetButton.Model.js",
+                    "Modules/ResetButton/JavaScript/Tavano.ResetButton.ResetButton.SS2Model.js"
+                ]
+            }
+        }
+    },
+    "ssp-libraries": {
+        "entry_point": "Modules/ResetButton/SuiteScript/Tavano.ResetButton.ResetButton.js",
+        "files": [
+            "Modules/ResetButton/SuiteScript/Tavano.ResetButton.ResetButton.js",
+            "Modules/ResetButton/SuiteScript/ResetButton.ServiceController.js"
+        ]
+    },
+    "suitescript2": {
+        "files": [
+            "Modules/ResetButton/SuiteScript2/ResetButton.Service.ss"
+        ]
+    }
+}
