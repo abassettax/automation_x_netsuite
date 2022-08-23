@@ -41,7 +41,7 @@
 				</div>
 				<!-- Social Sharing -->
 				<div class="product-details-full-social-share">
-					<p>Share: </p>
+					<!--<p>Share: </p>-->
 					<div data-view="SocialSharing.Flyout" class="product-details-full-social-sharing"></div>
 					<!--<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5720c41ce66f063f"></script>
 					<div class="addthis_sharing_toolbox"></div>-->

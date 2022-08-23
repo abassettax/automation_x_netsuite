@@ -3,7 +3,7 @@
 {{/if}}
 	<label class="order-wizard-termsandconditions-module-label">
 		<input type="checkbox" id="termsandconditions" name="termsandconditions" {{#if isAgreeTermCondition}}checked{{/if}}>
-		{{translate 'I agree to the <a data-type="term-condition-link-module" data-toggle="show-terms" href="#">Terms & Conditions</a>'}}
+		{{translate 'I agree to the <a data-type="term-condition-link-module" data-toggle="show-terms" href="#"><u>Terms & Conditions</u></a>'}}
 	</label>
 {{#if showWrapper}}
 </div>

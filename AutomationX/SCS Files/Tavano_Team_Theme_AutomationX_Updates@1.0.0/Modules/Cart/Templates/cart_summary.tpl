@@ -177,6 +177,7 @@
 
 	<div data-cms-area="cart_summary_cms_area_2" data-cms-area-filters="path"></div>
 
+	{{!----
 	{{#if showPromocodeForm}}
 		<div class="cart-summary-grid cart-summary-promocode-container">
 			<div class="cart-summary-expander-head">
@@ -191,6 +192,7 @@
 			</div>
 		</div>
 	{{/if}}
+	----}}
 
 	{{#if showActions}}
 		<div class="cart-summary-button-container">
