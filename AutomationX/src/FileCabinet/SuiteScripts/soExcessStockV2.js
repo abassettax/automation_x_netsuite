@@ -12,6 +12,11 @@ function arraysort(a, b){
    }
     return true;
  }
+
+ function getParameterFromURL(param) {
+  if (param = (new RegExp('[?&]' + encodeURIComponent(param) + '=([^&]*)')).exec(location.search))
+    return decodeURIComponent(param[1]);
+}  
  
  function postsourceES(type,name)
  {
