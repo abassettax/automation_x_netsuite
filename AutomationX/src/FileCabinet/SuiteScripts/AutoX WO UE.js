@@ -17,11 +17,14 @@ define([
             if (context.type === context.UserEventType.CREATE) {
                 var woRec = context.newRecord;
                 var recordid = context.newRecord.id;
+                var buildLocation = woRec.getText({
+                    fieldId: 'location'
+                });
                 log.debug({
                     title: 'afterSubmit',
                     details: 'woRec: ' + JSON.stringify(woRec)
                 });
-                var emailBody = 'A new WO has been created. WO Link: ';
+                var emailBody = 'A new WO has been created. <br><br>Location: '+buildLocation+'<br>WO Link: ';
                 var baseUrl = url.resolveDomain({
                     hostType: url.HostType.APPLICATION,
                     accountId: '422523'
