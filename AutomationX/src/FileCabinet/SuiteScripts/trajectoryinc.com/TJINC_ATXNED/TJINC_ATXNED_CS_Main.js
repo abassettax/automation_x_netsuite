@@ -938,9 +938,10 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
 
                         if (s_itemtype === 'InvtPart' || s_itemtype === 'Assembly') {
 
-                            if (!window.preferedvendorrate) {
+                            // if (!window.preferedvendorrate) {
                                 window.labelac = "AC:";
                                 i_lineloc = o_rec.getCurrentSublistValue({ fieldId: 'location', sublistId: 'item' });
+                                i_linecostrate = o_rec.getCurrentSublistValue({ fieldId: 'costestimaterate', sublistId: 'item' });
                                 if (i_lineloc) {
                                     var o_custom_search = tj.searchAll({
                                         'search': search.create({
@@ -970,17 +971,17 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                         window.isStocked = o_custom_search[0].getValue('locationpreferredstocklevel');
                                     }
 
-                                    if (window.source === 2 && window.itemaveragecost) {
-                                        o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'AVGCOST' });
-                                    } else {
-                                        if (i_locationac) {
-                                            if (parseInt(i_locationac) >= parseInt(o_rec.getCurrentSublistValue({ fieldId: 'quantity', sublistId: 'item' }))) {
-                                                o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'AVGCOST' });
-                                            }
-                                        } else {
-                                            o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'PURCHPRICE' });
-                                        }
-                                    }
+                                    // if (window.source === 2 && window.itemaveragecost) {
+                                    //     o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'AVGCOST' });
+                                    // } else {
+                                    //     if (i_locationac) {
+                                    //         if (parseInt(i_locationac) >= parseInt(o_rec.getCurrentSublistValue({ fieldId: 'quantity', sublistId: 'item' }))) {
+                                    //             o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'AVGCOST' });
+                                    //         }
+                                    //     } else {
+                                    //         o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'PURCHPRICE' });
+                                    //     }
+                                    // }
 
                                     if (i_locationac > 0) {
                                         window.itemaveragecost = i_locationac;
@@ -990,7 +991,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
 
                                 i_itemrate = o_rec.getCurrentSublistValue({ fieldId: 'rate', sublistId: 'item' });
 
-                                var i_ppMargin = ((1 - (window.preferedvendorrate / i_itemrate)) * 100).toFixed(2); //-2
+                                var i_ppMargin = ((1 - (window.costestimaterate / i_itemrate)) * 100).toFixed(2); //-2
                                 var i_avgcostMargin = ((1 - (window.itemaveragecost / i_itemrate)) * 100).toFixed(2);
 
                                 if (window.itemaveragecost > 0) {
@@ -998,7 +999,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                 }
 
                                 if (s_itemtype !== 'Assembly') {
-                                    s_ppricemargintext = '\nPP:' + i_ppMargin + '%\n ';
+                                    s_ppricemargintext = '\nPP (Est):' + i_ppMargin + '%\n ';
                                 }
 
                                 var o_LastNegoshDate = window.lastNegotiationDate;
@@ -1010,7 +1011,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                 var i_marginfieldvalue = s_ppricemargintext + s_avgmargintext + '\n' + s_isstockedlocal + ' \n  ' + o_LastNegoshDate;
                                 o_rec.setCurrentSublistValue({ fieldId: 'custcol61', sublistId: 'item', value: i_marginfieldvalue });
                                 window.oneanddone = 1;
-                            }
+                            // }
                             window.lastNegotiationDate = "";
                             window.preferedvendorrate = "";
                             window.itemaveragecost = "";
@@ -1030,8 +1031,12 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                 try {
                     if (o_rec.getValue({ fieldId: 'customform' }) !== 303) {
                         if (context.fieldId === 'povendor') {
-                            o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'PURCHPRICE' });
-                        } else if (context.fieldId === 'price' || (context.sublistId === 'item' && context.fieldId === 'location') || context.fieldId === 'custcol81') {
+                            i_vendorid = o_rec.getCurrentSublistValue({ fieldId: 'povendor', sublistId: 'item' });
+                            if (i_vendorid != '') {
+                                // o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'PURCHPRICE' });
+                            }
+                        //TODO: custcol81 isn't even on the main forms. price level and vendor do update the field. replace custcol91 with costestimaterate
+                        } else if (context.fieldId === 'price' || (context.sublistId === 'item' && context.fieldId === 'location') || context.fieldId === 'costestimaterate') {
                             if (o_rec.getCurrentSublistValue({ fieldId: 'price', sublistId: 'item' }) < 0) {
                                 o_rec.setCurrentSublistValue({ fieldId: 'custcol61', sublistId: 'item', value: 'Please enter a target margin or select a price level to see margin.' });
                                 return;
@@ -1041,9 +1046,10 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
 
 
                             if (s_itemtype === 'InvtPart' || s_itemtype === 'Assembly') {
-                                if (!window.preferedvendorrate && i_itemid) {
+                                if (i_itemid) {     //!window.preferedvendorrate && 
                                     window.labelac = "AC:";
                                     i_lineloc = o_rec.getCurrentSublistValue({ fieldId: 'location', sublistId: 'item' });
+                                    i_linecostrate = o_rec.getCurrentSublistValue({ fieldId: 'costestimaterate', sublistId: 'item' });
                                     if (i_lineloc) {
                                         a_columns = [
                                             search.createColumn({ name: "locationaveragecost", summary: search.Summary.AVG }),
@@ -1071,10 +1077,11 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                         });
 
                                         var i_locationac = 0;
+                                        window.costestimaterate = i_linecostrate;
                                         window.source = o_item_search[0].getValue(a_columns[6]);
-                                        window.locationAva = o_item_search[0].getValue(a_columns[7]);
-                                        window.lastNegotiationDate = o_item_search[0].getValue(a_columns[8]);
-                                        //window.altCount = o_item_search[0].getValue(a_columns[9]);
+                                            window.locationAva = o_item_search[0].getValue(a_columns[7]);
+                                            window.lastNegotiationDate = o_item_search[0].getValue(a_columns[8]);
+                                            //window.altCount = o_item_search[0].getValue(a_columns[9]);
                                         if (o_item_search.length > 0) {
                                             i_locationac = o_item_search[0].getValue(a_columns[0]);
                                             window.preferedvendorrate = o_item_search[0].getValue(a_columns[2]);
@@ -1082,18 +1089,19 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                             window.isStocked = o_item_search[0].getValue(a_columns[3]);
                                             window.LocationClass = o_item_search[0].getValue(a_columns[4]);
                                             window.userClass = o_item_search[0].getValue(a_columns[5]);
-
+                                              
                                         }
 
-                                        if (window.source === 2 && window.itemaveragecost) {
-                                            o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'AVGCOST' });
-                                        } else {
-                                            if (parseInt(window.locationAva) >= parseInt(o_rec.getCurrentSublistValue({ fieldId: 'quantity', sublistId: 'item' })) && i_locationac) {
-                                                o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'AVGCOST' });
-                                            } else {
-                                                o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'PURCHPRICE' });
-                                            }
-                                        }
+                                        //TODO: should allow users to set this and not have it be reset
+                                        // if (window.source === 2 && window.itemaveragecost) {
+                                        //     o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'AVGCOST' });
+                                        // } else {
+                                        //     if (parseInt(window.locationAva) >= parseInt(o_rec.getCurrentSublistValue({ fieldId: 'quantity', sublistId: 'item' })) && i_locationac) {
+                                        //         o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'AVGCOST' });
+                                        //     } else {
+                                        //         o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'PURCHPRICE' });
+                                        //     }
+                                        // }
                                         if (i_locationac > 0) {
                                             window.itemaveragecost = i_locationac;
                                             window.labelac = "LAC:";
@@ -1105,7 +1113,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                 i_itemrate = o_rec.getCurrentSublistValue({ fieldId: 'rate', sublistId: 'item' });
 
                                 o_temp = {
-                                    ppmargin: ((1 - (window.preferedvendorrate / i_itemrate)) * 100).toFixed(2),
+                                    ppmargin: ((1 - (window.costestimaterate / i_itemrate)) * 100).toFixed(2),
                                     avgcostmargin: ((1 - (window.itemaveragecost / i_itemrate)) * 100).toFixed(2),
                                     avgtextmargin: '',
                                     ppricemargintext: '',
@@ -1121,7 +1129,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                 }
 
                                 if (s_itemtype !== 'Assembly') {
-                                    o_temp.ppricemargintext = "PP: " + o_temp.ppmargin + "% \n";
+                                    o_temp.ppricemargintext = "PP (Est): " + o_temp.ppmargin + "% \n";
                                 }
 
                                 if (parseInt(window.isStocked) > 0) {
