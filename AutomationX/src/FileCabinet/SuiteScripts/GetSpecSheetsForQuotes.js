@@ -48,7 +48,7 @@ var itemCount = quoteRec.getLineItemCount('item');
            nlapiLogExecution('debug','file', file);	
           
 
-				var imageUrl = 'http://automation-x.com' +file.getURL();
+				var imageUrl = 'https://shop.automation-x.com' +file.getURL();
 
             var mySubString = imageUrl.substring( imageUrl.lastIndexOf("h=") + 2,  imageUrl.lastIndexOf("&"));
             nlapiLogExecution('debug','mySubString', mySubString);

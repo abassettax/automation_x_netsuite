@@ -51,7 +51,7 @@ var itemCount = nlapiGetLineItemCount('item');
           
 			// printed file must be available without login, otherwise you get error on printing 
 			//if (file.isOnline()){
-				var imageUrl = 'http://automation-x.com' +file.getURL();
+				var imageUrl = 'https://shop.automation-x.com' +file.getURL();
 				// complete url
 				//var completeUrl = imageUrl;
 				// set completed url to your custom field of type free-form-text
