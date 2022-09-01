@@ -916,7 +916,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
             //SO_postSource_margincalc
             _so_postsource: function (context) {
                 var o_rec = context.currentRecord;
-                var s_itemtype, i_lineloc, i_itemrate, s_avgmargintext, s_ppricemargintext;
+                var s_itemtype, i_lineloc, i_itemrate, s_avgmargintext, s_ppricemargintext, s_costmargintext;
                 var i_locationac = 0;
                 try {
                     if (context.fieldId === 'item' && context.sublistId === 'item' && o_rec.getValue('customform') !== 303) {
@@ -991,15 +991,18 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
 
                                 i_itemrate = o_rec.getCurrentSublistValue({ fieldId: 'rate', sublistId: 'item' });
 
-                                var i_ppMargin = ((1 - (window.costestimaterate / i_itemrate)) * 100).toFixed(2); //-2
+                                var i_costMargin = ((1 - (window.costestimaterate / i_itemrate)) * 100).toFixed(2);
+                                var i_ppMargin = ((1 - (window.preferedvendorrate / i_itemrate)) * 100).toFixed(2); //-2
                                 var i_avgcostMargin = ((1 - (window.itemaveragecost / i_itemrate)) * 100).toFixed(2);
 
                                 if (window.itemaveragecost > 0) {
-                                    s_avgmargintext = window.labelac + i_avgcostMargin + '%';
+                                    s_avgmargintext = window.labelac + i_avgcostMargin + '%\n';
                                 }
 
+                                s_costmargintext = 'Cost Est:' + i_costMargin + '%\n ';
+
                                 if (s_itemtype !== 'Assembly') {
-                                    s_ppricemargintext = '\nPP (Est):' + i_ppMargin + '%\n ';
+                                    s_ppricemargintext = 'PP:' + i_ppMargin + '%\n ';
                                 }
 
                                 var o_LastNegoshDate = window.lastNegotiationDate;
@@ -1008,7 +1011,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                     s_isstockedlocal = 'Stocked' + '.\n';
                                 }
 
-                                var i_marginfieldvalue = s_ppricemargintext + s_avgmargintext + '\n' + s_isstockedlocal + ' \n  ' + o_LastNegoshDate;
+                                var i_marginfieldvalue = s_costmargintext + s_ppricemargintext + s_avgmargintext + '\n' + s_isstockedlocal + ' \n  ' + o_LastNegoshDate;
                                 o_rec.setCurrentSublistValue({ fieldId: 'custcol61', sublistId: 'item', value: i_marginfieldvalue });
                                 window.oneanddone = 1;
                             // }
@@ -1035,7 +1038,6 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             if (i_vendorid != '') {
                                 // o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'PURCHPRICE' });
                             }
-                        //TODO: custcol81 isn't even on the main forms. price level and vendor do update the field. replace custcol91 with costestimaterate
                         } else if (context.fieldId === 'price' || (context.sublistId === 'item' && context.fieldId === 'location') || context.fieldId === 'costestimaterate') {
                             if (o_rec.getCurrentSublistValue({ fieldId: 'price', sublistId: 'item' }) < 0) {
                                 o_rec.setCurrentSublistValue({ fieldId: 'custcol61', sublistId: 'item', value: 'Please enter a target margin or select a price level to see margin.' });
@@ -1113,8 +1115,10 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                 i_itemrate = o_rec.getCurrentSublistValue({ fieldId: 'rate', sublistId: 'item' });
 
                                 o_temp = {
-                                    ppmargin: ((1 - (window.costestimaterate / i_itemrate)) * 100).toFixed(2),
+                                    costMargin: ((1 - (window.costestimaterate / i_itemrate)) * 100).toFixed(2),
+                                    ppmargin: ((1 - (window.preferedvendorrate / i_itemrate)) * 100).toFixed(2),
                                     avgcostmargin: ((1 - (window.itemaveragecost / i_itemrate)) * 100).toFixed(2),
+                                    costmargintext: '',
                                     avgtextmargin: '',
                                     ppricemargintext: '',
                                     isstockedlocal: 'Non-Stock' + '.\n',
@@ -1128,8 +1132,10 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                     o_temp.avgtextmargin = window.labelac + o_temp.avgcostmargin + " % \n ";
                                 }
 
+                                o_temp.costmargintext = 'Cost Est:' + o_temp.costMargin + '%\n ';
+
                                 if (s_itemtype !== 'Assembly') {
-                                    o_temp.ppricemargintext = "PP (Est): " + o_temp.ppmargin + "% \n";
+                                    o_temp.ppricemargintext = "PP: " + o_temp.ppmargin + "% \n";
                                 }
 
                                 if (parseInt(window.isStocked) > 0) {
@@ -1143,7 +1149,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                     o_temp.altlabel = '\n Alternates:' + parseInt(window.window.altCount);
                                 }
 
-                                o_temp.marginval = o_temp.ppricemargintext + o_temp.avgtextmargin + o_temp.isstockedlocal + o_temp.negoshlabel + window.lastNegotiationDate + o_temp.altlabel;
+                                o_temp.marginval = o_temp.costmargintext + o_temp.ppricemargintext + o_temp.avgtextmargin + o_temp.isstockedlocal + o_temp.negoshlabel + window.lastNegotiationDate + o_temp.altlabel;
                                 o_rec.setCurrentSublistValue({ fieldId: 'custcol112', sublistId: 'item', value: window.isStocked || '' });
                                 o_rec.setCurrentSublistValue({ fieldId: 'custcol61', sublistId: 'item', value: o_temp.marginval || '' });
 
