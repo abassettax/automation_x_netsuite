@@ -22,7 +22,10 @@ define(["require", "exports", "N/record", "./DH_Library"],
                     this.recordObj.setValue({ fieldId: 'owner', value: options.owner !== DH_Library_1.VENDOR.DARREN_HILL ? options.owner : DH_Library_1.EMPLOYEE.MIKE_HARRIS });
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.Item, value: options.details.itemId });
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.Quantity, value: options.details.quantity });
-                    this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.LocationPreferredStockLevel, value: options.details.LocationPreferredStockLevel });  /// mh added
+                    log.debug('check', !isNaN(options.details.LocationPreferredStockLevel));
+                    if (!isNaN(options.details.LocationPreferredStockLevel)) {
+                        this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.LocationPreferredStockLevel, value: options.details.LocationPreferredStockLevel });  /// mh added
+                    }
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.SalesOrderQuantity, value: options.details.quantity }); // From the Sales Order
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.Location, value: options.details.locationId });
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.Vendor, value: options.details.vendorId });

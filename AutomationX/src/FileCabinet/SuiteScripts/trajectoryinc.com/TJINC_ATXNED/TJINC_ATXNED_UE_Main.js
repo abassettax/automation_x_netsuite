@@ -36,8 +36,8 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
         };
 
         return {
-
-            _transfer_orderproc: function (context) {
+            //TODO: creates Transfer Orders on beforeSubmit of SO
+            _transfer_orderproc: function (context,type) {
                 let o_rec = context.newRecord;
                 let i_location, i_loc_item;
                 let b_createto, b_save;
@@ -52,13 +52,23 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                     if (i_location) {
 
                         for (i = 0; i < o_rec.getLineCount('item'); i++) {
-                            i_loc_item = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: i });
-                            b_createto = false;
+                            if (type == 'salesorder') {
+                                i_loc_item = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: i });
+                                b_createto = false;
+                            } else if (type == 'workorder') {
+                                i_loc_item = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol114', line: i });
+                                b_createto = false;
+                            }
+                            
 
                             if (parseInt(o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: i })) === 5) {
                                 b_createto = true;
                             } else {
-                                b_createto = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol76', line: i });
+                                if (type == 'salesorder') {
+                                    b_createto = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol76', line: i });
+                                } else if (type == 'workorder') {
+                                    b_createto = false;
+                                }
                             }
 
                             if (i_loc_item !== i_location && b_createto) {
@@ -75,6 +85,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             i_lines = 0
                             let o_torec = record.create({ type: record.Type.TRANSFER_ORDER, isDynamic: false });
                             o_torec.setValue({ fieldId: 'location', value: a_tolocation[i] });
+                            log.debug('locations to transfer to', i_location);
                             o_torec.setValue({ fieldId: 'transferlocation', value: i_location  });
                             o_torec.setValue({ fieldId: 'class', value: o_rec.getValue({ fieldId:'class' }) });
                             o_torec.setValue({ fieldId: 'employee', value: runtime.getCurrentUser().id });
@@ -83,18 +94,30 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             for (j = 0; j < o_rec.getLineCount('item'); j++) {
                                 o_temp = {
                                     line_item: o_rec.getSublistValue({ sublistId: 'item', fieldId: 'item', line: j }),
-                                    line_loc: o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: j }),
                                     line_qty: o_rec.getSublistValue({ sublistId: 'item', fieldId: 'quantity', line: j }),
-                                    line_qtyav: o_rec.getSublistValue({ sublistId: 'item', fieldId: 'quantityavailable', line: j }),
                                     line_toqty: 0,
                                     line_createTO: false
                                 };
+                                if (type == 'salesorder') {
+                                    o_temp.line_loc = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: j });
+                                    o_temp.line_qtyav = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'quantityavailable', line: j });
+                                } else if (type == 'workorder') {
+                                    o_temp.line_loc = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol114', line: j })
+                                    o_temp.line_qtyav = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol115', line: j });
+                                }
+                                log.debug('o_temp', JSON.stringify(o_temp));
 
+                                log.debug('custcol90', o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: j }));
                                 if (parseInt(o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: j })) === 5) {
                                     o_temp.line_createTO = true;
                                 } else {
-                                    o_temp.line_createTO = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol76', line: j });
+                                    if (type == 'salesorder') {
+                                        o_temp.line_createTO = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol76', line: j });
+                                    } else if (type == 'workorder') {
+                                        o_temp.line_createTO = false;
+                                    }
                                 }
+                                log.debug('o_temp 2', JSON.stringify(o_temp));
 
                                 if (a_tolocation[i] === o_temp.line_loc && o_temp.line_qtyav > 0 && o_temp.line_createTO) {
 
@@ -134,14 +157,24 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                 let i_nrec_id = o_torec.save({ enableSourcing: true, ignoreMandatoryFields: true });
                                 log.audit({ title: '_transfer_orderproc', details: 'New Transfer Order created for location: ' + a_tolocation[i] });
                                 for (j = 0; j < o_rec.getLineCount('item'); j++) {
-                                    if (o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: j }) === a_tolocation[i]) {
-                                        o_rec.setSublistValue({ sublistId: 'item', fieldId: 'custcol74', line: j, value: i_nrec_id });
-                                        o_rec.setSublistValue({ sublistId: 'item', fieldId: 'location', line: j, value: i_location });
-
-                                        if (parseInt(o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: j })) === 5) {
-                                            o_rec.setSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: j, value: '' });
+                                    if (type == 'salesorder') {
+                                        if (o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: j }) === a_tolocation[i]) {
+                                            o_rec.setSublistValue({ sublistId: 'item', fieldId: 'custcol74', line: j, value: i_nrec_id });
+                                            o_rec.setSublistValue({ sublistId: 'item', fieldId: 'location', line: j, value: i_location });
+    
+                                            if (parseInt(o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: j })) === 5) {
+                                                o_rec.setSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: j, value: '' });
+                                            }
                                         }
-                                    }
+                                    } else if (type = 'workorder') {
+                                        if (o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol114', line: j }) === a_tolocation[i]) {
+                                            o_rec.setSublistValue({ sublistId: 'item', fieldId: 'custcol74', line: j, value: i_nrec_id });
+    
+                                            if (parseInt(o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: j })) === 5) {
+                                                o_rec.setSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: j, value: '' });
+                                            }
+                                        }
+                                    } 
                                 }
                             }
                         }
@@ -598,7 +631,8 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                 }
             },
             //DH - Salers Order - UE after submit
-            _dh_so_ue_as: function (context) {
+            //TODO: creates Purchase Requests on afterSubmit of SO
+            _dh_so_ue_as: function (context,type) {
                 try {
                     if (runtime.executionContext !== runtime.ContextType.MAP_REDUCE) {
                         let purchaseRequests = [];
@@ -654,20 +688,35 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                                 i_cost = 0;
                                             }
                                         }
-
+                                        
+                                        if (type == 'salesorder') {
+                                            var locationId = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'location' });
+                                            var salesOrderId = +context.newRecord.id;
+                                            var salesOrderLine = i + 1;
+                                            var workOrderId = null;
+                                            var workOrderLine = null;
+                                        } else if (type == 'workorder') {
+                                            var locationId = context.newRecord.getValue({ fieldId: 'location' })
+                                            var workOrderId = +context.newRecord.id;
+                                            var workOrderLine = i + 1;
+                                            var salesOrderId = null;
+                                            var salesOrderLine = null;
+                                        }
                                         purchaseRequests.push({
                                             processingStatus: dh_pr.PurchaseRequestProcessingStatus.PurchaseOrder,
                                             LocationPreferredStockLevel: +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol112' }),   /// MH ADDED
                                             vendorId: +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'povendor' }),
-                                            locationId: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'location' }),
+                                            locationId: locationId,
                                             email: runtime.getCurrentUser().email,
                                             fromLocationId: -1,
                                             itemId: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'item' }),
                                             rate: i_cost,
                                             internalId: '-1',
                                             quantity: quantity,
-                                            salesOrderId: +context.newRecord.id,
-                                            salesOrderLine: i + 1,
+                                            salesOrderId: salesOrderId,
+                                            salesOrderLine: salesOrderLine,
+                                            workOrderId: workOrderId,
+                                            workOrderLine: workOrderLine,
                                             purchasingNotes: context.newRecord.getValue({ fieldId: dh_lib.FIELDS.TRANSACTION.BODY.PurchasingNotes }),
                                             estimatedCost: estimatedCost,
                                             fromSalesOrderProcess: createType !== dh_pr.CreateType.PurchaseOrder,
@@ -684,6 +733,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                 }
                             }
                         }
+                        log.debug('beforeSubmit - purchaseRequestsArr', "purchaseRequests: " + JSON.stringify(purchaseRequests));
                         // Send to Purchase Request Creation process
                         if (purchaseRequests.length > 0) {
                             if (purchaseRequests.length > 10) {
@@ -872,7 +922,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                     //DH - Salers Order - UE
                     this._dh_so_ue_bs(context);
 
-                    this._transfer_orderproc(context);
+                    this._transfer_orderproc(context,'salesorder');
 
                     this._linenumber(context);
 
@@ -882,6 +932,18 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                     }
                 } catch (e) {
                     log.error('tjincATX_beforeSubmitSO', e);
+                }
+            },
+
+            tjincATX_beforeSubmitWO: function (context) {
+                try {
+                    log.debug('tjincATX_beforeSubmitWO', 'IN');
+                    //DH - Salers Order - UE
+                    this._dh_so_ue_bs(context);
+
+                    this._transfer_orderproc(context,'workorder');
+                } catch (e) {
+                    log.error('tjincATX_beforeSubmitWO', e);
                 }
             },
 
@@ -907,10 +969,22 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                         o_rec.save({ enableSourcing: false, ignoreMandatoryFields: true });
 
                         //DH - Salers Order - UE after submit
-                        this._dh_so_ue_as(context);
+                        this._dh_so_ue_as(context, 'salesorder');
                     }
                 } catch (e) {
                     log.error('tjincATX_afterSubmitSO', e);
+                }
+            },
+
+            tjincATX_afterSubmitWO: function (context) {
+                try {
+                    log.debug('tjincATX_afterSubmitWO', 'IN');
+                    if (context.type !== 'delete') {
+                        //DH - Salers Order - UE after submit
+                        this._dh_so_ue_as(context,'workorder');
+                    }
+                } catch (e) {
+                    log.error('tjincATX_afterSubmitWO', e);
                 }
             },
 

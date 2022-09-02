@@ -83,4 +83,25 @@
         });
         salesOrder.save();
     };
+    exports.updateWorkOrder = function (workOrderInfo) {
+        var workOrder = record.load({
+            type: record.Type.WORK_ORDER,
+            id: workOrderInfo.id,
+            isDynamic: true
+        });
+        workOrderInfo.workOrderLineInfos.forEach(function (workOrderLineInfos) {
+            // Watch for index (as SS2.0 uses zero based)
+            var ss2LineIndex = workOrderLineInfos.lineId - 1;
+            workOrder.selectLine({ sublistId: 'item', line: ss2LineIndex });
+            if (workOrderLineInfos.relatedTransactionId) {
+                workOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: exports.FIELDS.TRANSACTION.COLUMN.RelatedTransaction, value: workOrderLineInfos.relatedTransactionId });
+            }
+            if (workOrderLineInfos.purchaseRequestId) {
+                workOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: exports.FIELDS.TRANSACTION.COLUMN.PurchaseRequest, value: workOrderLineInfos.purchaseRequestId });
+            }
+            workOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: exports.FIELDS.TRANSACTION.COLUMN.CreateType, value: '' });
+            workOrder.commitLine({ sublistId: 'item' });
+        });
+        workOrder.save();
+    };
 });

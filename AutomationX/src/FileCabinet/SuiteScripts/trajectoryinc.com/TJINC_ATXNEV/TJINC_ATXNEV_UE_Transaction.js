@@ -24,9 +24,12 @@
  function (record, lib) {
      function tjincATX_afterSubmit(context) {
          switch (context.newRecord.type.toLowerCase()) {
-             case record.Type.SALES_ORDER.toLowerCase():
-                 lib.tjincATX_afterSubmitSO(context);
-                 break;
+            case record.Type.SALES_ORDER.toLowerCase():
+                lib.tjincATX_afterSubmitSO(context);
+                break;
+            case record.Type.WORK_ORDER.toLowerCase():
+                lib.tjincATX_afterSubmitWO(context);
+                break;
          }
      }
 
@@ -40,9 +43,12 @@
 
      function tjincATX_beforeSubmit(context) {
          switch (context.newRecord.type.toLowerCase()) {
-             case record.Type.SALES_ORDER.toLowerCase():
-                 lib.tjincATX_beforeSubmitSO(context);
-                 break;
+            case record.Type.SALES_ORDER.toLowerCase():
+                lib.tjincATX_beforeSubmitSO(context);
+                break;
+            case record.Type.WORK_ORDER.toLowerCase():
+            lib.tjincATX_beforeSubmitWO(context);
+            break;
          }
      }
 

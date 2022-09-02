@@ -20,11 +20,14 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
             }
             var salesOrderLineInfos = [];
             var salesOrderId = -1;
+            var workOrderLineInfos = [];
+            var workOrderId = -1;
             options.purchaseRequests.forEach(function (purchaseRequest) {
                 var createPurchaseRequestResponse = exports.createPurchaseRequest({
                     employeeId: options.employeeId,
                     purchaseRequest: purchaseRequest
                 });
+                log.debug('getInputData - createPurchaseRequestResponse', JSON.stringify(createPurchaseRequestResponse));
                 if (createPurchaseRequestResponse.purchaseRequest && createPurchaseRequestResponse.purchaseRequest.fromSalesOrderProcess) {
                     processablePurchaseRequests.push(createPurchaseRequestResponse.purchaseRequest);
                 }
@@ -32,11 +35,23 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                     salesOrderId = purchaseRequest.salesOrderId;
                     salesOrderLineInfos.push(createPurchaseRequestResponse.salesOrderLineInfo);
                 }
+                if (createPurchaseRequestResponse.workOrderLineInfo) {
+                    workOrderId = purchaseRequest.workOrderId;
+                    workOrderLineInfos.push(createPurchaseRequestResponse.workOrderLineInfo);
+                }
             });
+            log.debug('getInputData - salesOrderId', salesOrderId + ' | ' + JSON.stringify(salesOrderLineInfos));
             if (salesOrderId > 0 && salesOrderLineInfos.length > 0) {
                 DH_Library_1.updateSalesOrder({
                     id: salesOrderId,
                     salesOrderLineInfos: salesOrderLineInfos
+                });
+            }
+            log.debug('getInputData - workOrderId', workOrderId + ' | ' + JSON.stringify(workOrderLineInfos));
+            if (workOrderId > 0 && workOrderLineInfos.length > 0) {
+                DH_Library_1.updateWorkOrder({
+                    id: workOrderId,
+                    workOrderLineInfos: workOrderLineInfos
                 });
             }
             return processablePurchaseRequests;
@@ -53,6 +68,10 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
             createPurchaseRequestResponse.purchaseRequest = options.purchaseRequest;
             createPurchaseRequestResponse.salesOrderLineInfo = {
                 lineId: options.purchaseRequest.salesOrderLine,
+                purchaseRequestId: purchaseRequestItemDetail.Id
+            };
+            createPurchaseRequestResponse.workOrderLineInfo = {
+                lineId: options.purchaseRequest.workOrderLine,
                 purchaseRequestId: purchaseRequestItemDetail.Id
             };
             return createPurchaseRequestResponse;
@@ -367,6 +386,7 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                 transferOrder.selectNewLine({ sublistId: 'item' });
                 transferOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'item', value: line.itemId });
                 transferOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity', value: line.quantity });
+                //TODO: default rate to last purchase price
                 transferOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: line.rate });
                 transferOrder.commitLine({ sublistId: 'item' });
             });
