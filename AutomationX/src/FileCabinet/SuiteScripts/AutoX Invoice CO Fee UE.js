@@ -3,8 +3,8 @@
 *@NScriptType UserEventScript
 */
 define([
-    'N/record', 'N/log',
-], function (record, log) {
+    'N/record', 'N/log', 'N/search',
+], function (record, log, search) {
 
     function beforeSubmit(context) {
 
@@ -12,6 +12,11 @@ define([
             return;
         } else {
             var invRec = context.newRecord;
+            var invTaxTotal = invRec.getValue('taxtotal');
+            log.debug({
+                title: 'beforeSubmit',
+                details: 'invTaxTotal: ' + invTaxTotal
+            });
             var invLocation = invRec.getValue('location');
             log.debug({
                 title: 'beforeSubmit',
@@ -23,7 +28,7 @@ define([
                 details: 'invoice ship state: ' + invShipState
             });
             var shipMethod = invRec.getValue('shipmethod');
-            if (invShipState == 'CO' && shipMethod != 4605) {   //must be CO and a delivery
+            if (invShipState == 'CO' && shipMethod != 4605 && invTaxTotal> 0) {   //must be CO, a delivery, and cust in not tax exempt
                 var numLines = invRec.getLineCount({
                     sublistId: 'item'
                 });
