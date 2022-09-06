@@ -1,6 +1,6 @@
 function TimeDelay(){
   debugger;
- if(  nlapiGetFieldValue('customform') == 347 && nlapiGetCurrentLineItemValue('item', 'quantityavailable' ) < nlapiGetCurrentLineItemValue('item', 'quantity' ) ){
+ if( (nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362) && nlapiGetCurrentLineItemValue('item', 'quantityavailable' ) < nlapiGetCurrentLineItemValue('item', 'quantity' ) ){
   alert( "STOCK ALERT\n\nThere is not enough avalible quantity to complete this line.  Please double check your part number or reduce the quantity to be less than or equal to Senecas available stock."); return false;} 
   return true; 
   
@@ -8,9 +8,9 @@ function TimeDelay(){
 
 function valLine(type, name)
 {
-  if( nlapiGetFieldValue('customform') == 347){ nlapiSetCurrentLineItemValue('item', 'location',69 ); } //
+  if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362){ nlapiSetCurrentLineItemValue('item', 'location',69 ); } //
    
-if( nlapiGetFieldValue('customform') == 347   && ( //AX Seneca Sales Order form 
+if( (nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362) && ( //AX Seneca Sales Order form 
 	parseInt(nlapiGetCurrentLineItemValue('item', 'quantityavailable' )) < 				parseInt(nlapiGetCurrentLineItemValue('item', 'quantity' ))))
 {
    
@@ -25,7 +25,7 @@ function fchangesen(type, name)
  
 
   
- if(name == 'custbody213' /*AFE/LOE*/ && nlapiGetFieldValue('customform') == 347     )
+ if(name == 'custbody213' /*AFE/LOE*/ && (nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362)     )
    { 
    
   var afeField= document.getElementById('custbody214_fs');
@@ -73,7 +73,7 @@ function POSpageInt()
 if(tran == 'To Be Generated' ){         nlapiSetFieldValue('custbody173',nlapiGetContext().getContact() );                   nlapiSetFieldValue('custbody35', nlapiLookupField('contact', nlapiGetContext().getContact(), 'entityid') ); }
 
  
-if(nlapiGetFieldValue('customform') == 347  ) //
+if(nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362) //
 {  
  var loeField= document.getElementById('custbody215_fs');
   var loeFieldLabel= document.getElementById('custbody215_fs_lbl_uir_label');  //
@@ -137,7 +137,7 @@ function POSlineInt()
 // nlapiSetCurrentLineItemValue('location', nlapiLookupField('contact', nlapiGetContext().getContact(), 'entityid'));
 // nlapiSetCurrentLineItemValue('item', 'location', headerlocation, false, false);
 if( nlapiGetFieldValue('customform') == 363 ){nlapiSetCurrentLineItemValue('item', 'location', 47 ); } //Enlink
-if( nlapiGetFieldValue('customform') == 347 ){ nlapiSetCurrentLineItemValue('item', 'location',69 ); } //XTO
+if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 ){ nlapiSetCurrentLineItemValue('item', 'location',69 ); } //XTO
 return true;
 }
 
