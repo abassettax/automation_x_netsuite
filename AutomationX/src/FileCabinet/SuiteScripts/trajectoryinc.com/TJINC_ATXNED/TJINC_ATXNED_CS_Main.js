@@ -1094,7 +1094,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                               
                                         }
 
-                                        //TODO: should allow users to set this and not have it be reset
+                                        //commenting this out should allow users to set this and not have it be reset
                                         // if (window.source === 2 && window.itemaveragecost) {
                                         //     o_rec.setCurrentSublistValue({ fieldId: 'costestimatetype', sublistId: 'item', value: 'AVGCOST' });
                                         // } else {
@@ -1465,7 +1465,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
             _xto_trailerhide_vline: function (context) {
                 var o_rec = context.currentRecord;
                 try {
-                    if (o_rec.getValue({ fieldId: 'customform' }) === 347 && (parseInt(o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantityavailable' })) < o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity' }))) {
+                    if ((o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362) && (parseInt(o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantityavailable' })) < o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity' }))) {
                         tj.alert('STOCK ALERT\n\nThere is not enough avalible quantity to complete this line.  Please double check your part number or reduce the quantity to be less than or equal to Senecas available stock.');
                         return false;
                     }
@@ -1482,7 +1482,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     if (o_rec.getValue({ fieldId: 'customform' }) === 363) { // Form does not longer exist
                         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 47 })
                     }
-                    if (o_rec.getValue({ fieldId: 'customform' }) === 347) {
+                    if (o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362) {
                         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 69 })
                     }
                 } catch (e) {
@@ -1494,7 +1494,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                 var o_rec = context.currentRecord;
                 var o_temp;
                 try {
-                    if (context.fieldId === 'custbody213' && o_rec.getValue({ fieldId: 'customform' }) === 347) {
+                    if (context.fieldId === 'custbody213' && (o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362)) {
                         o_temp = {
                             afeField: document.getElementById('custbody214_fs'),
                             afeFieldLabel: document.getElementById('custbody214_fs_lbl_uir_label'),
@@ -1554,7 +1554,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                         o_rec.setValue({ fieldId: 'custbody68', value: 20 });
                     }
 
-                    if (o_rec.getValue('customform') === 347 && o_rec.getValue('custbody213') === 1) {
+                    if ((o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362) && o_rec.getValue('custbody213') === 1) {
                         o_temp = {
                             loeField: document.getElementById('custbody215_fs'),
                             loeFieldLabel: document.getElementById('custbody215_fs_lbl_uir_label')
@@ -1581,7 +1581,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     }
                     if (o_rec.getValue('customform') === 363) {
                         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 47 });
-                    } else if (o_rec.getValue('customform') === 347) {
+                    } else if (o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362) {
                         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 69 });
                     }
                 } catch (e) {
