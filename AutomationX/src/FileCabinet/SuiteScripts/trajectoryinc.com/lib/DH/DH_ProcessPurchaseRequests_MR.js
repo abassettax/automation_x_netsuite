@@ -35,7 +35,7 @@
         if (employeeId === DH_Library_1.VENDOR.DARREN_HILL) {
             employeeId = DH_Library_1.EMPLOYEE.MIKE_HARRIS;
         }
-        var emailBody = 'The following is a list of Error(s) and Transactions(s)<br/><br/>';
+        var emailBody = 'The following is a list of Transactions(s)<br/><br/>';
         var transactionSection = 'Transactions:<br/><br/>', hasTransactions = false;
         var errorSection = '<br/><br/>Errors:<br/>', hasErrors = false;
         context.output.iterator().each(function (key, value) {
@@ -64,6 +64,7 @@
             return true;
         });
         if (hasErrors) {
+            emailBody += 'The following is a list of Error(s)<br/><br/>';
             emailBody += errorSection;
         }
         if (isProcurementEmployee(employeeId) && (hasTransactions || hasErrors)) {
