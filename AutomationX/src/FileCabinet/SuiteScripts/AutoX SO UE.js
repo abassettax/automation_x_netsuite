@@ -48,6 +48,7 @@ define([
                     columns: ['type']
                 });
                 var itemType = itemLookup.type[0].value;
+                var recordType = null;
                 switch (itemType) {   // Compare item type to its record type counterpart
                     case 'InvtPart':
                     recordType = record.Type.INVENTORY_ITEM;
@@ -69,10 +70,12 @@ define([
                         break;
                     default:
                }
+               if (recordType != null && recordType != undefined && recordType != '') {
                 itemsArr.push({
                     item: lineItem,
                     type: recordType
                 });
+               }
             }
             log.debug({
                 title: 'itemsArr: ',
