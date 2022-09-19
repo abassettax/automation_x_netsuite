@@ -143,11 +143,8 @@ return true;
 
 
 
-
-
-
-
-
-
-
-
+function saverecsen()
+{
+if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 ){ nlapiSetFieldValue('paymentmethod', 16 ); } //Seneca set payment method to E-Invoice
+return true;
+}
