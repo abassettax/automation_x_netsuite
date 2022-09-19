@@ -54,8 +54,8 @@
         purchaseRequestProcessor.scriptId = 'customscript_tjinc_dh_pr_mr';
         purchaseRequestProcessor.deploymentId = null; // Setting this to null forces Netsuite to select the next available 'idle' deployment
         purchaseRequestProcessor.params = {
-            custscript_dh_employee: employeeId,
-            custscript_dh_purchaserequests: JSON.stringify(purchaseRequests)
+            custscript_tjinc_dh_employee: employeeId,
+            custscript_tjinc_dh_purchaserequests: JSON.stringify(purchaseRequests)
         };
         purchaseRequestProcessor.submit();
     };
