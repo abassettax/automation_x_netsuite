@@ -18,40 +18,46 @@ function AXSetHold()
    
    //// End search
 
-// Invoice/Customer Search
+// Invoice/Customer Search  //custbody170 is Transmission Date field, custentity154 is Customer Market Code(s)
   var invsearchcolumns = new Array();
   invsearchcolumns[0] = new nlobjSearchColumn("internalid","customerMain","GROUP");
   invsearchcolumns[1] =  new nlobjSearchColumn("formulanumeric",null,"MAX").setFormula("TO_NUMBER((CASE WHEN  {custbody170} IS NULL THEN TO_CHAR({daysoverdue}) ELSE TO_CHAR(({daysoverdue} - ( {custbody170}-{trandate})))  END))");
   invsearchcolumns[2] = new nlobjSearchColumn("custentity154","customerMain","GROUP");
 
+  //NTS: AX Hold Search 1-15-18
   var searchresults = nlapiSearchRecord('transaction', 4898, null, invsearchcolumns );
   var custid ="";
   var MaxDaysOverdue ="";
   var CustMarketCodes = "";
    var  searchresultsarray = new Array();
  
-  for ( var i = 0; searchresults != null && i < searchresults.length; i++ )
- 		{
+  for ( var i = 0; searchresults != null && i < searchresults.length; i++ ){
 
-	 custid = searchresults[i].getValue(invsearchcolumns[0]);
-     MaxDaysOverdue =parseInt(searchresults[i].getValue(invsearchcolumns[1]));
-     CustMarketCodes = searchresults[i].getValue(invsearchcolumns[2]);
-          
-  searchresultsarray.push(custid);
+	  custid = searchresults[i].getValue(invsearchcolumns[0]);
+    MaxDaysOverdue =parseInt(searchresults[i].getValue(invsearchcolumns[1]));
+    CustMarketCodes = searchresults[i].getValue(invsearchcolumns[2]);
+    searchresultsarray.push(custid);
               
-if( MarketCodesForSoftHoldArray.indexOf(CustMarketCodes)!=-1  )
-  {
- if(MaxDaysOverdue >= ProducerHardHoldDays){   nlapiSubmitField("customer", custid, "custentity327", 4);   }else if(MaxDaysOverdue >= ProducerSoftHoldDays){ nlapiSubmitField("customer", custid, "custentity327", 3);  } else{  nlapiSubmitField("customer", custid, "custentity327", 5);}
-  }
-
-if( MarketCodesForSoftHoldArray.indexOf(CustMarketCodes)==-1  )
-  {
-if(MaxDaysOverdue >= GeneralHoldDays){  nlapiSubmitField("customer", custid, "custentity327", 4);  } else{ nlapiSubmitField("customer", custid, "custentity327", 5);   }
-  }
-//nlapiLogExecution('AUDIT', 'MaxDaysOverdue', MaxDaysOverdue); 
-
-
+    if( MarketCodesForSoftHoldArray.indexOf(CustMarketCodes)!=-1  ){
+      if(MaxDaysOverdue >= ProducerHardHoldDays){   
+        nlapiSubmitField("customer", custid, "custentity327", 4);   
+      } else if(MaxDaysOverdue >= ProducerSoftHoldDays){ 
+        nlapiSubmitField("customer", custid, "custentity327", 3);  
+      } else{  
+        nlapiSubmitField("customer", custid, "custentity327", 5);
+      }
+    }
+    if( MarketCodesForSoftHoldArray.indexOf(CustMarketCodes)==-1  ){
+      if(MaxDaysOverdue >= GeneralHoldDays){  
+        nlapiSubmitField("customer", custid, "custentity327", 4);  
+      } else{ 
+        nlapiSubmitField("customer", custid, "custentity327", 5);   
+      }
         }
+      //nlapiLogExecution('AUDIT', 'MaxDaysOverdue', MaxDaysOverdue); 
+
+
+  }
   
  ///////// check for customers on hold who will be off hold.
 
@@ -81,6 +87,8 @@ if(searchresultsarray.indexOf(custonhold)==-1  ){ nlapiSubmitField("customer", c
 //Soft Hold   3  
 //On Hold   4  
 //Off Hold   5  
-//Credit Limit Soft Hold   6  
-//Credit Limit Hold 7
+//Credit Limit Soft Hold   6 - DELETED
+//Credit Limit Hold 7 - DELETED
+//Disable Hold  8
+//Forced Hold   9
 
