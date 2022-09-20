@@ -47,35 +47,37 @@ define([
                     id: lineItem,
                     columns: ['type']
                 });
-                var itemType = itemLookup.type[0].value;
-                var recordType = null;
-                switch (itemType) {   // Compare item type to its record type counterpart
-                    case 'InvtPart':
-                    recordType = record.Type.INVENTORY_ITEM;
-                    break;
-                    case 'NonInvtPart':
-                        recordType = record.Type.NON_INVENTORY_ITEM;
+                if (itemLookup.length > 0) {
+                    var itemType = itemLookup.type[0].value;
+                    var recordType = null;
+                    switch (itemType) {   // Compare item type to its record type counterpart
+                        case 'InvtPart':
+                        recordType = record.Type.INVENTORY_ITEM;
                         break;
-                    case 'Service':
-                        recordType = record.Type.SERVICE_ITEM;
-                        break;
-                    case 'Assembly':
-                        recordType = record.Type.ASSEMBLY_ITEM;
-                        break;                 
-                    case 'Kit':
-                        recordType = record.Type.KIT_ITEM; //Kit/Package	
-                        break;
-                    case 'Group':
-                        recordType = record.Type.ITEM_GROUP; //Item Group
-                        break;
-                    default:
-               }
-               if (recordType != null && recordType != undefined && recordType != '') {
-                itemsArr.push({
-                    item: lineItem,
-                    type: recordType
-                });
-               }
+                        case 'NonInvtPart':
+                            recordType = record.Type.NON_INVENTORY_ITEM;
+                            break;
+                        case 'Service':
+                            recordType = record.Type.SERVICE_ITEM;
+                            break;
+                        case 'Assembly':
+                            recordType = record.Type.ASSEMBLY_ITEM;
+                            break;                 
+                        case 'Kit':
+                            recordType = record.Type.KIT_ITEM; //Kit/Package	
+                            break;
+                        case 'Group':
+                            recordType = record.Type.ITEM_GROUP; //Item Group
+                            break;
+                        default:
+                   }
+                   if (recordType != null && recordType != undefined && recordType != '') {
+                    itemsArr.push({
+                        item: lineItem,
+                        type: recordType
+                    });
+                   }
+                }
             }
             log.debug({
                 title: 'itemsArr: ',
