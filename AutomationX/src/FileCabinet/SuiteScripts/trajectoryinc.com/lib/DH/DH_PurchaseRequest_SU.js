@@ -422,7 +422,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     search.createColumn({ name: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.IsCustomPrice }),
                     search.createColumn({ name: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.VendorNotes }), // 29 VendorNotes
                     search.createColumn({ name: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.LastNegotiationDate }),//30 MH Added
-                    search.createColumn({ name: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Rate })//31 SO rate added            
+                    search.createColumn({ name: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Rate }),//31 SO rate added
+                    search.createColumn({ name: 'cost', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//32 Item purchase price added
                 ]
             }).run().each(function (result) {
                 var purchaseRequestItemDetail = {
@@ -450,7 +451,6 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     monthsOnHand: +result.getValue(result.columns[17]),
                     companyOnOrder: +result.getValue(result.columns[18]),
                     locationOnOrder: +result.getValue(result.columns[19]),
-                    estimatedCost: +result.getValue(result.columns[20]),
                     salesOrderId: +result.getValue(result.columns[21]),
                     salesOrderQuantity: +result.getValue(result.columns[22]),
                     email: result.getValue(result.columns[23]),
@@ -471,6 +471,11 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     fromSalesOrderProcess: false,
                     rate: result.getValue(result.columns[31])
                 };
+                var estCost = +result.getValue(result.columns[20]);
+                if (estCost == 0) {
+                    estCost = +result.getValue(result.columns[32]);
+                }
+                purchaseRequestItemDetail.estimatedCost = estCost;
                 itemIds.push(purchaseRequestItemDetail.itemId);
                 // Ensure we only keep the unique Item / Location combinations
                 if (itemLocationIds.indexOf(purchaseRequestItemDetail.itemId + "_" + purchaseRequestItemDetail.locationId) === -1) {
@@ -520,7 +525,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             }
                             //else if available and months on hand greater than 0, eval further
                             else {
-                                //TODO: determines value for From Location field. need to review logic that determines if a match is found. may just need to skip this defaulting
+                                //determines value for From Location field. need to review logic that determines if a match is found. may just need to skip this defaulting
                                 var fromLocationDetails = getFromLocation(purchaseRequestItemDetail.itemId, purchaseRequestItemDetail.quantity, purchaseRequestItemDetail.locationId);
                                 //if transfer match is not found, set to PO
                                 if (fromLocationDetails.fromLocation === -1) {
@@ -548,7 +553,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         // FORM_BUTTONS.push({ id: 'custpage_cust_hist_btn', label: 'Customer History', functionName: 'gethist' });
         FORM_BUTTONS.push({ id: 'custpage_reset', label: 'Reset', functionName: 'reset' });
         var STOCK_REQUEST_FIELDS = [];
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'line', type: serverWidget.FieldType.TEXT, label: 'Line'}, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'line', type: serverWidget.FieldType.TEXT, label: 'Line ID'}, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'process', type: serverWidget.FieldType.CHECKBOX, label: 'Process'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'id', type: serverWidget.FieldType.TEXT, label: 'ID' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'status', type: serverWidget.FieldType.SELECT, label: 'Action'}, displayType: serverWidget.FieldDisplayType.ENTRY });
@@ -556,10 +561,11 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'fromlocationid', type: serverWidget.FieldType.SELECT, label: 'From Location', source: 'location'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'links', type: serverWidget.FieldType.TEXTAREA, label: 'Links' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: DH_Library_1.FIELDS.ITEM.AX5Code, type: serverWidget.FieldType.TEXT, label: 'AX 5 Code' }, displayType: serverWidget.FieldDisplayType.DISABLED });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemid', type: serverWidget.FieldType.SELECT, label: 'Item', source: 'item' }, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemid', type: serverWidget.FieldType.SELECT, label: 'Item', source: 'Item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'isstocked', type: serverWidget.FieldType.TEXT, label: 'Netstock Item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'custbu', type: serverWidget.FieldType.TEXT, label: 'BU/Customer' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'estcost', type: serverWidget.FieldType.TEXT, label: 'Estimated Cost' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'avgcost', type: serverWidget.FieldType.TEXT, label: 'Item Unit Cost' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'vendor', type: serverWidget.FieldType.SELECT, label: 'Vendor', source: 'vendor' }, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'iscustomprice', type: serverWidget.FieldType.CHECKBOX, label: 'iscustomprice' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'qty', type: serverWidget.FieldType.INTEGER, label: 'QTY' }, displayType: serverWidget.FieldDisplayType.ENTRY });
@@ -576,9 +582,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'leadtime', type: serverWidget.FieldType.TEXT, label: 'Lead Time' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'lastnegotiationdate', type: serverWidget.FieldType.TEXTAREA, label: 'Last Negotiation Date' }, displayType: serverWidget.FieldDisplayType.HIDDEN }); // MH added
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'newstock', type: serverWidget.FieldType.CHECKBOX, label: 'Add Stock Level' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'forecastnotes', type: serverWidget.FieldType.TEXT, label: 'Forecast/Notes' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'forecastnotes', type: serverWidget.FieldType.TEXT, label: 'Sales Notes' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'purchasingnotes', type: serverWidget.FieldType.TEXTAREA, label: 'Purchasing Notes' }, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'avgcost', type: serverWidget.FieldType.TEXT, label: 'cost' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'solineid', type: serverWidget.FieldType.INTEGER, label: 'solineid' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'empemails', type: serverWidget.FieldType.EMAIL, label: 'email' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'potype', type: serverWidget.FieldType.INTEGER, label: 'potype' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
