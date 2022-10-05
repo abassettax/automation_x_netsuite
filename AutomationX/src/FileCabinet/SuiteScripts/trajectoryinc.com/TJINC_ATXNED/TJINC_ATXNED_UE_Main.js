@@ -36,7 +36,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
         };
 
         return {
-            //TODO: creates Transfer Orders on beforeSubmit of SO
+            //creates Transfer Orders on beforeSubmit of SO
             _transfer_orderproc: function (context,type) {
                 let o_rec = context.newRecord;
                 let i_location, i_loc_item;
@@ -141,7 +141,14 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
 
                                     o_torec.setSublistValue({ sublistId: 'item', fieldId: 'item', value: o_temp.line_item, line: i_lines });
                                     o_torec.setSublistValue({ sublistId: 'item', fieldId: 'quantity', value: o_temp.line_toqty, line: i_lines });
-                                    o_torec.setSublistValue({ sublistId: 'item', fieldId: 'rate', value: o_cost_search[0].getValue('locationaveragecost') || o_rec.getSublistValue({ sublistId: 'item', fieldId: 'rate', line: j }), line: i_lines });
+                                    //defaults to average cost at the location, otherwise uses the rate set on the SO.
+                                    //add handling for loc avg cost empty or zero
+                                    if (o_cost_search[0].getValue('locationaveragecost') == '' || o_cost_search[0].getValue('locationaveragecost') == 0 || o_cost_search[0].getValue('locationaveragecost') == null) {
+                                        var toRate = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'rate', line: j });
+                                    } else {
+                                        var toRate = o_cost_search[0].getValue('locationaveragecost');
+                                    }
+                                    o_torec.setSublistValue({ sublistId: 'item', fieldId: 'rate', value: toRate, line: i_lines });
                                     i_lines++;
                                     if (!b_save) {
                                         b_save = true;
@@ -631,7 +638,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                 }
             },
             //DH - Salers Order - UE after submit
-            //TODO: creates Purchase Requests on afterSubmit of SO
+            //creates Purchase Requests on afterSubmit of SO
             _dh_so_ue_as: function (context,type) {
                 try {
                     if (runtime.executionContext !== runtime.ContextType.MAP_REDUCE) {
@@ -639,6 +646,8 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                         let employeeId = +runtime.getCurrentUser().id;
                         for (let i = 0, lineCount = +context.newRecord.getLineCount({ sublistId: 'item' }); i < lineCount; i = i + 1) {
                             let createType = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol90' });
+                            let notes = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol116'});
+                            let prType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custrecord314'});
                             let relatedTransactionId = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.RelatedTransaction });
                             let purchaseRequestId = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.PurchaseRequest });
                             let costEstimateType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'costestimatetype' });
@@ -648,7 +657,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             let nextLineIndex = (i + 1);
                             let i_cost;
                             // Ensure both Related and PR's are blank
-                            if (this._dh_isproc(context, i) && !(relatedTransactionId > 0) && (purchaseRequestId === DUMMY_PR || !(purchaseRequestId > 0))) {
+                            if (this._dh_isproc(context, i) && !(relatedTransactionId > 0) && (purchaseRequestId === DUMMY_PR || !(purchaseRequestId > 0)) && createType != '') {
                                 switch (createType) {
                                     case dh_pr.CreateType.PurchaseOrder:
                                     case dh_pr.CreateType.ExpeditePO:
@@ -723,7 +732,9 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                             description: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'description' }),
                                             purchaseOrderType: createType,
                                             isCustomPrice: estimatedCost !== -1,
-                                            vendorNotes: vendorNotes
+                                            vendorNotes: vendorNotes,
+                                            notes: notes,
+                                            prType: prType
                                         });
                                         // Skip the next line, if it was vendor notes
                                         if (vendorNotes !== null) {
@@ -784,7 +795,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             let relatedTransactionId = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.RelatedTransaction });
                             let purchaseRequestId = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.PurchaseRequest });
                             // Ensure both Related and PR's are blank
-                            if (this._dh_isproc(context, i) && !(relatedTransactionId > 0) && !(purchaseRequestId > 0)) {
+                            if (this._dh_isproc(context, i) && !(relatedTransactionId > 0) && !(purchaseRequestId > 0) && createType != '') {
                                 switch (parseInt(createType)) {
                                     case dh_pr.CreateType.PurchaseOrder:
                                     case dh_pr.CreateType.ExpeditePO:

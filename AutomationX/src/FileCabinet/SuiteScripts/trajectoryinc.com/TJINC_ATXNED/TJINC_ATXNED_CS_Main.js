@@ -908,6 +908,32 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                         } else {
                             o_rec.setValue({ fieldId: 'email', value: o_rec.getValue('custbody_po_follow_up') });
                         }
+                    } 
+                    if (context.sublistId == 'item' && (context.fieldId == 'custcol90' || context.fieldId == 'custcol117')) {
+                        var purchReq = o_rec.getCurrentSublistValue({
+                            sublistId: 'item',
+                            fieldId: 'custcol90'
+                        });
+                        var prType = o_rec.getCurrentSublistValue({
+                            sublistId: 'item',
+                            fieldId: 'custcol117'
+                        });
+                        if (purchReq == '1' && prType == '') {
+                            o_rec.setCurrentSublistValue({
+                                sublistId: 'item',
+                                fieldId: 'custcol117',
+                                value: '1',
+                                ignoreFieldChange: true
+                            });
+                        }
+                        if (purchReq == '' || purchReq == '5') {
+                            o_rec.setCurrentSublistValue({
+                                sublistId: 'item',
+                                fieldId: 'custcol117',
+                                value: '',
+                                ignoreFieldChange: true
+                            });
+                        }
                     }
                 } catch (e) {
                     log.error('_so_fieldchange', e);
@@ -1358,16 +1384,17 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     }
                     o_rec.setValue({ fieldId: 'shippingcostoverridden', value: true });
 
-                    a_fields = ['otherrefnum', 'custbody38', 'custbody8', 'custbody9', 'custbody10', 'custbody69', 'custbody11', 'custbody67', 'custbody74', 'custbody87', 'custbody129'];
+                    var a_fields = ['otherrefnum', 'custbody38', 'custbody8', 'custbody9', 'custbody10', 'custbody69', 'custbody11', 'custbody67', 'custbody74', 'custbody87', 'custbody129'];
+                    var s_custcodelist;
 
                     for (i = 0; i < a_fields.length; i++) {
                         s_custcodelist += a_fields[i] + ' ';
                     }
                     o_rec.setValue({ fieldId: 'custbody204', value: s_custcodelist.substring(0, 299), ignoreFieldChange: true });
 
-                    s_addtocart = '';
+                    var s_addtocart = '';
                     for (i = 0; i < o_rec.getLineCount('item'); i++) {
-                        s_itemtext = o_rec.getSublistText({ fieldId: 'item', sublistId: 'item', line: i });
+                        var s_itemtext = o_rec.getSublistText({ fieldId: 'item', sublistId: 'item', line: i });
                         if ((s_itemtext.indexOf('-I.U.') !== -1 && s_itemtext.indexOf('-I.U-S') === -1 && o_rec.type.toLowerCase() === "salesorder") ||
                             (s_itemtext.indexOf('IN USE') !== -1 && s_itemtext.indexOf('IN USE - SOLD') === -1 && o_rec.type.toLowerCase() === "salesorder")) {
                             record.submitFields({
@@ -1426,6 +1453,54 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     return true;
                 } catch (e) {
                     log.error('_cs_so_baseprice', e);
+                    return true;
+                }
+            },
+            //CS SO Purchase Request validations
+            _cs_so_purchasereq: function (context) {
+                var o_rec = context.currentRecord;
+                var i_prVal, i_prType, i_loc, i_qty, i_qtyavail;
+                try {
+                    if (context.sublistId === 'item') {
+                        i_prVal = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol90' });
+                        i_prType = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol117' });
+                        i_prVendor = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'povendor' });
+
+                        i_loc = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'location' });
+                        i_qty = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity' });
+                        i_qtyavail = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantityavailable' });
+
+                        // log.debug('Purchase Request: ', i_prVal);
+                        if (i_prVal) {
+                            if (i_prVal == '1') {
+                                //if PR, validate selection for purchase request type
+                                if (i_prType == '') {
+                                    alert('The current line you selected for a Purchase Request does not have a Purchase Request Type set. Please correct this line before submitting.')
+                                    return false;
+                                }
+                                //if PR, validate selection for Vendor
+                                if (i_prVendor == '') {
+                                    alert('The current line you selected for a Purchase Request does not have a Vendor set. Please correct this line before submitting.')
+                                    return false;
+                                }
+                            }
+                            if (i_prVal == '5') {
+                                if (i_loc == '218' || i_loc == '219') {
+                                    alert('The current line you selected for a Transfer is attempting to transfer from a panel shop. Please choose a different transfer location before submitting.')
+                                    return false;
+                                }
+                                //if TO, validate selection for ship loc (and qty avail > qty)
+                                if (i_loc == '' || (i_qtyavail == '' || i_qtyavail == 0 || i_qtyavail < i_qty)) {
+                                    alert('The current line you selected for a Transfer does not have a from Ship Loc set and/or it does not have enough quantity to transfer. Please correct this line before submitting.')
+                                    return false;
+                                }
+                                
+                            }
+                        }
+                    }
+                    return true;
+                } catch (e) {
+                    log.error('_cs_so_purchasereq', e);
                     return true;
                 }
             },
@@ -1660,6 +1735,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     log.debug('tjincATX_validateline', 'IN');
                     //CS SO BasePrice
                     o_response = this._cs_so_baseprice(context);
+                    o_response = this._cs_so_purchasereq(context);
 
                     if (o_user.roleCenter === s_customer_center || parseInt(o_user.id) === 6447 || parseInt(o_user.id) === 25918) {
                         o_response = this._xto_trailerhide_vline(context);
