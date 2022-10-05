@@ -46,10 +46,10 @@
 
 function PO_PageInt() {
 
-    if (!localStorage.boochiefs) { localStorage.boochiefs = 0; };
-    var goraiders = localStorage.boochiefs;
-    var w = screen.width - 50;
-    var h = screen.hiegth - 50;
+    // if (!localStorage.boochiefs) { localStorage.boochiefs = 0; };
+    // var goraiders = localStorage.boochiefs;
+    // var w = screen.width - 50;
+    // var h = screen.hiegth - 50;
 
     //if((nlapiGetUser() ==7270 || nlapiGetUser() == 3354 ||nlapiGetUser() ==  8069)  && goraiders.length <2 && 1==2)
     //  {
@@ -63,13 +63,13 @@ function PO_PageInt() {
 
 
     var dropc = 0;
-    var loc = nlapiGetFieldValue('location');
+    // var loc = nlapiGetFieldValue('location');
     for (x = 1; x <= nlapiGetLineItemCount('item'); x++) {
 
 
-        var itemloc = nlapiGetLineItemValue('item', 'location', x);
+        // var itemloc = nlapiGetLineItemValue('item', 'location', x);
         var drop = nlapiGetLineItemValue('item', 'custcol4', x, x);
-        if (drop == "T") { var newdropc = dropc++ }
+        if (drop == "T") { dropc++ }
 
 
 

@@ -297,7 +297,16 @@ function openitempo() {
 }
 //end open items
 
+function openiteminvpo() {
+  var uid = nlapiGetCurrentLineItemValue('item', 'item');
 
+  if (!uid) { alert("Please select an item to check inventory."); return true; }
+  if (uid) {
+    var w = screen.width - 50;
+    window.open("https://system.na3.netsuite.com/app/common/search/searchresults.nl?searchtype=Item&Item_INTERNALID=" + uid + "&style=NORMAL&report=&grid=&searchid=3993&sortcol=Item_INVENTOCATION17_raw&sortdir=ASC&csv=HTML&OfficeXML=F&pdf=&size=1000&twbx=F", "newwin", "dependent = yes, height=800, width=" + w + ", top=100, left=200, toolbar=no, scrollbars=yes, menubar=no, status=no, titlebar=no, resizable=yes, location=no");
+    return true;
+  }
+}
 
 function updateIRvendor() {
   alert("Starting Update.  Please wait.")
