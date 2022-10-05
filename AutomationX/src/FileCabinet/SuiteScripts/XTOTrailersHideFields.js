@@ -83,17 +83,35 @@ if(nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') =
 
   
   
-  var headerIcon= document.getElementById('ns-header-menu-home-item0');
-if(headerIcon){headerIcon.style.display = 'none'; }
+//   var headerIcon= document.getElementById('ns-header-menu-home-item0');
+// if(headerIcon){headerIcon.style.display = 'none'; }
   
-  var headerIcontwo= document.getElementById('ns-header-menu-home');
-if(headerIcontwo){headerIcontwo.style.display = 'none'; }  
+//   var headerIcontwo= document.getElementById('ns-header-menu-home');
+// if(headerIcontwo){headerIcontwo.style.display = 'none'; }  
    
   var SigButton= document.getElementById('tbl_custpagesi_sigcapturebtn');
 if(SigButton){SigButton.style.display = 'none'; }  
   
    var SigButtonBottom= document.getElementById('tbl_secondarycustpagesi_sigcapturebtn');
-if(SigButtonBottom){SigButtonBottom.style.display = 'none'; }  
+if(SigButtonBottom){SigButtonBottom.style.display = 'none'; }
+
+var avaButton1= document.getElementById('tbl_custpage_ava_calculatetax');
+if(avaButton1){avaButton1.style.display = 'none'; }
+
+var avaButton2= document.getElementById('tbl_custpage_ava_validatebillto');
+if(avaButton2){avaButton2.style.display = 'none'; }
+
+var avaButton3= document.getElementById('tbl_custpage_ava_validateshipto');
+if(avaButton3){avaButton3.style.display = 'none'; }
+
+var avaButton4= document.getElementById('tbl_secondarycustpage_ava_calculatetax');
+if(avaButton4){avaButton4.style.display = 'none'; }
+
+var avaButton5= document.getElementById('tbl_secondarycustpage_ava_validatebillto');
+if(avaButton5){avaButton5.style.display = 'none'; }
+
+var avaButton6= document.getElementById('tbl_secondarycustpage_ava_validateshipto');
+if(avaButton6){avaButton6.style.display = 'none'; }
   
 var ListLink= document.getElementById('NS_MENU_ID0'); 
 if(ListLink){ListLink.style.display = 'none'; }
@@ -125,7 +143,13 @@ var source = nlapiGetFieldValue('custbody125');
 //if( nlapiGetFieldValue('customform') == 363 ){nlapiSetCurrentLineItemValue('item', 'location', 47 ); }
 //if( nlapiGetFieldValue('customform') == 347 ){nlapiSetCurrentLineItemValue('item', 'location', 69 ); }
 }
-                              
+
+if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 ){ 
+  nlapiSetFieldValue('terms', 2 ); //Seneca set terms to Net 30. Should keep payment method null
+  nlapiGetField('ccsave' ).setDisplayType('hidden');
+  nlapiGetField('ccdefault' ).setDisplayType('hidden');
+}
+
 }
 
 
@@ -145,6 +169,6 @@ return true;
 
 function saverecsen()
 {
-if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 ){ nlapiSetFieldValue('paymentmethod', 16 ); } //Seneca set payment method to E-Invoice
+// if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 ){ nlapiSetFieldValue('terms', 2 ); } //Seneca set terms to Net 30. Should keep payment method null
 return true;
 }
