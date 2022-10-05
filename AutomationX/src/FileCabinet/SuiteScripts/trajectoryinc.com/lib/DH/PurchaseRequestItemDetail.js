@@ -34,6 +34,8 @@ define(["require", "exports", "N/record", "./DH_Library"],
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.SalesOrderLine, value: options.details.salesOrderLine });
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.IsCustomPrice, value: options.details.isCustomPrice });
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.Rate, value: options.details.rate });
+                    this.recordObj.setValue({ fieldId: 'custrecord196', value: options.details.notes });
+                    this.recordObj.setValue({ fieldId: 'custrecord314', value: options.details.prType });
                     // Allow this field to be overridden by incoming EstimateCost
                     if (options.details.estimatedCost !== -1) {
                         this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.EstimatedCost, value: options.details.estimatedCost }); // This is normally sourced in from the Item
