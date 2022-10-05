@@ -4,6 +4,15 @@
  */
 define(['N/search', 'N/ui/message'],
     function (search, message) {
+        function pageInit(context) {
+            if (context.mode == 'create') {
+				var currentRecord = context.currentRecord;
+                currentRecord.setValue({
+                    fieldId: 'orderstatus',
+                    value: 'A'
+                });
+			}
+        }
         function fieldChanged(context) {
             var isNew = context.currentRecord.isNew;
             var currentRecord = context.currentRecord;
@@ -32,7 +41,7 @@ define(['N/search', 'N/ui/message'],
                     var minDateMonth = minDateRaw.getMonth();
                     var minDateDay = minDateRaw.getDate();
                     var minDate = new Date(minDateYear, minDateMonth, minDateDay, 0, 0, 0, 0);
-                    minDate.setDate(minDate.getDate() + 7);
+                    minDate.setDate(minDate.getDate() + 28);    //4 weeks out
                     // alert('minDate: ' + minDate.getDate());
                     if (newDate == '') {
                         currentRecord.setValue({
@@ -45,7 +54,8 @@ define(['N/search', 'N/ui/message'],
                         //both are dates, we can compare
                         if (newDate < minDate) {
                             //throw error, return false
-                            alert("Need by Date must be at least one week from today.  Resetting date to one week out. Please pick a date one week out or later.");
+                            var dateFormatted = (minDate.getMonth()+1)+'/'+minDate.getDate()+'/'+minDate.getFullYear();
+                            alert("Need by Date must be at least four weeks from today. Please pick a date of " + dateFormatted + " or later.");
                             currentRecord.setValue({
                                 fieldId: 'custbody_as_need_by_date',
                                 value: minDate,
@@ -183,7 +193,16 @@ define(['N/search', 'N/ui/message'],
                     return true;
                 }
         }
-        // function saveRecord (context) {
+        function saveRecord (context) {
+            if (context.mode == 'create') {
+				var currentRecord = context.currentRecord;
+                //default to Planned
+                currentRecord.setValue({
+                    fieldId: 'orderstatus',
+                    value: 'A'
+                });
+			}
+            return true;
         //     //check lines that want to transfer, validate from location is set and from location has enough available qty
         //     //also need to validate PR lines any make sure pr type isn't empty
         //     var currentRecord = context.currentRecord;
@@ -254,10 +273,11 @@ define(['N/search', 'N/ui/message'],
         //     } else {
         //         return true;
         //     }
-        // }
+        }
         return {
+            pageInit: pageInit,
             fieldChanged: fieldChanged,
-            validateLine: validateLine
-            // saveRecord: saveRecord
+            validateLine: validateLine,
+            saveRecord: saveRecord
         };
     });
