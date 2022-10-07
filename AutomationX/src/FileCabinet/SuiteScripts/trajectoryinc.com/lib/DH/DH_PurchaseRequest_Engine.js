@@ -148,12 +148,12 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                                         itemId: purchaseRequest.itemId,
                                         quantity: purchaseRequest.quantity
                                     };
-                                    if (purchaseRequest.salesOrderId && +purchaseRequest.salesOrderId > 0) {
-                                        purchaseRequestInfo.salesOrderId = +purchaseRequest.salesOrderId;
+                                    if (purchaseRequest.salesOrderId && purchaseRequest.salesOrderId.length > 0) {
+                                        purchaseRequestInfo.salesOrderId = purchaseRequest.salesOrderId;
                                     }
-                                    if (purchaseRequest.salesOrderLine && +purchaseRequest.salesOrderLine >= 0) { // Be careful, Sales Order index could be zero
-                                        purchaseRequestInfo.salesOrderLineId = +purchaseRequest.salesOrderLine;
-                                    }
+                                    // if (purchaseRequest.salesOrderLine && +purchaseRequest.salesOrderLine >= 0) { // Be careful, Sales Order index could be zero
+                                    //     purchaseRequestInfo.salesOrderLineId = +purchaseRequest.salesOrderLine;
+                                    // }
                                     if (purchaseRequest.description) {
                                         purchaseRequestInfo.description = purchaseRequest.description;
                                     }
@@ -203,28 +203,42 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                         break;
                 }
                 options.transaction.lines.forEach(function (line) {
+                    var soDataArr = [];
                     line.purchaseRequestInfos.forEach(function (purchaseRequestInfo) {
-                        linkRelatedTransaction(purchaseRequestInfo, transactionId, options.transaction.type, line.notes);
+                        var prArr = purchaseRequestInfo.id;
+                        for (var i = 0; i < prArr.length; i++) {
+                            linkRelatedTransaction(prArr[i], transactionId, options.transaction.type, line.notes);
+                        }
+                        //reformatting sales data into raw array so it can be grouped prior to updating
+                        var soArr = purchaseRequestInfo.salesOrderId;
+                        for (var i = 0; i < soArr.length; i++) {
+                            var soId = soArr[i].id;
+                            var soLine = soArr[i].line;
+                            soDataArr.push({
+                                id: soId,
+                                line: soLine
+                            });
+                        }
                     });
                     // Group by SalesOrder
                     // @ts-ignore
-                    var salesOrderGroups = _.groupBy(line.purchaseRequestInfos, function (purchaseRequestInfo) {
-                        return +purchaseRequestInfo.salesOrderId;
+                    var salesOrderGroups = _.groupBy(soDataArr, function (soData) {
+                        return +soData.id;
                     });
-                    _.each(salesOrderGroups, function (purchaseRequestInfos) {
-                        if (purchaseRequestInfos[0].salesOrderId > 0) {
+                    _.each(salesOrderGroups, function (soData) {
+                        if (soData[0].id > 0) {
                             var salesOrderLineInfo_1 = [];
-                            purchaseRequestInfos.forEach(function (purchaseRequestInfo) {
-                                if (purchaseRequestInfo.salesOrderLineId && +purchaseRequestInfo.salesOrderLineId >= 0) { // Be careful, Sales Order Line could be zero
+                            soData.forEach(function (soData2) {
+                                if (soData2.line && +soData2.line >= 0) { // Be careful, Sales Order Line could be zero
                                     salesOrderLineInfo_1.push({
-                                        lineId: +purchaseRequestInfo.salesOrderLineId,
-                                        purchaseRequestId: purchaseRequestInfo.id,
+                                        lineId: +soData2.line,
+                                        // purchaseRequestId: purchaseRequestInfo.id,   //no need to set PR back to it's same value
                                         relatedTransactionId: transactionId
                                     });
                                 }
                             });
                             DH_Library_1.updateSalesOrder({
-                                id: purchaseRequestInfos[0].salesOrderId,
+                                id: soData[0].id,
                                 salesOrderLineInfos: salesOrderLineInfo_1
                             });
                         }
@@ -261,14 +275,14 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
             purchaseOrder.setValue({ fieldId: 'approvalstatus', value: APPROVAL_STATUS.PendingApproval });
             purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.POFollowUpEmail, value: options.email });
             switch (options.poType) {
-                case PurchaseRequestItemDetail_1.CreateType.ExpeditePO:
+                case '2':   //new prType list, Expedite
                     purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsExpedite, value: true });
                     purchaseOrder.setValue({ fieldId: 'shipmethod', value: DH_Library_1.SHIPMETHOD.UPSNEXTDAY });
                     break;
-                case PurchaseRequestItemDetail_1.CreateType.DropShipPO:
+                case '3':   //new prType list, Drop Ship
                     purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsDropShip, value: true });
                     break;
-                case PurchaseRequestItemDetail_1.CreateType.WillCallPO:
+                case '4':   //new prType list, Will Call
                     purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.isWillCall, value: true });
                     break;
                 default:
@@ -284,27 +298,32 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                 var salesOrders = [];
                 var salesOrderIds = [];
                 line.purchaseRequestInfos.forEach(function (purchaseRequestInfo) {
-                    if (purchaseRequestInfo.salesOrderId && purchaseRequestInfo.salesOrderId > 0) {
-                        var poSoLinkage = {
-                            purchaseOrderLineId: index,
-                            salesOrderId: purchaseRequestInfo.salesOrderId,
-                            itemId: purchaseRequestInfo.itemId,
-                            quantity: purchaseRequestInfo.quantity
-                        };
-                        if (purchaseRequestInfo.salesOrderLineId && purchaseRequestInfo.salesOrderLineId > 0) {
-                            poSoLinkage.salesOrderLineId = purchaseRequestInfo.salesOrderLineId;
+                    var soArr = purchaseRequestInfo.salesOrderId;
+                    for (var i = 0; i < soArr.length; i++) {
+                        var soId = soArr[i].id;
+                        var soLine = soArr[i].line;
+                        if (soId && soId > 0) {
+                            var poSoLinkage = {
+                                purchaseOrderLineId: index,
+                                salesOrderId: soId,
+                                itemId: purchaseRequestInfo.itemId,
+                                quantity: purchaseRequestInfo.quantity
+                            };
+                            if (soLine && soLine > 0) {
+                                poSoLinkage.salesOrderLineId = soLine;
+                            }
+                            poSOLinkages.push(poSoLinkage);
+                            // Get the tranid of the Sales Order
+                            var details = search.lookupFields({
+                                type: search.Type.SALES_ORDER,
+                                id: soId,
+                                columns: ['tranid']
+                            });
+                            if (salesOrders.indexOf(details.tranid) === -1) {
+                                salesOrders.push(details.tranid); // remove duplicates
+                            }
+                            salesOrderIds.push(soId);
                         }
-                        poSOLinkages.push(poSoLinkage);
-                        // Get the tranid of the Sales Order
-                        var details = search.lookupFields({
-                            type: search.Type.SALES_ORDER,
-                            id: purchaseRequestInfo.salesOrderId,
-                            columns: ['tranid']
-                        });
-                        if (salesOrders.indexOf(details.tranid) === -1) {
-                            salesOrders.push(details.tranid); // remove duplicates
-                        }
-                        salesOrderIds.push(purchaseRequestInfo.salesOrderId);
                     }
                     if (purchaseRequestInfo.description) {
                         lineDescriptions.push(purchaseRequestInfo.description);
@@ -392,9 +411,9 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
             });
             return transferOrder.save();
         };
-        var linkRelatedTransaction = function (purchaseRequestInfo, transactionId, purchaseRequestProcessingStatus, lineNotes) {
+        var linkRelatedTransaction = function (prId, transactionId, purchaseRequestProcessingStatus, lineNotes) {
             updatePurchaseRequest({
-                purchaseRequestInfo: purchaseRequestInfo,
+                prId: prId,
                 purchaseRequestProcessingStatus: purchaseRequestProcessingStatus,
                 transactionId: transactionId,
                 lineNotes: lineNotes
@@ -411,7 +430,7 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
             }
             record.submitFields({
                 type: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.RECORD_TYPE,
-                id: options.purchaseRequestInfo.id,
+                id: options.prId,
                 values: updateValues
             });
         };

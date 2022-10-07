@@ -32,7 +32,40 @@
                 ignoreFieldChange: true
             });
         }
-      
+
+        var filterPrType = getParameterFromURL('prType');
+              if (filterPrType) {
+            var currentRecord = context.currentRecord;
+            currentRecord.setValue({
+                fieldId: 'custpage_prtype',
+                value: filterPrType,
+                ignoreFieldChange: true
+            });
+        } else {
+            var currentRecord = context.currentRecord;
+            currentRecord.setValue({
+                fieldId: 'custpage_prtype',
+                value: '1',
+                ignoreFieldChange: true
+            });
+        }
+
+        var filterPurchMethod = getParameterFromURL('purchMethod');
+              if (filterPurchMethod) {
+            var currentRecord = context.currentRecord;
+            currentRecord.setValue({
+                fieldId: 'custpage_purchmethod',
+                value: filterPurchMethod,
+                ignoreFieldChange: true
+            });
+        } else {
+            var currentRecord = context.currentRecord;
+            currentRecord.setValue({
+                fieldId: 'custpage_purchmethod',
+                value: '1',
+                ignoreFieldChange: true
+            });
+        }
       
         if (screenHeight < 400) {
             screenHeight = 400;
@@ -51,10 +84,12 @@
     };
     exports.fieldChanged = function (context) {
         var currentRecord = context.currentRecord, FieldName = context.fieldId;
-        if (FieldName === 'custpage_filterlocationid'  || FieldName === 'custpage_nonstockonly') {
+        if (FieldName === 'custpage_filterlocationid'  || FieldName === 'custpage_nonstockonly' || FieldName === 'custpage_prtype' || FieldName === 'custpage_purchmethod') {
             var location_1 = currentRecord.getValue('custpage_filterlocationid');
-             var normallystocked = currentRecord.getValue('custpage_nonstockonly');
-            window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2234&deploy=1&compid=422523' + '&locationFilter=' + location_1 + '&normallystocked=' + normallystocked, '_self');
+            var normallystocked = currentRecord.getValue('custpage_nonstockonly');
+            var prType = currentRecord.getValue('custpage_prtype');
+            var purchMethod = currentRecord.getValue('custpage_purchmethod');
+            window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2234&deploy=1&compid=422523' + '&locationFilter=' + location_1 + '&normallystocked=' + normallystocked + '&prType=' + prType + '&purchMethod=' + purchMethod, '_self');
             return true;
         }
       
@@ -68,6 +103,7 @@
         var zeroLines = true;
         var emptyStatus = false;
         var toNoRate = false;
+        var zeroQtys = false;
         for (var i = 0; i < lineCount; i++) {
             var processLine = currentRecord.getSublistValue({
                 sublistId: 'custpagesublist',
@@ -86,12 +122,24 @@
                     fieldId: 'rate',
                     line: i
                 });
+                var qty = currentRecord.getSublistValue({
+                    sublistId: 'custpagesublist',
+                    fieldId: 'qty',
+                    line: i
+                });
+                if (qty == 0) {
+                    zeroQtys = true;
+                    failedLine = (i+1);
+                    break;
+                }
                 if (status == '') {
                     emptyStatus = true;
                     failedLine = (i+1);
+                    break;
                 } else if (status == '2' && (rate == '' || rate == null || rate == undefined)) {
                     toNoRate = true;
                     failedLine = (i+1);
+                    break;
                 }
             }
         }
@@ -99,6 +147,16 @@
             var myMsg = message.create({
                 title: 'NO SELECTION',
                 message: 'None of the purchase requests were selected to process. Please select at least one and fill in the required fields before submitting.',
+                type: message.Type.ERROR
+            });
+            myMsg.show({
+                duration: 10000 // will disappear after 5s
+            });
+            return false;
+        } else if (zeroQtys) {
+            var myMsg = message.create({
+                title: 'NO QTY SET ON LINE ' + failedLine,
+                message: 'At least one of the requests you selected does not have a quantity set. Please select a quantity greater than zero before submitting.',
                 type: message.Type.ERROR
             });
             myMsg.show({

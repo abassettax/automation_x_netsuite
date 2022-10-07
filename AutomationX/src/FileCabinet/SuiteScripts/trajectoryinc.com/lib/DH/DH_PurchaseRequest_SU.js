@@ -38,7 +38,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
             }
         };
         var getHandler = function (context) {
-            var clearAll = false, locationId = -1, isNormallyStocked = -1;
+            var clearAll = false, locationId = -1, isNormallyStocked = -1, prType = -1, purchMethod = -1;
             if (context.request.parameters.clearAll) {
                 clearAll = context.request.parameters.clearAll === 'T';
             }
@@ -48,11 +48,29 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
             if (context.request.parameters.normallystocked) {
                 isNormallyStocked = context.request.parameters.normallystocked;
             }
+            log.debug({
+                title: 'context.request.parameters.prType',
+                details: context.request.parameters.prType
+            });
+            if (context.request.parameters.prType) {
+                prType = +context.request.parameters.prType;
+            } else {
+                prType = '1';   //Standard
+            }
+            log.debug({
+                title: 'context.request.parameters.purchMethod',
+                details: context.request.parameters.purchMethod
+            });
+            if (context.request.parameters.purchMethod) {
+                purchMethod = context.request.parameters.purchMethod;
+            } else {
+                purchMethod = '1';  //Email
+            }
 
             // var stockRequests = !DH_ProcessManager_1.isProcessing() ? getStockRequests(clearAll, isNormallyStocked) : []; 
             // var stockRequests = !DH_ProcessManager_1.isProcessing() ? getStockRequests(clearAll, locationId, isNormallyStocked) : [];
             // removing cache check, doesn't work well with new UI and functionally doesn't do much since we can backload requests into the MR queue
-            var stockRequests = getStockRequests(clearAll, locationId, isNormallyStocked);
+            var stockRequests = getStockRequests(clearAll, locationId, isNormallyStocked, prType, purchMethod);
             var form = serverWidget.createForm({ title: FORM.title });
             // region Item List 
             var itemList = form.addSublist({ id: ITEMSUBLIST.id, label: stockRequests.length + " " + ITEMSUBLIST.label, type: serverWidget.SublistType.LIST });
@@ -110,6 +128,10 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 text: 'No'
             });
             //End stocked filter
+
+            form.addField({ id: 'custpage_prtype', type: serverWidget.FieldType.SELECT, label: 'Request Type', source: 'customlist1277'});
+            form.addField({ id: 'custpage_purchmethod', type: serverWidget.FieldType.SELECT, label: 'Purchasing Method', source: 'customlist1276'});
+
             form.addSubmitButton({
                 label: 'Create Transactions'
             });
@@ -124,16 +146,40 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
             });
             stockRequests.forEach(function (stockRequest, index) {
                 var links = '';
+                var soLinks = '';
                 stockRequest.values.forEach(function (stockRequest) {
                     if (stockRequest.value) {
                         if (stockRequest.config.id == 'id') {
-                            //TODO: rework to search on multiple requests when consolidation happens
-                            var recId = stockRequest.value;
-                            var recUrl = url.resolveRecord({
-                                recordType: 'customrecord463',
-                                recordId: recId
-                            });
-                            links = '<a href="https://' + baseUrl + recUrl + '" target="_blank">Purchase Request</a><br><br>';
+                            var recIdsArr = stockRequest.value;
+                            // log.debug({
+                            //     title: 'recIdsArr',
+                            //     details: JSON.stringify(recIdsArr) + 'type1 : ' + typeof(recIdsArr) + ' len: ' + recIdsArr.length + ' type2: ' + typeof(recIdsArr[0])
+                            // });
+                            for (var i = 0; i < recIdsArr.length; i++) {
+                                var recId = recIdsArr[i];
+                                var recUrl = url.resolveRecord({
+                                    recordType: 'customrecord463',
+                                    recordId: recId
+                                });
+                                links = links + '<a href="https://' + baseUrl + recUrl + '" target="_blank">PR '+recId+'</a><br>';
+                            }
+                        } else if (stockRequest.config.id == 'so') {
+                            var soArr = stockRequest.value;
+                            // log.debug({
+                            //     title: 'recIdsArr',
+                            //     details: JSON.stringify(recIdsArr) + 'type1 : ' + typeof(recIdsArr) + ' len: ' + recIdsArr.length + ' type2: ' + typeof(recIdsArr[0])
+                            // });
+                            for (var i = 0; i < soArr.length; i++) {
+                                var recId = soArr[i].id;
+                                var recUrl = url.resolveRecord({
+                                    recordType: record.Type.SALES_ORDER,
+                                    recordId: recId
+                                });
+                                soLinks = soLinks + '<a href="https://' + baseUrl + recUrl + '" target="_blank">'+soArr[i].text+'</a>';
+                                if (i < (soArr.length - 1)) {
+                                    soLinks = soLinks + '<br>'
+                                }
+                            }
                         } else if (stockRequest.config.id == 'itemid') {
                             //item links
                             var itemId = stockRequest.value;
@@ -141,7 +187,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             //     recordType: record.Type.ITEM,
                             //     recordId: itemId
                             // });
-                            links = links + '<a href="https://' + baseUrl + '/app/common/item/item.nl?id=' + itemId + '" target="_blank">Item</a><br><br>';
+                            links = links + '<br><a href="https://' + baseUrl + '/app/common/item/item.nl?id=' + itemId + '" target="_blank">Item</a><br><br>';
                             //inv check link
                             links = links + '<a href="https://422523.app.netsuite.com/app/common/search/searchresults.nl?searchtype=Item&Item_INTERNALID=' + itemId + '&style=NORMAL&report=&grid=&searchid=3993&sortcol=Item_INVENTOCATION17_raw&sortdir=ASC&csv=HTML&OfficeXML=F&pdf=&size=1000&twbx=F" target="_blank">Check Inv</a><br><br>';
                             //po history link
@@ -164,6 +210,9 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 // });
                 if (links != '') {
                     itemList.setSublistValue({ id: 'links', value: links, line: index });
+                }
+                if (soLinks != '') {
+                    itemList.setSublistValue({ id: 'so', value: soLinks, line: index });
                 }
             });
             return form;
@@ -190,21 +239,24 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         purchasingNotes: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'purchasingnotes', line: i }),
                         estimatedCost: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'avgcost', line: i }),
                         fromLocationId: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'fromlocationid', line: i }),
-                        salesOrderId: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'so', line: i }),
+                        salesOrderId: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'so', line: i }),
                         internalId: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i }),
                         email: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'empemails', line: i }),
                         rate: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'rate', line: i }),
                         fromSalesOrderProcess: false,
-                        purchaseOrderType: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'potype', line: i }),
+                        purchaseOrderType: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'prtype', line: i }),
                         description: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'description', line: i }),
                         isCustomPrice: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'iscustomprice', line: i }) === 'T',
                         vendorNotes: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'vendornotes', line: i }),
                         LastNegotiationDate: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'lastnegotiationdate', line: i }), //MH added
                         LocationPreferredStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'LocationPreferredStockLevel', line: i }), //MH added
-                        AddLocalStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'AddLocalStockLevel', line: i }), //MH added
+                        AddLocalStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'AddLocalStockLevel', line: i }) //MH added
                     });
-                    purchaseRequestIds.push(context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i }));
-                    purchaseRequestStatuses.push(processStatus);
+                    var prIdsArr = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i });
+                    for (var j = 0; j < prIdsArr.length; j++) {
+                        purchaseRequestIds.push(prIdsArr[j]);
+                        purchaseRequestStatuses.push(processStatus);
+                    }
                 }
             }
             if (purchaseRequests.length > 0) {
@@ -244,9 +296,23 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         };
         // endregion  
 
-        var getStockRequests = function (clearAll, locationId, isNormallyStocked) {
-            var stockRequests = [], purchaseRequestItemDetails = getPurchaseRequestItemDetails(clearAll, locationId, isNormallyStocked);
-            purchaseRequestItemDetails.forEach(function (purchaseRequestItemDetail) {
+        var getStockRequests = function (clearAll, locationId, isNormallyStocked, prType, purchMethod) {
+            log.debug({
+                title: 'getStockRequests params',
+                details: clearAll + ' | ' + locationId + ' | ' + isNormallyStocked + ' | ' + prType + ' | ' + purchMethod
+            });
+            var stockRequests = [], purchaseRequestItemDetails = getPurchaseRequestItemDetails(clearAll, locationId, isNormallyStocked, prType, purchMethod);
+            log.debug({
+                title: 'purchaseRequestItemDetails',
+                details: purchaseRequestItemDetails.length + ' | ' + JSON.stringify(purchaseRequestItemDetails)
+            });
+            var consPurchaseRequests = consolidateRequests(purchaseRequestItemDetails);
+            //TODO: need to verify consolodation works. 33 reqs in on Monday, but no duplicates
+            log.debug({
+                title: 'consPurchaseRequests',
+                details: consPurchaseRequests.length + ' | ' + JSON.stringify(consPurchaseRequests)
+            });
+            consPurchaseRequests.forEach(function (purchaseRequestItemDetail) {
                 var stockRequest = { values: JSON.parse(JSON.stringify(STOCK_REQUEST_FIELDS)) };
                 stockRequest.values.forEach(function (itemListField) {
                     switch (itemListField.config.id) {
@@ -316,7 +382,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             itemListField.value = purchaseRequestItemDetail.purchasingNotes;
                             break;
                         case 'so':
-                            itemListField.value = purchaseRequestItemDetail.salesOrderId;
+                            itemListField.value = purchaseRequestItemDetail.soArr;
                             break;
                         case 'avgcost':
                             itemListField.value = purchaseRequestItemDetail.estimatedCost;
@@ -329,7 +395,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             itemListField.value = "$" + format.format({ value: estCost, type: format.Type.CURRENCY });
                             break;
                         case 'id':
-                            itemListField.value = purchaseRequestItemDetail.internalId;
+                            itemListField.value = purchaseRequestItemDetail.prids;
                             break;
                         case 'idlink':
                             itemListField.value = purchaseRequestItemDetail.internalId;
@@ -358,13 +424,19 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         case 'lastnegotiationdate':
                             itemListField.value = purchaseRequestItemDetail.LastNegotiationDate;
                             break;  // MH added
+                        case 'purchmethod':
+                            itemListField.value = purchaseRequestItemDetail.purchMethod;
+                            break;
+                        case 'prtype':
+                            itemListField.value = purchaseRequestItemDetail.prType;
+                            break;
                     }
                 });
                 stockRequests.push(stockRequest);
             });
             return stockRequests;
         };
-        var getPurchaseRequestItemDetails = function (clearAll, locationId, isStock, AddLocalStockLevel, isNormallyStocked) {
+        var getPurchaseRequestItemDetails = function (clearAll, locationId, isStock, prType, purchMethod) {
             var itemIds = [], itemLocationIds = [], purchaseRequestItemDetails = [];
             var filter = [['isinactive', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', ['@NONE@','4']]];
             if (locationId > 0) {
@@ -385,6 +457,28 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 filter.push('AND');
                 filter.push([PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.LocationPreferredStockLevel, "notgreaterthan", "0"]);
             }
+            log.debug({
+                title: 'prType and purchMethod',
+                details: prType + ' | ' + purchMethod
+            });
+            if (prType != '1') {
+                filter.push('AND');
+                filter.push(['custrecord314', 'anyof', prType]);
+            } else {
+                filter.push('AND');
+                filter.push(["custrecord314","anyof","@NONE@","1"]);
+            }
+            if (purchMethod != '1') {
+                filter.push('AND');
+                filter.push(["custrecord187.custitem115","anyof",purchMethod]);
+            } else {
+                filter.push('AND');
+                filter.push(["custrecord187.custitem115","anyof","@NONE@","1"]);
+            }
+            log.debug({
+                title: 'getPurchaseRequestItemDetails filter',
+                details: JSON.stringify(filter)
+            });
 
             //End Normally Stocked Filter
             search.create({
@@ -424,6 +518,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     search.createColumn({ name: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.LastNegotiationDate }),//30 MH Added
                     search.createColumn({ name: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Rate }),//31 SO rate added
                     search.createColumn({ name: 'cost', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//32 Item purchase price added
+                    search.createColumn({ name: 'custitem115', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//33 Item purchase method added
+                    search.createColumn({ name: 'custrecord314' })//34 Pr type added
                 ]
             }).run().each(function (result) {
                 var purchaseRequestItemDetail = {
@@ -452,6 +548,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     companyOnOrder: +result.getValue(result.columns[18]),
                     locationOnOrder: +result.getValue(result.columns[19]),
                     salesOrderId: +result.getValue(result.columns[21]),
+                    salesOrderText: result.getText(result.columns[21]),
                     salesOrderQuantity: +result.getValue(result.columns[22]),
                     email: result.getValue(result.columns[23]),
                     salesOrderLine: +result.getValue(result.columns[24]),
@@ -469,13 +566,25 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     internalId2: result.id,
                     locationPreferredStockLevel: -1,
                     fromSalesOrderProcess: false,
-                    rate: result.getValue(result.columns[31])
+                    rate: result.getValue(result.columns[31]),
+                    purchMethod: result.getValue(result.columns[33]),
+                    prids: [],
+                    soArr: []
                 };
                 var estCost = +result.getValue(result.columns[20]);
                 if (estCost == 0) {
                     estCost = +result.getValue(result.columns[32]);
                 }
                 purchaseRequestItemDetail.estimatedCost = estCost;
+                var prType = result.getValue(result.columns[34]);
+                // log.debug({
+                //     title: 'checking prType',
+                //     details: 'prType: ' + prType
+                // });
+                if (prType == '') {
+                    prType = '1';
+                }
+                purchaseRequestItemDetail.prType = prType;
                 itemIds.push(purchaseRequestItemDetail.itemId);
                 // Ensure we only keep the unique Item / Location combinations
                 if (itemLocationIds.indexOf(purchaseRequestItemDetail.itemId + "_" + purchaseRequestItemDetail.locationId) === -1) {
@@ -506,7 +615,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     purchaseRequestItemDetail.locationPreferredStockLevel = itemDetail.locationPreferredStockLevel;
                     purchaseRequestItemDetail.isAvailable = isItemAvailable[+purchaseRequestItemDetail.itemId];
                 }
-                //TODO: this is suggestion logic. should review and refine with Kyle
+                //this is suggestion logic. parameters are fine for now
                 if (purchaseRequestItemDetail.processingStatus == '') {
                     //automatically clears all lines, no suggestions applied
                     if (clearAll) {
@@ -557,6 +666,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'process', type: serverWidget.FieldType.CHECKBOX, label: 'Process'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'id', type: serverWidget.FieldType.TEXT, label: 'ID' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'status', type: serverWidget.FieldType.SELECT, label: 'Action'}, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'prtype', type: serverWidget.FieldType.SELECT, label: 'Request Type', source: 'customlist1277' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'purchmethod', type: serverWidget.FieldType.SELECT, label: 'Purchase Method', source: 'customlist1276' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'locationid', type: serverWidget.FieldType.SELECT, label: 'Location', source: 'location'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'fromlocationid', type: serverWidget.FieldType.SELECT, label: 'From Location', source: 'location'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'links', type: serverWidget.FieldType.TEXTAREA, label: 'Links' }, displayType: serverWidget.FieldDisplayType.DISABLED });
@@ -568,9 +679,9 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'avgcost', type: serverWidget.FieldType.TEXT, label: 'Item Unit Cost' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'vendor', type: serverWidget.FieldType.SELECT, label: 'Vendor', source: 'vendor' }, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'iscustomprice', type: serverWidget.FieldType.CHECKBOX, label: 'iscustomprice' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'qty', type: serverWidget.FieldType.INTEGER, label: 'QTY' }, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'rate', type: serverWidget.FieldType.FLOAT, label: 'rate' }, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'so', type: serverWidget.FieldType.SELECT, label: 'Sales Order', source: 'salesorder' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'qty', type: serverWidget.FieldType.INTEGER, label: 'Qty' }, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'rate', type: serverWidget.FieldType.FLOAT, label: 'Rate' }, displayType: serverWidget.FieldDisplayType.ENTRY });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'so', type: serverWidget.FieldType.TEXTAREA, label: 'Sales Order' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'soqty', type: serverWidget.FieldType.INTEGER, label: 'SO QTY' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'moh', type: serverWidget.FieldType.TEXT, label: 'MOH' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         // STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'demandavgs', type: serverWidget.FieldType.TEXT, label: 'Local / Company Demand' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
@@ -685,6 +796,125 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 return true;
             });
             return fromLocationDetails;
+        };
+        //consolidate requests to item by location
+        var consolidateRequests = function (purchaseRequestItemDetails) {
+            var consolidatedReqs = [];
+            var keys = [];
+            var items = [];
+            var itemLocJSON = [];
+            //consolidate by itemId and locationId
+            //aggregate quantity, average rate (or max? rate should be the same)
+            //need to consolidate ids into array
+            //check processingStatus. if purchase, add to purchase total. if transfer, add to tranfser total
+
+            //TODO: add vendor level of consolidation prior to location/item
+            for (var i = 0; i < purchaseRequestItemDetails.length; i++) {
+                var localPurchReq = purchaseRequestItemDetails[i];
+                var vendor = localPurchReq.vendorId;
+                var item = localPurchReq.itemId;
+                var location = localPurchReq.locationId;
+                var quantity = localPurchReq.quantity;
+                var rate = localPurchReq.rate;
+                var process = localPurchReq.processingStatus;
+                var prId = localPurchReq.internalId;
+                var soId = localPurchReq.salesOrderId;
+                var soText = localPurchReq.salesOrderText;
+                var soLine = localPurchReq.salesOrderLine;
+                var key = item + '-' + location + '-' + vendor;
+
+                var index = items.indexOf(item);
+                if (index == -1) {
+                    items.push(item);
+                    itemLocJSON.push({
+                        item: item,
+                        locs: [{
+                            loc: location,
+                            vendors: [vendor]
+                        }]
+                    });
+                    localPurchReq.prids.push(prId);
+                    localPurchReq.soArr.push({
+                        id: soId,
+                        text: soText,
+                        line: soLine
+                    });
+                    localPurchReq.key = key;
+                    keys.push(key);
+                    consolidatedReqs.push(localPurchReq);
+                } else {
+                    var itemLocArr = itemLocJSON[index].locs;
+                    var locIndex = findWithAttr(itemLocArr, 'loc', location);
+                    if (locIndex == -1) {
+                        itemLocJSON[index].locs.push({
+                            loc: location,
+                            vendors: [vendor]
+                        });
+                        localPurchReq.prids.push(prId);
+                        localPurchReq.soArr.push({
+                            id: soId,
+                            text: soText,
+                            line: soLine
+                        });
+                        localPurchReq.key = key;
+                        keys.push(key);
+                        consolidatedReqs.push(localPurchReq);
+                    } else {
+                        var vendorArr = itemLocJSON[index].locs[locIndex].vendors;
+                        var venIndex = vendorArr.indexOf(vendor);
+                        if (venIndex == -1) {
+                            itemLocJSON[index].locs[locIndex].vendors.push(vendor);
+                            localPurchReq.prids.push(prId);
+                            localPurchReq.soArr.push({
+                                id: soId,
+                                text: soText,
+                                line: soLine
+                            });
+                            localPurchReq.key = key;
+                            keys.push(key);
+                            consolidatedReqs.push(localPurchReq);
+                        } else {
+                            var consIndex = keys.indexOf(key);
+                            consolidatedReqs[consIndex].prids.push(prId)
+                            consolidatedReqs[consIndex].soArr.push({
+                                id: soId,
+                                text: soText,
+                                line: soLine
+                            });
+                            consolidatedReqs[consIndex].quantity = consolidatedReqs[consIndex].quantity + quantity;
+                                consolidatedReqs[consIndex].rate = (consolidatedReqs[consIndex].rate + rate)/2;
+                            if (process == '1') {
+                                //if existing type is TO, swap to PO. Wouldn't transfer AND purchase normally, if we need to do a PO we should just condolidate everything there
+                                var currentProcess = consolidatedReqs[consIndex].processingStatus;
+                                if (currentProcess == '2') {
+                                    consolidatedReqs[consIndex].processingStatus = '1';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            log.debug({
+                title: 'keys',
+                details: keys.length + ' | ' + JSON.stringify(keys)
+            });
+            log.debug({
+                title: 'items',
+                details: items.length + ' | ' + JSON.stringify(items)
+            });
+            log.debug({
+                title: 'itemLocJSON',
+                details: itemLocJSON.length + ' | ' + JSON.stringify(itemLocJSON)
+            });
+            return consolidatedReqs;
+        };
+        var findWithAttr = function findWithAttr(array, attr, value) {
+            for(var i = 0; i < array.length; i += 1) {
+                if(array[i][attr] === value) {
+                    return i;
+                }
+            }
+            return -1;
         };
     });
 // endregion
