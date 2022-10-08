@@ -150,7 +150,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 stockRequest.values.forEach(function (stockRequest) {
                     if (stockRequest.value) {
                         if (stockRequest.config.id == 'id') {
-                            var recIdsArr = stockRequest.value;
+                            var recIdsArr = JSON.parse(stockRequest.value);
                             // log.debug({
                             //     title: 'recIdsArr',
                             //     details: JSON.stringify(recIdsArr) + 'type1 : ' + typeof(recIdsArr) + ' len: ' + recIdsArr.length + ' type2: ' + typeof(recIdsArr[0])
@@ -164,17 +164,24 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                                 links = links + '<a href="https://' + baseUrl + recUrl + '" target="_blank">PR '+recId+'</a><br>';
                             }
                         } else if (stockRequest.config.id == 'so') {
-                            var soArr = stockRequest.value;
+                            var soArr = JSON.parse(stockRequest.value);
                             // log.debug({
                             //     title: 'recIdsArr',
-                            //     details: JSON.stringify(recIdsArr) + 'type1 : ' + typeof(recIdsArr) + ' len: ' + recIdsArr.length + ' type2: ' + typeof(recIdsArr[0])
+                            //     details: JSON.stringify(soArr) + 'type1 : ' + typeof(soArr) + ' len: ' + soArr.length + ' type2: ' + typeof(soArr[0])
                             // });
                             for (var i = 0; i < soArr.length; i++) {
                                 var recId = soArr[i].id;
-                                var recUrl = url.resolveRecord({
-                                    recordType: record.Type.SALES_ORDER,
-                                    recordId: recId
-                                });
+                                if (soArr[i].type == 'salesorder') {
+                                    var recUrl = url.resolveRecord({
+                                        recordType: record.Type.SALES_ORDER,
+                                        recordId: recId
+                                    });
+                                } else {
+                                    var recUrl = url.resolveRecord({
+                                        recordType: record.Type.WORK_ORDER,
+                                        recordId: recId
+                                    });
+                                }
                                 soLinks = soLinks + '<a href="https://' + baseUrl + recUrl + '" target="_blank">'+soArr[i].text+'</a>';
                                 if (i < (soArr.length - 1)) {
                                     soLinks = soLinks + '<br>'
@@ -229,6 +236,14 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     details: 'line: ' + i + ' | process: '  + status_1
                 });
                 if (status_1 == 'T') {
+                    log.debug({
+                        title: 'checking soids',
+                        details: JSON.parse(context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'soids', line: i }))
+                    });
+                    log.debug({
+                        title: 'checking prids',
+                        details: JSON.parse(context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i }))
+                    });
                     purchaseRequests.push({
                         processingStatus: processStatus,
                         salesOrderLine: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'solineid', line: i }),
@@ -239,8 +254,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         purchasingNotes: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'purchasingnotes', line: i }),
                         estimatedCost: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'avgcost', line: i }),
                         fromLocationId: +context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'fromlocationid', line: i }),
-                        salesOrderId: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'so', line: i }),
-                        internalId: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i }),
+                        salesOrderId: JSON.parse(context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'soids', line: i })),
+                        internalId: JSON.parse(context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i })),
                         email: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'empemails', line: i }),
                         rate: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'rate', line: i }),
                         fromSalesOrderProcess: false,
@@ -252,13 +267,21 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         LocationPreferredStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'LocationPreferredStockLevel', line: i }), //MH added
                         AddLocalStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'AddLocalStockLevel', line: i }) //MH added
                     });
-                    var prIdsArr = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i });
+                    var prIdsArr = JSON.parse(context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i }));
+                    log.debug({
+                        title: 'post prIdsArr',
+                        details: JSON.stringify(prIdsArr)
+                    });
                     for (var j = 0; j < prIdsArr.length; j++) {
                         purchaseRequestIds.push(prIdsArr[j]);
                         purchaseRequestStatuses.push(processStatus);
                     }
                 }
             }
+            log.debug({
+                title: 'post purchaseRequests',
+                details: JSON.stringify(purchaseRequests)
+            });
             if (purchaseRequests.length > 0) {
                 var purchaseRequestProcessor = task.create({
                     taskType: task.TaskType.MAP_REDUCE
@@ -272,6 +295,10 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 purchaseRequestProcessor.submit();
                 DH_ProcessManager_1.processingStart();
             }
+            log.debug({
+                title: 'post purchaseRequestIds',
+                details: JSON.stringify(purchaseRequestIds)
+            });
             //Set placeholder "Processing" status on each record
             for (var i = 0; i < purchaseRequestIds.length; i++) {
                 var updateValues = {};
@@ -307,7 +334,6 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 details: purchaseRequestItemDetails.length + ' | ' + JSON.stringify(purchaseRequestItemDetails)
             });
             var consPurchaseRequests = consolidateRequests(purchaseRequestItemDetails);
-            //TODO: need to verify consolodation works. 33 reqs in on Monday, but no duplicates
             log.debug({
                 title: 'consPurchaseRequests',
                 details: consPurchaseRequests.length + ' | ' + JSON.stringify(consPurchaseRequests)
@@ -382,7 +408,14 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             itemListField.value = purchaseRequestItemDetail.purchasingNotes;
                             break;
                         case 'so':
-                            itemListField.value = purchaseRequestItemDetail.soArr;
+                            itemListField.value = JSON.stringify(purchaseRequestItemDetail.soArr);
+                            break;
+                        case 'soids':
+                            // log.debug({
+                            //     title: 'purchaseRequestItemDetail.soIdArr',
+                            //     details: purchaseRequestItemDetail.soIdArr.length + ' | ' + JSON.stringify(purchaseRequestItemDetail.soIdArr)
+                            // });
+                            itemListField.value = JSON.stringify(purchaseRequestItemDetail.soIdArr);
                             break;
                         case 'avgcost':
                             itemListField.value = purchaseRequestItemDetail.estimatedCost;
@@ -395,7 +428,11 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             itemListField.value = "$" + format.format({ value: estCost, type: format.Type.CURRENCY });
                             break;
                         case 'id':
-                            itemListField.value = purchaseRequestItemDetail.prids;
+                            // log.debug({
+                            //     title: 'purchaseRequestItemDetail.prids',
+                            //     details: purchaseRequestItemDetail.prids.length + ' | ' + JSON.stringify(purchaseRequestItemDetail.prids)
+                            // });
+                            itemListField.value = JSON.stringify(purchaseRequestItemDetail.prids);
                             break;
                         case 'idlink':
                             itemListField.value = purchaseRequestItemDetail.internalId;
@@ -547,11 +584,11 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     monthsOnHand: +result.getValue(result.columns[17]),
                     companyOnOrder: +result.getValue(result.columns[18]),
                     locationOnOrder: +result.getValue(result.columns[19]),
-                    salesOrderId: +result.getValue(result.columns[21]),
+                    salesOrderId: result.getValue(result.columns[21]),
                     salesOrderText: result.getText(result.columns[21]),
                     salesOrderQuantity: +result.getValue(result.columns[22]),
                     email: result.getValue(result.columns[23]),
-                    salesOrderLine: +result.getValue(result.columns[24]),
+                    salesOrderLine: result.getValue(result.columns[24]),
                     purchasingNotes: result.getValue(result.columns[25]),
                     purchaseOrderType: parseInt(result.columns[26]),
                     description: result.getValue(result.columns[27]),
@@ -569,7 +606,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     rate: result.getValue(result.columns[31]),
                     purchMethod: result.getValue(result.columns[33]),
                     prids: [],
-                    soArr: []
+                    soArr: [],
+                    soIdArr: []
                 };
                 var estCost = +result.getValue(result.columns[20]);
                 if (estCost == 0) {
@@ -664,7 +702,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         var STOCK_REQUEST_FIELDS = [];
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'line', type: serverWidget.FieldType.TEXT, label: 'Line ID'}, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'process', type: serverWidget.FieldType.CHECKBOX, label: 'Process'}, displayType: serverWidget.FieldDisplayType.ENTRY });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'id', type: serverWidget.FieldType.TEXT, label: 'ID' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'id', type: serverWidget.FieldType.TEXTAREA, label: 'ID' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'status', type: serverWidget.FieldType.SELECT, label: 'Action'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'prtype', type: serverWidget.FieldType.SELECT, label: 'Request Type', source: 'customlist1277' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'purchmethod', type: serverWidget.FieldType.SELECT, label: 'Purchase Method', source: 'customlist1276' }, displayType: serverWidget.FieldDisplayType.DISABLED });
@@ -682,6 +720,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'qty', type: serverWidget.FieldType.INTEGER, label: 'Qty' }, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'rate', type: serverWidget.FieldType.FLOAT, label: 'Rate' }, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'so', type: serverWidget.FieldType.TEXTAREA, label: 'Sales Order' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'soids', type: serverWidget.FieldType.TEXTAREA, label: 'Sales Order IDS' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'soqty', type: serverWidget.FieldType.INTEGER, label: 'SO QTY' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'moh', type: serverWidget.FieldType.TEXT, label: 'MOH' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         // STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'demandavgs', type: serverWidget.FieldType.TEXT, label: 'Local / Company Demand' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
@@ -808,7 +847,6 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
             //need to consolidate ids into array
             //check processingStatus. if purchase, add to purchase total. if transfer, add to tranfser total
 
-            //TODO: add vendor level of consolidation prior to location/item
             for (var i = 0; i < purchaseRequestItemDetails.length; i++) {
                 var localPurchReq = purchaseRequestItemDetails[i];
                 var vendor = localPurchReq.vendorId;
@@ -822,6 +860,11 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 var soText = localPurchReq.salesOrderText;
                 var soLine = localPurchReq.salesOrderLine;
                 var key = item + '-' + location + '-' + vendor;
+                if (soText.indexOf('Sales Order') != -1) {
+                    var tranType = 'salesorder';
+                } else {
+                    var tranType = 'workorder'
+                }
 
                 var index = items.indexOf(item);
                 if (index == -1) {
@@ -837,7 +880,14 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     localPurchReq.soArr.push({
                         id: soId,
                         text: soText,
-                        line: soLine
+                        line: soLine,
+                        type: tranType
+                    });
+                    localPurchReq.soIdArr.push({
+                        id: soId,
+                        text: soText,
+                        line: soLine,
+                        type: tranType
                     });
                     localPurchReq.key = key;
                     keys.push(key);
@@ -854,7 +904,14 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         localPurchReq.soArr.push({
                             id: soId,
                             text: soText,
-                            line: soLine
+                            line: soLine,
+                            type: tranType
+                        });
+                        localPurchReq.soIdArr.push({
+                            id: soId,
+                            text: soText,
+                            line: soLine,
+                            type: tranType
                         });
                         localPurchReq.key = key;
                         keys.push(key);
@@ -868,7 +925,14 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             localPurchReq.soArr.push({
                                 id: soId,
                                 text: soText,
-                                line: soLine
+                                line: soLine,
+                                type: tranType
+                            });
+                            localPurchReq.soIdArr.push({
+                                id: soId,
+                                text: soText,
+                                line: soLine,
+                                type: tranType
                             });
                             localPurchReq.key = key;
                             keys.push(key);
@@ -879,7 +943,14 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             consolidatedReqs[consIndex].soArr.push({
                                 id: soId,
                                 text: soText,
-                                line: soLine
+                                line: soLine,
+                                type: tranType
+                            });
+                            consolidatedReqs[consIndex].soIdArr.push({
+                                id: soId,
+                                text: soText,
+                                line: soLine,
+                                type: tranType
                             });
                             consolidatedReqs[consIndex].quantity = consolidatedReqs[consIndex].quantity + quantity;
                                 consolidatedReqs[consIndex].rate = (consolidatedReqs[consIndex].rate + rate)/2;

@@ -32,11 +32,11 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                     processablePurchaseRequests.push(createPurchaseRequestResponse.purchaseRequest);
                 }
                 if (createPurchaseRequestResponse.salesOrderLineInfo) {
-                    salesOrderId = purchaseRequest.salesOrderId;
+                    salesOrderId = purchaseRequest.salesOrderId[0].id;
                     salesOrderLineInfos.push(createPurchaseRequestResponse.salesOrderLineInfo);
                 }
                 if (createPurchaseRequestResponse.workOrderLineInfo) {
-                    workOrderId = purchaseRequest.workOrderId;
+                    workOrderId = purchaseRequest.workOrderId;[0].id;
                     workOrderLineInfos.push(createPurchaseRequestResponse.workOrderLineInfo);
                 }
             });
@@ -64,7 +64,7 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                 options.employeeId = DH_Library_1.EMPLOYEE.MIKE_HARRIS;
             }
             var purchaseRequestItemDetail = new PurchaseRequestItemDetail_1.PurchaseRequestItemDetail({ owner: options.employeeId, details: options.purchaseRequest });
-            options.purchaseRequest.internalId = "" + purchaseRequestItemDetail.Id;
+            options.purchaseRequest.internalId = [purchaseRequestItemDetail.Id];
             createPurchaseRequestResponse.purchaseRequest = options.purchaseRequest;
             createPurchaseRequestResponse.salesOrderLineInfo = {
                 lineId: options.purchaseRequest.salesOrderLine,
@@ -144,7 +144,7 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                                 var purchaseRequestInfos = [], lineNotes = [];
                                 rateGroup.forEach(function (purchaseRequest) {
                                     var purchaseRequestInfo = {
-                                        id: +purchaseRequest.internalId,
+                                        id: purchaseRequest.internalId,
                                         itemId: purchaseRequest.itemId,
                                         quantity: purchaseRequest.quantity
                                     };
@@ -192,6 +192,7 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
             return transactions;
         };
         exports.createTransaction = function (options) {
+            log.debug('getInputData - createTransaction', JSON.stringify(options));
             var transactionId = -1;
             if (options.transaction.type !== PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.Reject) {
                 switch (options.transaction.type) {
@@ -214,9 +215,11 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                         for (var i = 0; i < soArr.length; i++) {
                             var soId = soArr[i].id;
                             var soLine = soArr[i].line;
+                            var tranType = soArr[i].type;
                             soDataArr.push({
                                 id: soId,
-                                line: soLine
+                                line: soLine,
+                                type: tranType
                             });
                         }
                     });
@@ -232,15 +235,22 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                                 if (soData2.line && +soData2.line >= 0) { // Be careful, Sales Order Line could be zero
                                     salesOrderLineInfo_1.push({
                                         lineId: +soData2.line,
-                                        // purchaseRequestId: purchaseRequestInfo.id,   //no need to set PR back to it's same value
+                                        // purchaseRequestId: purchaseRequestInfo.id,   //this is needed for replacing the placeholder 1000 pr record
                                         relatedTransactionId: transactionId
                                     });
                                 }
                             });
-                            DH_Library_1.updateSalesOrder({
-                                id: soData[0].id,
-                                salesOrderLineInfos: salesOrderLineInfo_1
-                            });
+                            if (soData[0].type == 'salesorder') {
+                                DH_Library_1.updateSalesOrder({
+                                    id: soData[0].id,
+                                    salesOrderLineInfos: salesOrderLineInfo_1
+                                });
+                            } else {
+                                DH_Library_1.updateWorkOrder({
+                                    id: soData[0].id,
+                                    workOrderLineInfos: salesOrderLineInfo_1
+                                });
+                            }
                         }
                     });
                 });
@@ -274,20 +284,30 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
             purchaseOrder.setValue({ fieldId: 'trandate', value: new Date() });
             purchaseOrder.setValue({ fieldId: 'approvalstatus', value: APPROVAL_STATUS.PendingApproval });
             purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.POFollowUpEmail, value: options.email });
-            switch (options.poType) {
-                case '2':   //new prType list, Expedite
-                    purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsExpedite, value: true });
-                    purchaseOrder.setValue({ fieldId: 'shipmethod', value: DH_Library_1.SHIPMETHOD.UPSNEXTDAY });
-                    break;
-                case '3':   //new prType list, Drop Ship
-                    purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsDropShip, value: true });
-                    break;
-                case '4':   //new prType list, Will Call
-                    purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.isWillCall, value: true });
-                    break;
-                default:
-                    purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsReStockPO, value: true });
-                    break;
+            // switch (options.poType) {
+            //     case PurchaseRequestItemDetail_1.CreateType.ExpeditePO:   //new prType list, Expedite
+            //         purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsExpedite, value: true });
+            //         purchaseOrder.setValue({ fieldId: 'shipmethod', value: DH_Library_1.SHIPMETHOD.UPSNEXTDAY });
+            //         break;
+            //     case PurchaseRequestItemDetail_1.CreateType.ExpeditePO:   //new prType list, Drop Ship
+            //         purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsDropShip, value: true });
+            //         break;
+            //     case PurchaseRequestItemDetail_1.CreateType.ExpeditePO:   //new prType list, Will Call
+            //         purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.isWillCall, value: true });
+            //         break;
+            //     default:
+            //         purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsReStockPO, value: true });
+            //         break;
+            // }
+            if (options.poType == '2') {
+                purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsExpedite, value: true });
+                purchaseOrder.setValue({ fieldId: 'shipmethod', value: DH_Library_1.SHIPMETHOD.UPSNEXTDAY });
+            } else if (options.poType == '3') {
+                purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsDropShip, value: true });
+            } else if (options.poType == '4') {
+                purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.isWillCall, value: true });
+            } else {
+                purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsReStockPO, value: true });
             }
             options.lines.forEach(function (line, index) {
                 lineDescriptions = [];

@@ -656,6 +656,12 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             let vendorNotes = null;
                             let nextLineIndex = (i + 1);
                             let i_cost;
+                            var recType = context.newRecord.type;
+                            if (recType == record.Type.SALES_ORDER) {
+                                var tranType = 'salesorder';
+                            } else {
+                                var tranType = 'workorder';
+                            }
                             // Ensure both Related and PR's are blank
                             if (this._dh_isproc(context, i) && !(relatedTransactionId > 0) && (purchaseRequestId === DUMMY_PR || !(purchaseRequestId > 0)) && createType != '') {
                                 switch (createType) {
@@ -722,7 +728,12 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                             rate: i_cost,
                                             internalId: '-1',
                                             quantity: quantity,
-                                            salesOrderId: salesOrderId,
+                                            //have to mock format from normal PR setup
+                                            salesOrderId: [{
+                                                id: salesOrderId,
+                                                line: salesOrderLine,
+                                                type: tranType
+                                            }],
                                             salesOrderLine: salesOrderLine,
                                             workOrderId: workOrderId,
                                             workOrderLine: workOrderLine,
@@ -760,6 +771,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                 purchaseRequestProcessor.submit();
                             }
                             else {
+                                //only returns requests that can be processed immediately
                                 let processablePurchaseRequests = dh_pre.createPurchaseRequests({
                                     employeeId: employeeId,
                                     purchaseRequests: purchaseRequests
