@@ -147,8 +147,12 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
             stockRequests.forEach(function (stockRequest, index) {
                 var links = '';
                 var soLinks = '';
+                var item5Code;
                 stockRequest.values.forEach(function (stockRequest) {
                     if (stockRequest.value) {
+                        if (stockRequest.config.id == DH_Library_1.FIELDS.ITEM.AX5Code) {
+                            item5Code = stockRequest.value;
+                        }
                         if (stockRequest.config.id == 'id') {
                             var recIdsArr = JSON.parse(stockRequest.value);
                             // log.debug({
@@ -196,7 +200,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             // });
                             links = links + '<br><a href="https://' + baseUrl + '/app/common/item/item.nl?id=' + itemId + '" target="_blank">Item</a><br><br>';
                             //inv check link
-                            links = links + '<a href="https://422523.app.netsuite.com/app/common/search/searchresults.nl?searchtype=Item&Item_INTERNALID=' + itemId + '&style=NORMAL&report=&grid=&searchid=3993&sortcol=Item_INVENTOCATION17_raw&sortdir=ASC&csv=HTML&OfficeXML=F&pdf=&size=1000&twbx=F" target="_blank">Check Inv</a><br><br>';
+                            links = links + '<a href="https://422523.app.netsuite.com/app/common/search/searchresults.nl?searchtype=Item&Item_INVENTORYLOCATION=&CUSTITEM35='+item5Code+'&Item_FORMULATEXT=&CUSTITEM111=ANY&style=NORMAL&CUSTITEM35type=STARTSWITH&Item_FORMULATEXTtype=STARTSWITH&report=&grid=&searchid=7042&sortcol=Item_FORMULATEXT_raw&sortdir=DESC" target="_blank">Check Inv</a><br><br>';
                             //po history link
                             links = links + '<a href="https://422523.app.netsuite.com/app/common/search/searchresults.nl?searchtype=Transaction&IT_Item_INTERNALID=' + itemId + '&searchid=7144" target="_blank">PO History</a>';
                         }
