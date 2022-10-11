@@ -475,7 +475,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         };
         var getPurchaseRequestItemDetails = function (clearAll, locationId, isStock, prType, purchMethod) {
             var itemIds = [], itemLocationIds = [], purchaseRequestItemDetails = [];
-            var filter = [['isinactive', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', ['@NONE@','4']]];
+            var filter = [['isinactive', 'is', 'F'], 'AND', ['custrecord315', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', ['@NONE@','4']]];
             if (locationId > 0) {
                 filter.push('AND');
                 filter.push([PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Location, 'anyof', locationId]);
