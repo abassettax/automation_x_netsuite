@@ -60,19 +60,19 @@ define([
             } else {
                 var woRecOld = context.oldRecord;
                 var oldStatus = woRecOld.getValue({
-                    fieldId: 'orderstatus'
+                    fieldId: 'custbody237'
                 });
                 var woRecId = context.newRecord.id;
                 var woRec = context.newRecord;
                 var newStatus = woRec.getValue({
-                    fieldId: 'orderstatus'
+                    fieldId: 'custbody237'
                 });
                 log.debug({
                     title: 'afterSubmit',
                     details: 'Checking status. Old: ' + oldStatus + ' | New: ' + newStatus
                 });
-                if (oldStatus != newStatus && newStatus == 'B') {
-                    //Planned -> Released
+                if (oldStatus != newStatus && newStatus == '2') {
+                    //Not Started/Complete -> In Progress
                     //Set date started value. Send email
                     var woRecObj = record.load({
                         type: record.Type.WORK_ORDER,
@@ -131,7 +131,7 @@ define([
                             var locationName = 'No Location Set';
                         }
     
-                        var emailBody = 'A WO has been released to be built. <br><br>Location: '+locationName+'<br>WO Link: ';
+                        var emailBody = 'A WO has been released to be built and is now In Progress. <br><br>Location: '+locationName+'<br>WO Link: ';
                         var baseUrl = url.resolveDomain({
                             hostType: url.HostType.APPLICATION,
                             accountId: '422523'
@@ -155,8 +155,8 @@ define([
                             details: 'WO Released Email Sent'
                         });
                     }
-                } else if (oldStatus != newStatus && newStatus == 'A') {
-                    //Releaed -> Planned
+                } else if (oldStatus != newStatus && newStatus == '1') {
+                    //Complete/In Progress -> Not Started
                     //Remove date started value. Send email
                     var woRecObj = record.load({
                         type: record.Type.WORK_ORDER,
@@ -214,7 +214,7 @@ define([
                             var locationName = 'No Location Set';
                         }
     
-                        var emailBody = 'A WO has been reset to Planned. <br><br>Location: '+locationName+'<br>WO Link: ';
+                        var emailBody = 'A WO has been reset to Not Started. <br><br>Location: '+locationName+'<br>WO Link: ';
                         var baseUrl = url.resolveDomain({
                             hostType: url.HostType.APPLICATION,
                             accountId: '422523'

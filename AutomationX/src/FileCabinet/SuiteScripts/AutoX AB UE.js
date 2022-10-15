@@ -62,6 +62,24 @@ define([
 					id: createdFrom,
                     isDynamic: true,
 				});
+                var woStatus = woRec.getField({
+                    fieldId: 'orderstatus'
+                });
+                var axStatus = woRec.getField({
+                    fieldId: 'custbody237'
+                });
+                if (woStatus == 'G') {
+                    //WO fully built, update AX Status field
+                    woRec.setValue({
+                        fieldId: 'custbody237',
+                        value: '3'
+                    });
+                } else if (axStatus != '2') {
+                    woRec.setValue({
+                        fieldId: 'custbody237',
+                        value: '2'
+                    });
+                }
                 var recipients = [];
                 var salesTeamLines = woRec.getLineCount({
                     sublistId: 'salesteam'
@@ -86,6 +104,7 @@ define([
                         recipients.push(empEmail)
                     }
                 }
+                woRec.save();
                 log.debug({
                     title: 'afterSubmit',
                     details: 'recipients: ' + JSON.stringify(recipients)

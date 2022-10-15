@@ -9,7 +9,15 @@ define(['N/search', 'N/ui/message'],
 				var currentRecord = context.currentRecord;
                 currentRecord.setValue({
                     fieldId: 'orderstatus',
-                    value: 'A'
+                    value: 'B'
+                });
+                currentRecord.setValue({
+                    fieldId: 'entity',
+                    value: '40674'
+                });
+                currentRecord.setValue({
+                    fieldId: 'custbody237',
+                    value: '1'
                 });
 			}
         }
@@ -168,23 +176,21 @@ define(['N/search', 'N/ui/message'],
                                 }
                                 //if PR, validate selection for Vendor
                                 if (i_prVendor == '') {
-                                    alert('The current line you selected for a Purchase Request does not have a Vendor set. Please correct this line before submitting.')
+                                    alert('The current line you selected for a Purchase Request does not have a Purchase Request Vendor set. Please correct this line before submitting.')
                                     return false;
                                 }
                             }
-                            if (i_prVal == '5') {
-                                //TODO: since only Tech Services is placing WOs, can we allow them to transfer from panel shops?
-                                if (i_loc == '218' || i_loc == '219') {
-                                    alert('The current line you selected for a Transfer is attempting to transfer from a panel shop. Please choose a different transfer location before submitting.')
-                                    return false;
-                                }
-                                //if TO, validate selection for ship loc (and qty avail > qty)
-                                if (i_loc == '' || (i_qtyavail == '' || i_qtyavail == 0 || i_qtyavail < i_qty)) {
-                                    alert('The current line you selected for a Transfer does not have a from Ship Loc set and/or it does not have enough quantity to transfer. Please correct this line before submitting.')
-                                    return false;
-                                }
-                                
-                            }
+                            // if (i_prVal == '5') {
+                            //     if (i_loc == '218' || i_loc == '219') {
+                            //         alert('The current line you selected for a Transfer is attempting to transfer from a panel shop. Please choose a different transfer location before submitting.')
+                            //         return false;
+                            //     }
+                            //     //if TO, validate selection for ship loc (and qty avail > qty)
+                            //     if (i_loc == '' || (i_qtyavail == '' || i_qtyavail == 0 || i_qtyavail < i_qty)) {
+                            //         alert('The current line you selected for a Transfer does not have a from Ship Loc set and/or it does not have enough quantity to transfer. Please correct this line before submitting.')
+                            //         return false;
+                            //     }
+                            // }
                         }
                     }
                     return true;
@@ -194,14 +200,32 @@ define(['N/search', 'N/ui/message'],
                 }
         }
         function saveRecord (context) {
+            var currentRecord = context.currentRecord;
             if (context.mode == 'create') {
-				var currentRecord = context.currentRecord;
-                //default to Planned
+                //default to Released so we can still commit inventory
                 currentRecord.setValue({
                     fieldId: 'orderstatus',
-                    value: 'A'
+                    value: 'B'
+                });
+                currentRecord.setValue({
+                    fieldId: 'custbody237',
+                    value: '1'
                 });
 			}
+            var customer = currentRecord.getValue({
+                fieldId: 'entity'
+            });
+            if (customer == '') {
+                var myMsg = message.create({
+                    title: 'NO CUSTOMER SELECTED',
+                    message: 'Please select a customer for the Work Order before submitting. If this is a stock order, use AutoX as the customer.',
+                    type: message.Type.ERROR
+                });
+                myMsg.show({
+                    duration: 10000 // will disappear after 5s
+                });
+                return false;
+            }
             return true;
         //     //check lines that want to transfer, validate from location is set and from location has enough available qty
         //     //also need to validate PR lines any make sure pr type isn't empty
