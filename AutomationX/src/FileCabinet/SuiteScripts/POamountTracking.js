@@ -2,11 +2,25 @@ function poamounttracking(type) {
 
   if (type == 'view' && nlapiGetFieldValue('custbody_sourceday_po_sd') == "F") {
 
-    //EmailPOButton
-    //customscript855   customscript357
-    var approvalStatus = nlapiGetFieldValue('approvalstatus');
-    if (approvalStatus == '2') {  //Approved
-      form.addButton('custpage_emailpo', 'Email Untransmitted PO', 'SendPOEmailRefreshes() ');
+    //add/remove buttons here as needed for POs based on role
+    //only show edit if PO vendor is 2491 - Credit Card Purchase Tracker %
+    //Edit id: edit
+    //Close id: closeremaining
+    var vendor = nlapiGetFieldValue('entity');
+    var userRole = nlapiGetRole();
+    var allowedRoles = [3,1052,1115,1003,1060,1054];
+    if (vendor != '2491' && allowedRoles.indexOf(parseInt(userRole))== -1) {
+      form.removeButton('edit');
+      form.removeButton('closeremaining');
+      form.removeButton('secondaryedit');
+      form.removeButton('secondarycloseremaining');
+    } else {
+      //EmailPOButton
+      //customscript855   customscript357
+      var approvalStatus = nlapiGetFieldValue('approvalstatus');
+      if (approvalStatus == '2') {  //Approved
+        form.addButton('custpage_emailpo', 'Email Untransmitted PO', 'SendPOEmailRefreshes() ');
+      }
     }
     form.setScript('customscript357'); // sets the script on the client side
   } else {
