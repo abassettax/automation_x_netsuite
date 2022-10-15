@@ -439,6 +439,68 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     } else if (context.fieldId === 'costestimate') {
                         var i_newcost = o_rec.getCurrentSublistValue({ fieldId: 'quantity', sublistId: 'item' }) * parseFloat((o_rec.getCurrentSublistValue({ fieldId: 'costestimate', sublistId: 'item' }).replace(' ', '')));
                         o_rec.setCurrentSublistValue({ value: i_newcost, fieldId: 'costestimate', sublistId: 'item' });
+                    } else if (context.fieldId == 'custcol114') {
+                        var itemID = o_rec.getCurrentSublistValue({
+                            sublistId: 'item',
+                            fieldId: 'item'
+                        });
+                        var fromLocation = o_rec.getCurrentSublistValue({
+                            sublistId: 'item',
+                            fieldId: 'custcol114'
+                        });
+                        if (itemID != '' && fromLocation != '') {
+                            var itemAvail = 0;
+                            var filters = [];
+                            var itemFilter = ['internalid', 'anyof'];
+                            itemFilter.push(itemID.toString());
+                            var locationFilter = ['inventorylocation', 'anyof'];
+                            locationFilter.push(fromLocation.toString());
+                            var fullFilter = [];
+                            fullFilter.push(itemFilter);
+                            fullFilter.push('AND');
+                            fullFilter.push(locationFilter);
+                            filters.push(fullFilter);
+        
+                            search.create({
+                                type: 'item',
+                                filters: filters,
+                                columns: [
+                                    'inventorylocation',
+                                    'locationquantityavailable'
+                                ]
+                            }).run().each(function (result) {
+                                itemAvail = +result.getValue(result.columns[1])
+                                return true;
+                            });
+                            o_rec.setCurrentSublistValue({
+                                sublistId: 'item',
+                                fieldId: 'custcol115',
+                                value: itemAvail
+                            });
+                        } else {
+                            o_rec.setCurrentSublistValue({
+                                sublistId: 'item',
+                                fieldId: 'custcol115',
+                                value: ''
+                            });
+                        }
+                    } else if (context.fieldId == 'custcol90' || context.fieldId == 'custcol118') {
+                        var prType = o_rec.getCurrentSublistValue({
+                            sublistId: 'item',
+                            fieldId: 'custcol90'
+                        });
+                        var prVendor = o_rec.getCurrentSublistValue({
+                            sublistId: 'item',
+                            fieldId: 'custcol118'
+                        });
+                        //if credit card PO and pr vendor is blank or another vendor, always reset to cc tracker vendor
+                        if (prType == '6' && prVendor != '2491') {
+                            o_rec.setCurrentSublistValue({
+                                sublistId: 'item',
+                                fieldId: 'custcol118',
+                                value: '2491'
+                            });
+                        }
                     } else if (context.fieldId === 'custcol90' && o_rec.getCurrentSublistValue({ fieldId: 'custcol90', sublistId: 'item' }) !== '') {
                         o_temp = {
                             stockrequest: o_rec.getCurrentSublistValue({ fieldId: 'custcol91', sublistId: 'item' }),
@@ -446,7 +508,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             lineclosed: o_rec.getCurrentSublistValue({ fieldId: 'isclosed', sublistId: 'item' }),
                             linetype: o_rec.getCurrentSublistValue({ fieldId: 'itemtype', sublistId: 'item' }),
                             hasLocation: o_rec.getCurrentSublistValue({ fieldId: 'location', sublistId: 'item' }),
-                            hasvendor: o_rec.getCurrentSublistValue({ fieldId: 'povendor', sublistId: 'item' }),
+                            hasvendor: o_rec.getCurrentSublistValue({ fieldId: 'custcol118', sublistId: 'item' }),
                             custcol90: o_rec.getCurrentSublistValue({ fieldId: 'custcol90', sublistId: 'item' })
                         };
 
@@ -455,6 +517,11 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             o_rec.setCurrentSublistValue({ fieldId: 'custcol90', sublistId: 'item', value: '' })
                             return;
                         }
+                        // if (o_temp.linetype === 'NonInvtPart') {
+                        //     tj.alert('You are attempting to create a purchase order or transfer order for a Non Inventory item.  If you would like to purchase a direct item, please create a standalone purchase request and add the necessary details there.');
+                        //     o_rec.setCurrentSublistValue({ fieldId: 'custcol90', sublistId: 'item', value: '' })
+                        //     return;
+                        // }
                         if (o_rec.getCurrentSublistValue({ fieldId: 'item', sublistId: 'item' }) !== 1277) {
                             if (!o_temp.hasLocation) {
                                 tj.alert("Please Select a Location for this line before attempting to create a PO.");
@@ -886,6 +953,15 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                     o_temp.isDisabled = false;
                                 }
                             }
+                        }
+                        var preferredVendor = o_rec.getCurrentSublistValue({ fieldId: 'povendor', sublistId: 'item' });
+                        var prVendor = o_rec.getCurrentSublistValue({ fieldId: 'custcol118', sublistId: 'item' })
+                        if (preferredVendor != '' && prVendor == '') {
+                            o_rec.setCurrentSublistValue({
+                                fieldId: 'custcol118',
+                                sublistId: 'item',
+                                value: preferredVendor
+                            });
                         }
                     }
                 } catch (e) {
@@ -1464,9 +1540,11 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     if (context.sublistId === 'item') {
                         i_prVal = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol90' });
                         i_prType = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol117' });
-                        i_prVendor = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'povendor' });
+                        i_prVendor = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol118' });
 
                         i_loc = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'location' });
+                        i_tranloc = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol114' });
+                        i_tranqtyavail = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol115' });
                         i_qty = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity' });
                         i_qtyavail = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantityavailable' });
 
@@ -1478,23 +1556,33 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                     alert('The current line you selected for a Purchase Request does not have a Purchase Request Type set. Please correct this line before submitting.')
                                     return false;
                                 }
+                            }
+                            if (i_prVal != '5') {
                                 //if PR, validate selection for Vendor
                                 if (i_prVendor == '') {
                                     alert('The current line you selected for a Purchase Request does not have a Vendor set. Please correct this line before submitting.')
                                     return false;
                                 }
                             }
+                            if (i_prVal != '6') {
+                                if (i_prVendor == '2491') {
+                                    alert('The current line you selected for a Purchase Request is using the placeholder vendor Credit Card Purchase Tracker %. Please select a real vendor on this line before submitting.')
+                                    return false;
+                                }
+                            }
                             if (i_prVal == '5') {
-                                if (i_loc == '218' || i_loc == '219') {
-                                    alert('The current line you selected for a Transfer is attempting to transfer from a panel shop. Please choose a different transfer location before submitting.')
+                                if (i_loc == '218' || i_loc == '219' || i_tranloc == '218' || i_tranloc == '219') {
+                                    alert('The current line you selected for a Transfer is attempting to transfer from/to a panel shop. Please choose a different location before submitting.')
                                     return false;
                                 }
                                 //if TO, validate selection for ship loc (and qty avail > qty)
-                                if (i_loc == '' || (i_qtyavail == '' || i_qtyavail == 0 || i_qtyavail < i_qty)) {
-                                    alert('The current line you selected for a Transfer does not have a from Ship Loc set and/or it does not have enough quantity to transfer. Please correct this line before submitting.')
+                                if (i_loc == '' || i_tranloc == '') {
+                                    alert('The current line you selected for a Transfer is missing either a Ship Location or a Transfer From Location. Please correct this line before submitting.')
+                                    return false;
+                                } else if (i_tranqtyavail == '' || i_tranqtyavail == 0 || i_tranqtyavail < i_qty) {
+                                    alert('The current line you selected for a Transfer does not have enough quantity to transfer. Either select a location with enough available to complete the line or change to a Purchase Request. Please correct this line before submitting.')
                                     return false;
                                 }
-                                
                             }
                         }
                     }

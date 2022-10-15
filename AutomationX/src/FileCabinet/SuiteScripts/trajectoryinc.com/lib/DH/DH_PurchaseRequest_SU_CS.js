@@ -58,13 +58,13 @@
                 value: filterPurchMethod,
                 ignoreFieldChange: true
             });
-        } else {
-            var currentRecord = context.currentRecord;
-            currentRecord.setValue({
-                fieldId: 'custpage_purchmethod',
-                value: '1',
-                ignoreFieldChange: true
-            });
+        // } else {
+        //     var currentRecord = context.currentRecord;
+        //     currentRecord.setValue({
+        //         fieldId: 'custpage_purchmethod',
+        //         value: '1',
+        //         ignoreFieldChange: true
+        //     });
         }
       
         if (screenHeight < 400) {
@@ -104,6 +104,8 @@
         var emptyStatus = false;
         var toNoRate = false;
         var zeroQtys = false;
+        // var typesArray = [];
+        var methodsArray = [];
         for (var i = 0; i < lineCount; i++) {
             var processLine = currentRecord.getSublistValue({
                 sublistId: 'custpagesublist',
@@ -141,6 +143,25 @@
                     failedLine = (i+1);
                     break;
                 }
+                // var prType = currentRecord.getSublistValue({
+                //     sublistId: 'custpagesublist',
+                //     fieldId: 'prtype',
+                //     line: i
+                // });
+                // if (typesArray.indexOf(prType) == -1) {
+                //     typesArray.push(prType);
+                // }
+                var purchMethod = currentRecord.getSublistValue({
+                    sublistId: 'custpagesublist',
+                    fieldId: 'purchmethod',
+                    line: i
+                });
+                if (purchMethod == '') {
+                    purchMethod = '1';  //if blank, treat as Email
+                }
+                if (methodsArray.indexOf(purchMethod) == -1) {
+                    methodsArray.push(purchMethod);
+                }
             }
         }
         if (zeroLines) {
@@ -177,6 +198,26 @@
             var myMsg = message.create({
                 title: 'NO RATE FOR TRANSFER ON LINE ' + failedLine,
                 message: 'At least one of the requests you selected is a Transfer Order that does not have a Rate set. Please fill in the required fields before submitting.',
+                type: message.Type.ERROR
+            });
+            myMsg.show({
+                duration: 10000 // will disappear after 5s
+            });
+            return false;
+        // } else if (typesArray.length > 1) {
+        //     var myMsg = message.create({
+        //         title: 'MULTIPLE PR TYPES',
+        //         message: 'The requests you selected are across multiple purchase request types. Please select requests of a single type before submitting.',
+        //         type: message.Type.ERROR
+        //     });
+        //     myMsg.show({
+        //         duration: 10000 // will disappear after 5s
+        //     });
+        //     return false;
+        } else if (methodsArray.length > 1) {
+            var myMsg = message.create({
+                title: 'MULTIPLE PURCH METHODS',
+                message: 'The requests you selected are across multiple purchase methods. Please select requests of a single purchase method before submitting.',
                 type: message.Type.ERROR
             });
             myMsg.show({

@@ -120,5 +120,6 @@ define(["require", "exports", "N/record", "./DH_Library"],
             CreateType[CreateType["DropShipPO"] = 3] = "DropShipPO";
             CreateType[CreateType["WillCallPO"] = 4] = "WillCallPO";
             CreateType[CreateType["TransferOrder"] = 5] = "TransferOrder";
+            CreateType[CreateType["CreditCardPO"] = 6] = "CreditCardPO";
         })(CreateType = exports.CreateType || (exports.CreateType = {}));
     });

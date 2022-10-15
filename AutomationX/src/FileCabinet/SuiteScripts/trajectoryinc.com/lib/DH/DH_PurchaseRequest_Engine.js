@@ -263,11 +263,16 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
         var rejectPurchaseRequest = function (options) {
             options.lines.forEach(function (line) {
                 line.purchaseRequestInfos.forEach(function (purchaseRequestInfo) {
-                    updatePurchaseRequest({
-                        purchaseRequestInfo: purchaseRequestInfo,
-                        purchaseRequestProcessingStatus: PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.Reject,
-                        lineNotes: line.notes
-                    });
+                    var prArr = purchaseRequestInfo.id;
+                    for (var i = 0; i < prArr.length; i++) {
+                        updatePurchaseRequest({
+                            prId: prArr[i],
+                            purchaseRequestInfo: purchaseRequestInfo,
+                            purchaseRequestProcessingStatus: PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.Reject,
+                            lineNotes: line.notes
+                        });
+                    }
+                    
                 });
             });
         };
@@ -309,6 +314,7 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
             } else {
                 purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsReStockPO, value: true });
             }
+            var salesOrderIds = [];
             options.lines.forEach(function (line, index) {
                 lineDescriptions = [];
                 lineVendorNotes = [];
@@ -316,7 +322,6 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                     lineNotes.push(line.notes);
                 }
                 var salesOrders = [];
-                var salesOrderIds = [];
                 line.purchaseRequestInfos.forEach(function (purchaseRequestInfo) {
                     var soArr = purchaseRequestInfo.salesOrderId;
                     for (var i = 0; i < soArr.length; i++) {
@@ -342,7 +347,9 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                             if (salesOrders.indexOf(details.tranid) === -1) {
                                 salesOrders.push(details.tranid); // remove duplicates
                             }
-                            salesOrderIds.push(soId);
+                            if (salesOrderIds.indexOf(soId) == -1) {
+                                salesOrderIds.push(soId);
+                            }
                         }
                     }
                     if (purchaseRequestInfo.description) {
@@ -352,11 +359,6 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                         lineVendorNotes.push(purchaseRequestInfo.vendorNotes);
                     }
                 });
-                // In the case of a dropship, I need to pull the ShipTo from the Sales Order forward to the DropShip PO ShipTo
-                if (options.poType === PurchaseRequestItemDetail_1.CreateType.DropShipPO && salesOrderIds.length > 0) {
-                    var salesOrder = record.load({ type: record.Type.SALES_ORDER, id: salesOrderIds[0] });
-                    purchaseOrder.setValue({ fieldId: 'shipaddress', value: salesOrder.getValue({ fieldId: 'shipaddress' }) });
-                }
                 purchaseOrder.selectNewLine({ sublistId: 'item' });
                 purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'item', value: line.itemId });
                 purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity', value: line.quantity });
@@ -382,6 +384,15 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                     purchaseOrder.commitLine({ sublistId: 'item' });
                 }
             });
+            log.debug('createPurchaseOrder - salesOrderIds', JSON.stringify(salesOrderIds));
+            //set Related Transactions field
+            purchaseOrder.setValue({ fieldId: 'custbody236', value: salesOrderIds });
+            // In the case of a dropship, I need to pull the ShipTo from the Sales Order forward to the DropShip PO ShipTo
+            if (options.poType === PurchaseRequestItemDetail_1.CreateType.DropShipPO && salesOrderIds.length > 0) {
+                //alter structure to get id from first value in array. no consolidation, so is just an array with one json at pos 0
+                var salesOrder = record.load({ type: record.Type.SALES_ORDER, id: salesOrderIds[0].id });
+                purchaseOrder.setValue({ fieldId: 'shipaddress', value: salesOrder.getValue({ fieldId: 'shipaddress' }) });
+            }
             if (lineNotes.length > 0) {
                 purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.PurchasingNotes, value: lineNotes.join('\n') });
             }
@@ -429,6 +440,23 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                 transferOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: line.rate });
                 transferOrder.commitLine({ sublistId: 'item' });
             });
+            var salesOrderIds = [];
+            options.lines.forEach(function (line) {
+                line.purchaseRequestInfos.forEach(function (purchaseRequestInfo) {
+                    var soArr = purchaseRequestInfo.salesOrderId;
+                    for (var i = 0; i < soArr.length; i++) {
+                        var soId = soArr[i].id;
+                        if (soId && soId > 0) {
+                            if (salesOrderIds.indexOf(soId) == -1) {
+                                salesOrderIds.push(soId);
+                            }
+                        }
+                    }
+                });
+            });
+            log.debug('createTranserOrder - salesOrderIds', JSON.stringify(salesOrderIds));
+                //set Related Transactions field
+                transferOrder.setValue({ fieldId: 'custbody236', value: salesOrderIds });
             return transferOrder.save();
         };
         var linkRelatedTransaction = function (prId, transactionId, purchaseRequestProcessingStatus, lineNotes) {

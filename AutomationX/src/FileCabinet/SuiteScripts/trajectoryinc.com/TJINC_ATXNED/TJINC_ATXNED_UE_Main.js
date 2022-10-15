@@ -52,13 +52,13 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                     if (i_location) {
 
                         for (i = 0; i < o_rec.getLineCount('item'); i++) {
-                            if (type == 'salesorder') {
-                                i_loc_item = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: i });
-                                b_createto = false;
-                            } else if (type == 'workorder') {
+                            // if (type == 'salesorder') {
+                            //     i_loc_item = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: i });
+                            //     b_createto = false;
+                            // } else if (type == 'workorder') {
                                 i_loc_item = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol114', line: i });
                                 b_createto = false;
-                            }
+                            // }
                             
 
                             if (parseInt(o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: i })) === 5) {
@@ -98,13 +98,13 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                     line_toqty: 0,
                                     line_createTO: false
                                 };
-                                if (type == 'salesorder') {
-                                    o_temp.line_loc = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: j });
-                                    o_temp.line_qtyav = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'quantityavailable', line: j });
-                                } else if (type == 'workorder') {
+                                // if (type == 'salesorder') {
+                                //     o_temp.line_loc = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: j });
+                                //     o_temp.line_qtyav = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'quantityavailable', line: j });
+                                // } else if (type == 'workorder') {
                                     o_temp.line_loc = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol114', line: j })
                                     o_temp.line_qtyav = o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol115', line: j });
-                                }
+                                // }
                                 log.debug('o_temp', JSON.stringify(o_temp));
 
                                 log.debug('custcol90', o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: j }));
@@ -159,14 +159,19 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             }
 
                             if (b_save) {
+                                var soId = o_rec.id;
+                                if (soId) {
+                                    o_torec.setValue({ fieldId: 'custbody236', value: soId });
+                                }
                                 o_torec.setValue({ fieldId: 'shippingcost', value: 0.01, ignoreFieldChange: true });
 
                                 let i_nrec_id = o_torec.save({ enableSourcing: true, ignoreMandatoryFields: true });
                                 log.audit({ title: '_transfer_orderproc', details: 'New Transfer Order created for location: ' + a_tolocation[i] });
                                 for (j = 0; j < o_rec.getLineCount('item'); j++) {
                                     if (type == 'salesorder') {
-                                        if (o_rec.getSublistValue({ sublistId: 'item', fieldId: 'location', line: j }) === a_tolocation[i]) {
+                                        if (o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol114', line: j }) === a_tolocation[i]) {
                                             o_rec.setSublistValue({ sublistId: 'item', fieldId: 'custcol74', line: j, value: i_nrec_id });
+                                            //set ship location as header location
                                             o_rec.setSublistValue({ sublistId: 'item', fieldId: 'location', line: j, value: i_location });
     
                                             if (parseInt(o_rec.getSublistValue({ sublistId: 'item', fieldId: 'custcol90', line: j })) === 5) {
@@ -647,7 +652,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                         for (let i = 0, lineCount = +context.newRecord.getLineCount({ sublistId: 'item' }); i < lineCount; i = i + 1) {
                             let createType = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol90' });
                             let notes = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol116'});
-                            let prType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custrecord314'});
+                            let prType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol117'});
                             let relatedTransactionId = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.RelatedTransaction });
                             let purchaseRequestId = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.PurchaseRequest });
                             let costEstimateType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'costestimatetype' });
@@ -669,6 +674,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                     case dh_pr.CreateType.ExpeditePO:
                                     case dh_pr.CreateType.DropShipPO:
                                     case dh_pr.CreateType.WillCallPO:
+                                    case dh_pr.CreateType.CreditCardPO:
                                         // If the estimate 'Cost Est Type' (standard field) is Custom, carry through the Est Extended Cost as the Unit Cost (divide Est Extended Cost / by Qty ) and use as 'estimatedCost'
                                         if (costEstimateType === 'CUSTOM') {
                                             estimatedCost = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'costestimaterate' });
@@ -692,7 +698,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                                     type: 'item',
                                                     filters: [
                                                         ['internalidnumber', 'equalto', context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'item' })], 'AND',
-                                                        ['othervendor', 'anyof', context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'povendor' })]
+                                                        ['othervendor', 'anyof', context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol118' })]
                                                     ],
                                                     columns: ['vendorcost']
                                                 })
@@ -720,7 +726,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                         purchaseRequests.push({
                                             processingStatus: dh_pr.PurchaseRequestProcessingStatus.PurchaseOrder,
                                             LocationPreferredStockLevel: +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol112' }),   /// MH ADDED
-                                            vendorId: +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'povendor' }),
+                                            vendorId: +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol118' }),
                                             locationId: locationId,
                                             email: runtime.getCurrentUser().email,
                                             fromLocationId: -1,
@@ -813,6 +819,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                     case dh_pr.CreateType.ExpeditePO:
                                     case dh_pr.CreateType.DropShipPO:
                                     case dh_pr.CreateType.WillCallPO:
+                                    case dh_pr.CreateType.CreditCardPO:
                                         // Move this to a BeforeSubmit and populate the 'Purchase Request' column with a dummy value (1000) on evey line that was processed
                                         // Popuating this value allows a client-script to prevent the user from entering a value in the CreateType field .. thus preventing re-generating the line
                                         log.debug('beforeSubmit - Attemping to set Dummy PR', "line: " + i);

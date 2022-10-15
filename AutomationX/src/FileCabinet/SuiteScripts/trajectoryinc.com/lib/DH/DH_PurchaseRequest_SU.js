@@ -63,8 +63,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
             });
             if (context.request.parameters.purchMethod) {
                 purchMethod = context.request.parameters.purchMethod;
-            } else {
-                purchMethod = '1';  //Email
+            // } else {
+            //     purchMethod = '1';  //Email
             }
 
             // var stockRequests = !DH_ProcessManager_1.isProcessing() ? getStockRequests(clearAll, isNormallyStocked) : []; 
@@ -155,10 +155,10 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         }
                         if (stockRequest.config.id == 'id') {
                             var recIdsArr = JSON.parse(stockRequest.value);
-                            // log.debug({
-                            //     title: 'recIdsArr',
-                            //     details: JSON.stringify(recIdsArr) + 'type1 : ' + typeof(recIdsArr) + ' len: ' + recIdsArr.length + ' type2: ' + typeof(recIdsArr[0])
-                            // });
+                            log.debug({
+                                title: 'recIdsArr',
+                                details: JSON.stringify(recIdsArr) + 'type1 : ' + typeof(recIdsArr) + ' len: ' + recIdsArr.length + ' type2: ' + typeof(recIdsArr[0])
+                            });
                             for (var i = 0; i < recIdsArr.length; i++) {
                                 var recId = recIdsArr[i];
                                 var recUrl = url.resolveRecord({
@@ -169,10 +169,10 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             }
                         } else if (stockRequest.config.id == 'so') {
                             var soArr = JSON.parse(stockRequest.value);
-                            // log.debug({
-                            //     title: 'recIdsArr',
-                            //     details: JSON.stringify(soArr) + 'type1 : ' + typeof(soArr) + ' len: ' + soArr.length + ' type2: ' + typeof(soArr[0])
-                            // });
+                            log.debug({
+                                title: 'soArr',
+                                details: JSON.stringify(soArr) + 'type1 : ' + typeof(soArr) + ' len: ' + soArr.length + ' type2: ' + typeof(soArr[0])
+                            });
                             for (var i = 0; i < soArr.length; i++) {
                                 var recId = soArr[i].id;
                                 if (soArr[i].type == 'salesorder') {
@@ -232,9 +232,11 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
             var purchaseRequests = [];
             var purchaseRequestIds = [];
             var purchaseRequestStatuses = [];
+            var purchaseRequestNotes = [];
             for (var i = 0, lineCount = +context.request.getLineCount({ group: ITEMSUBLIST.id }); i < lineCount; i = i + 1) {
                 var status_1 = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'process', line: i });
                 var processStatus = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'status', line: i });
+                var purchNotes = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'purchasingnotes', line: i });
                 log.debug({
                     title: 'checking line',
                     details: 'line: ' + i + ' | process: '  + status_1
@@ -279,6 +281,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     for (var j = 0; j < prIdsArr.length; j++) {
                         purchaseRequestIds.push(prIdsArr[j]);
                         purchaseRequestStatuses.push(processStatus);
+                        purchaseRequestNotes.push(purchNotes);
                     }
                 }
             }
@@ -311,6 +314,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 } else {
                     updateValues[PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus] = 5;
                 }
+                updateValues[PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.PurchaseNotes] = purchaseRequestNotes[i];
                 record.submitFields({
                     type: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.RECORD_TYPE,
                     id: purchaseRequestIds[i],
@@ -337,7 +341,13 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 title: 'purchaseRequestItemDetails',
                 details: purchaseRequestItemDetails.length + ' | ' + JSON.stringify(purchaseRequestItemDetails)
             });
-            var consPurchaseRequests = consolidateRequests(purchaseRequestItemDetails);
+            //only consolidate if standard. show standalone lines for special types so Purch can decide how to group them
+            if (prType == '1') {
+                var consPurchaseRequests = consolidateRequests(purchaseRequestItemDetails);
+            } else {
+                var consPurchaseRequests = consolidateRequests2(purchaseRequestItemDetails);
+            }
+            
             log.debug({
                 title: 'consPurchaseRequests',
                 details: consPurchaseRequests.length + ' | ' + JSON.stringify(consPurchaseRequests)
@@ -502,19 +512,19 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 title: 'prType and purchMethod',
                 details: prType + ' | ' + purchMethod
             });
-            if (prType != '1') {
+            if (prType > 1) {
                 filter.push('AND');
                 filter.push(['custrecord314', 'anyof', prType]);
             } else {
                 filter.push('AND');
                 filter.push(["custrecord314","anyof","@NONE@","1"]);
             }
-            if (purchMethod != '1') {
+            if (purchMethod > 0) {
                 filter.push('AND');
                 filter.push(["custrecord187.custitem115","anyof",purchMethod]);
-            } else {
-                filter.push('AND');
-                filter.push(["custrecord187.custitem115","anyof","@NONE@","1"]);
+            // } else {
+            //     filter.push('AND');
+            //     filter.push(["custrecord187.custitem115","anyof","@NONE@","1"]);
             }
             log.debug({
                 title: 'getPurchaseRequestItemDetails filter',
@@ -611,7 +621,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     purchMethod: result.getValue(result.columns[33]),
                     prids: [],
                     soArr: [],
-                    soIdArr: []
+                    soIdArr: [],
+                    soNotesConcat: ''
                 };
                 var estCost = +result.getValue(result.columns[20]);
                 if (estCost == 0) {
@@ -736,7 +747,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'leadtime', type: serverWidget.FieldType.TEXT, label: 'Lead Time' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'lastnegotiationdate', type: serverWidget.FieldType.TEXTAREA, label: 'Last Negotiation Date' }, displayType: serverWidget.FieldDisplayType.HIDDEN }); // MH added
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'newstock', type: serverWidget.FieldType.CHECKBOX, label: 'Add Stock Level' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
-        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'forecastnotes', type: serverWidget.FieldType.TEXT, label: 'Sales Notes' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'forecastnotes', type: serverWidget.FieldType.TEXTAREA, label: 'Sales Notes' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'purchasingnotes', type: serverWidget.FieldType.TEXTAREA, label: 'Purchasing Notes' }, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'solineid', type: serverWidget.FieldType.INTEGER, label: 'solineid' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'empemails', type: serverWidget.FieldType.EMAIL, label: 'email' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
@@ -863,6 +874,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 var soId = localPurchReq.salesOrderId;
                 var soText = localPurchReq.salesOrderText;
                 var soLine = localPurchReq.salesOrderLine;
+                var soNotes = localPurchReq.forecastnotes;
                 var key = item + '-' + location + '-' + vendor;
                 if (soText.indexOf('Sales Order') != -1) {
                     var tranType = 'salesorder';
@@ -894,6 +906,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         type: tranType
                     });
                     localPurchReq.key = key;
+                    localPurchReq.soNotesConcat = soNotes;
                     keys.push(key);
                     consolidatedReqs.push(localPurchReq);
                 } else {
@@ -918,6 +931,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             type: tranType
                         });
                         localPurchReq.key = key;
+                        localPurchReq.soNotesConcat = soNotes;
                         keys.push(key);
                         consolidatedReqs.push(localPurchReq);
                     } else {
@@ -939,6 +953,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                                 type: tranType
                             });
                             localPurchReq.key = key;
+                            localPurchReq.soNotesConcat = soNotes;
                             keys.push(key);
                             consolidatedReqs.push(localPurchReq);
                         } else {
@@ -956,8 +971,9 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                                 line: soLine,
                                 type: tranType
                             });
+                            consolidatedReqs[consIndex].soNotesConcat = consolidatedReqs[consIndex].soNotesConcat + '<br><br>' + soNotes;
                             consolidatedReqs[consIndex].quantity = consolidatedReqs[consIndex].quantity + quantity;
-                                consolidatedReqs[consIndex].rate = (consolidatedReqs[consIndex].rate + rate)/2;
+                            consolidatedReqs[consIndex].rate = (consolidatedReqs[consIndex].rate + rate)/2;
                             if (process == '1') {
                                 //if existing type is TO, swap to PO. Wouldn't transfer AND purchase normally, if we need to do a PO we should just condolidate everything there
                                 var currentProcess = consolidatedReqs[consIndex].processingStatus;
@@ -982,6 +998,56 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 details: itemLocJSON.length + ' | ' + JSON.stringify(itemLocJSON)
             });
             return consolidatedReqs;
+        };
+        //consolidate requests to item by location
+        var consolidateRequests2 = function (purchaseRequestItemDetails) {
+            var consolidatedReqs2 = [];
+            //consolidate by itemId and locationId
+            //aggregate quantity, average rate (or max? rate should be the same)
+            //need to consolidate ids into array
+            //check processingStatus. if purchase, add to purchase total. if transfer, add to tranfser total
+
+            for (var i = 0; i < purchaseRequestItemDetails.length; i++) {
+                var localPurchReq = purchaseRequestItemDetails[i];
+                var prId = localPurchReq.internalId;
+                var soId = localPurchReq.salesOrderId;
+                var soText = localPurchReq.salesOrderText;
+                var soLine = localPurchReq.salesOrderLine;
+                var soNotes = localPurchReq.forecastnotes;
+                if (soText.indexOf('Sales Order') != -1) {
+                    var tranType = 'salesorder';
+                } else {
+                    var tranType = 'workorder'
+                }
+                localPurchReq.prids.push(prId);
+                localPurchReq.soArr.push({
+                    id: soId,
+                    text: soText,
+                    line: soLine,
+                    type: tranType
+                });
+                localPurchReq.soIdArr.push({
+                    id: soId,
+                    text: soText,
+                    line: soLine,
+                    type: tranType
+                });
+                localPurchReq.soNotesConcat = soNotes;
+                consolidatedReqs2.push(localPurchReq);
+            }
+            // log.debug({
+            //     title: 'keys',
+            //     details: keys.length + ' | ' + JSON.stringify(keys)
+            // });
+            // log.debug({
+            //     title: 'items',
+            //     details: items.length + ' | ' + JSON.stringify(items)
+            // });
+            // log.debug({
+            //     title: 'itemLocJSON',
+            //     details: itemLocJSON.length + ' | ' + JSON.stringify(itemLocJSON)
+            // });
+            return consolidatedReqs2;
         };
         var findWithAttr = function findWithAttr(array, attr, value) {
             for(var i = 0; i < array.length; i += 1) {
