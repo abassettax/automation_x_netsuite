@@ -82,7 +82,18 @@ if(name == 'shipdate')
 
 }
 
-
+if(name =='entity')
+{
+// var ven = nlapiGetFieldValue('entity');
+var userRole = nlapiGetRole();
+// alert(userRole);
+var allowedRoles = [3,1052,1115,1003,1060,1054];
+// alert(allowedRoles.indexOf(parseInt(userRole)));
+if (allowedRoles.indexOf(parseInt(userRole)) == -1) {
+  alert("Your role does not have permission to change the Vendor on Credit Card POs. Please create new POs using Purchase Requests from Sales Order lines or standalone Purchase Requests for Stock Requests. Resetting the Vendor to Credit Card Purchase Tracker %.");
+nlapiSetFieldValue('entity',"2491", false, null);  //always set entity to CC Tracker on change if user is not in list
+  return true;
+}}
 
 }
 
