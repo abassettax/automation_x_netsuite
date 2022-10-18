@@ -129,7 +129,7 @@ function avaCash() {
    var glCash3 = transactionSearch3[0].getValue(nlobjSearchColumn("amount", null, "SUM"));
    var glundepfunds = accountSearch[0].getValue(nlobjSearchColumn("balance", null, null));
    var lineOS = accountSearchA[0].getValue(nlobjSearchColumn("balance", null, null));
-   var cashAVA = parseInt(linemax) + parseInt(glCash) + parseInt(glCash2) + parseInt(glCash3) + parseInt(glundepfunds) + parseInt(lineOS);
+   var cashAVA = parseFloat(linemax) + parseFloat(glCash) + parseFloat(glCash2) + parseFloat(glCash3) + parseFloat(glundepfunds) + parseFloat(lineOS);
 
    var sevenplus = vendorbillSearch[0].getValue(APcolumns[1]);
    var fifteenplus = vendorbillSearch[0].getValue(APcolumns[3]);
@@ -143,7 +143,7 @@ function avaCash() {
    var twentyfiveplusamount = vendorbillSearch[0].getValue(APcolumns[8]);
    var thirtyfiveplusamount = vendorbillSearch[0].getValue(APcolumns[10]);
    var totalap = totalAPSearch[0].getValue(totalAPColumns[0]);
-   var totalapPlusRecNotBilled = Math.abs(parseInt(totalap)) + Math.abs(parseInt(AmountRecNotBilled));
+   var totalapPlusRecNotBilled = Math.abs(parseFloat(totalap)) + Math.abs(parseFloat(AmountRecNotBilled));
 
    var FormatedAmountRecNotBilled = '$' + parseFloat(Math.abs(AmountRecNotBilled)).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
    var FormatedglCash = '$' + parseFloat(glCash).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
