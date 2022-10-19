@@ -703,7 +703,8 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                                     columns: ['vendorcost']
                                                 })
                                             });
-                                            if (o_cost_search) {
+                                            log.debug('beforeSubmit - o_cost_search', "o_cost_search: " + JSON.stringify(o_cost_search));
+                                            if (o_cost_search.length > 0) {
                                                 i_cost = o_cost_search[0].getValue({ name: 'vendorcost' });
                                             } else {
                                                 i_cost = 0;
