@@ -1,4 +1,4 @@
-function beforesubitIR() {
+function beforesubitIR(type) {
   /////////////////////////////////landed cost value
   var landedCostPercent = .02;
   ////////////////////////////////////////////////
@@ -8,9 +8,17 @@ function beforesubitIR() {
   if (cf.indexOf("Purchase") > -1) {
     var amountlandedcost = 0;
     var lineCount = parseInt(nlapiGetLineItemCount('item'));
+    nlapiLogExecution('DEBUG', 'lineCount', lineCount);
     for (x = 1; x <= lineCount; x++) {
+      //need to explicitly check context instead of implicitly checking qty. otherwise we may attribute landed shipping from other receivable lines, not just received lines
+      if (type == 'create') {
+        var receive = nlapiGetLineItemValue('item', 'itemreceive', x);
+      } else {
+        var receive = true;
+      }
+      nlapiLogExecution('DEBUG', 'receive', receive);
       var qty = nlapiGetLineItemValue('item', 'quantity', x);
-      if (qty) {
+      if (qty && qty > 0) {
         var itemrate = nlapiGetLineItemValue('item', 'rate', x);
         var itemtypes = nlapiGetLineItemValue('item', 'itemtype', x);
         nlapiLogExecution('DEBUG', 'itemtypes', itemtypes);
