@@ -14,11 +14,11 @@ function beforesubitIR(type) {
       if (type == 'create') {
         var receive = nlapiGetLineItemValue('item', 'itemreceive', x);
       } else {
-        var receive = true;
+        var receive = 'T';
       }
       nlapiLogExecution('DEBUG', 'receive', receive);
       var qty = nlapiGetLineItemValue('item', 'quantity', x);
-      if (qty && qty > 0) {
+      if ((qty && qty > 0) && receive == 'T') {
         var itemrate = nlapiGetLineItemValue('item', 'rate', x);
         var itemtypes = nlapiGetLineItemValue('item', 'itemtype', x);
         nlapiLogExecution('DEBUG', 'itemtypes', itemtypes);
