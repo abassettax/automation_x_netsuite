@@ -7,6 +7,7 @@ function beforesubitIR(type) {
 
   if (cf.indexOf("Purchase") > -1) {
     var amountlandedcost = 0;
+    var amountrate = 0;
     var lineCount = parseInt(nlapiGetLineItemCount('item'));
     nlapiLogExecution('DEBUG', 'lineCount', lineCount);
     for (x = 1; x <= lineCount; x++) {
@@ -22,14 +23,26 @@ function beforesubitIR(type) {
         var itemrate = nlapiGetLineItemValue('item', 'rate', x);
         var itemtypes = nlapiGetLineItemValue('item', 'itemtype', x);
         nlapiLogExecution('DEBUG', 'itemtypes', itemtypes);
-        if (itemrate > 0 && itemtypes == 'InvtPart') { amountlandedcost = parseInt(amountlandedcost) + ((itemrate * parseInt(qty)) * landedCostPercent); }
+        if (itemrate > 0 && itemtypes == 'InvtPart') { amountlandedcost = parseFloat(amountlandedcost) + ((itemrate * parseInt(qty)) * landedCostPercent); }
+        amountrate = parseFloat(amountrate) + itemrate * parseInt(qty);
       }
     }
-    nlapiLogExecution('DEBUG', 'amountlandedcost', amountlandedcost);
-    if (nlapiGetFieldValue('landedcostsource1') == 'MANUAL' && amountlandedcost > .01) {
-      nlapiSetFieldValue('custbody187', landedCostPercent * 100);
+    var landed1 = nlapiGetFieldValue('landedcostamount1');
+    var landed2 = nlapiGetFieldValue('landedcostamount2');
+    var landed3 = nlapiGetFieldValue('landedcostamount3');
+    var landed4 = nlapiGetFieldValue('landedcostamount4');
+    var actLanded = landed1 + landed2 + landed3 + landed4;
+    if ((landed1 == '' && landed2 == '' && landed3 == '' && landed4 == '') && nlapiGetFieldValue('landedcostsource1') == 'MANUAL' && amountlandedcost > .01) {
+      actLanded = amountlandedcost;
       nlapiSetFieldValue('landedcostmethod', 'VALUE');
       nlapiSetFieldValue('landedcostamount1', amountlandedcost);
+    }
+    nlapiLogExecution('DEBUG', 'actLanded', actLanded);
+    nlapiLogExecution('DEBUG', 'amountrate', amountrate);
+    nlapiLogExecution('DEBUG', 'landed cost %', (actLanded/amountrate) * 100);
+    if (actLanded > .01 && amountrate > 0) {
+      nlapiSetFieldValue('custbody187', (actLanded/amountrate) * 100);
+      nlapiSetFieldValue('custbody238', nlapiGetFieldValue('landedcostsource1'));
     }
   }
 
