@@ -37,6 +37,15 @@ define(['N/record',
                     break;
             }
         }
+
+        function tjincATX_validatefieldSO(context) {
+            switch (context.currentRecord.type.toLowerCase()) {
+                case record.Type.SALES_ORDER.toLowerCase():
+                    return lib.tjincATX_validatefieldSO(context);
+                default:
+                    return true;
+            }
+        }
         
         function tjincATX_fieldChanged(context) {
             switch (context.currentRecord.type.toLowerCase()) {
@@ -90,6 +99,7 @@ define(['N/record',
         }
 
         return {
+            validateField: tjincATX_validatefieldSO,
             fieldChanged: tjincATX_fieldChanged,
             postSourcing: tjincATX_postSource,
             lineInit: tjincATX_lineInit,

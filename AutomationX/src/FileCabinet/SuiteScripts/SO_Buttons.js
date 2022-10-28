@@ -236,6 +236,7 @@ function adjustcostestimate() {
         }
     }
 
+    //TODO: this may be redefining the same function set in the UE script for the main button
     function axClose() {
         var SOid = nlapiGetRecordId();
         var rec = nlapiLoadRecord(nlapiGetRecordType(), SOid);
@@ -834,55 +835,124 @@ function adjustcostestimate() {
         return true;
     }
 
-    function itemprice() {
+    // function itemprice() {
 
-        alert("Starting price update.  This may take several minutes.  You will be prompted when completed.");
+    //     //TODO: need to move this function to before submit. No longer need a button, need to move this logic to TJINC UE Main
+    //     alert("Starting price update.  This may take several minutes.  You will be prompted when completed.");
 
-        cust = nlapiGetFieldValue('entity');
-        var ischild = nlapiLookupField('customer', cust, 'parent');
+    //     cust = nlapiGetFieldValue('entity');
+    //     var ischild = nlapiLookupField('customer', cust, 'parent');
 
 
-        //check to see if there is a parent customer if so update that customer
-        if (ischild) {
-            if (nlapiLookupField('customer', ischild, 'custentity333') == "T") { cust = ischild; }
+    //     //check to see if there is a parent customer if so update that customer
+    //     if (ischild) {
+    //         if (nlapiLookupField('customer', ischild, 'custentity333') == "T") { cust = ischild; }
+    //     }
+    //     ///end customer check
+    //     var record = nlapiLoadRecord('customer', cust);
+    //     if (nlapiGetCurrentLineItemValue('item', 'item')) {
+    //         nlapiCommitLineItem('item');
+    //     }
+    //     for (x = 1; x <= nlapiGetLineItemCount('item'); x++) {
+    //         if (nlapiGetLineItemValue('item', 'custcol_custpriceupdate', x) == "T") {
+
+    //             var uid = nlapiGetLineItemValue('item', 'item', x);
+    //             var SOPrice = nlapiGetLineItemValue('item', 'price', x);
+
+    //             //----------------------------------------------------------
+
+    //             for (i = 1; i <= record.getLineItemCount('itempricing'); i++) {
+
+    //                 var thisitemid = record.getLineItemValue('itempricing', 'item', i);
+    //                 if (uid == thisitemid && SOPrice) {
+    //                     record.setLineItemValue('itempricing', 'level', i, SOPrice);
+    //                     //alert("Customer Price Record Updated");
+    //                     break;
+    //                 }
+    //             }
+
+    //             //-----------------------------------------------------------------------
+
+    //             if (uid != thisitemid && SOPrice) {
+    //                 record.selectNewLineItem('itempricing');
+    //                 record.setCurrentLineItemValue('itempricing', 'item', uid);
+    //                 record.setCurrentLineItemValue('itempricing', 'level', SOPrice);
+    //                 record.commitLineItem('itempricing');
+    //                 //alert("Customer Price Record Updated 1");
+    //             }
+    //         }
+    //     }
+
+    //     nlapiSubmitRecord(record, false, true);
+    //     alert("Customer pricing has been updated for selected items");
+    // }
+
+    function updateprice() {
+        alert("Starting price sync. This may take several minutes. You will be notified when it is completed.");
+
+        //TODO: iterate through all lines to get item ids. loop through item ids. see if customer has defined pricing for each item. if yes, set custom rate. else, set current base rate for item
+        var cust = nlapiGetFieldValue('entity');
+        var pricingSearch = nlapiSearchRecord("pricing",null,
+            [
+            ["pricelevel","noneof","@NONE@","1"], 
+            "AND", 
+            ["customer","anyof",cust]
+            ], 
+            [
+            new nlobjSearchColumn("iteminternalid",null,"GROUP"), 
+            new nlobjSearchColumn("pricelevel",null,"GROUP"), 
+            new nlobjSearchColumn("unitprice",null,"AVG")
+            ]
+        );
+        var priceLevelIds = [157,150,98,151,99,152,100,153,101,154,102,155,103,156,105,122,106,123,107,120,108,121,114,119,113,124,109,125,115,126,116,127,117,128,118,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,159,110,1,111,5];
+        var priceLevelNames = ['0-LAP - Lowest Allowable Price','01% Off Base Price','02% Off Base Price','03% Off Base Price','04% Off Base Price','05% Off Base Price','06% Off Base Price','07% Off Base Price','08% Off Base Price','09% Off Base Price','10% Off Base Price','11% Off Base Price','12% Off Base Price','13% Off Base Price','14% Off Base Price','15% Off Base Price','16% Off Base Price','17% Off Base Price','18% Off Base Price','19% off base price','20% Off Base Price','21% off base price','22% Off Base Price','23% Off Base Price','24% Off Base Price','25% Off Base Price','26% Off Base Price','27% Off Base Price','28% Off Base Price','29% Off Base Price','30% Off Base Price','31% Off Base Price','32% Off Base Price','33% Off Base Price','34% Off Base Price','35% Off Base Price','36% Off Base Price','37% Off Base Price','38% Off Base Price','39% Off Base Price','40% Off Base Price','42% Off Base Price','44% Off Base Price','46% Off Base Price','48% Off Base Price','50% Off Base Price','52% Off Base Price','54% Off Base Price','56% Off Base Price','58% Off Base Price','60% Off Base Price','62% Off Base Price','64% Off Base Price','66% Off Base Price','68% Off Base Price','70% Off Base Price','AMAZON','Archive Base Price','Base Price','MSRP','Online Price'];
+        var customerPrices = [];
+        var items = [];
+        // alert('pricing results: ' + pricingSearch.length);
+        for (var i = 0; pricingSearch != null && i < pricingSearch.length; i++) {
+            var pricingSearches = pricingSearch[i];
+            var cols = pricingSearches.getAllColumns();
+            var item = pricingSearches.getValue(cols[0]);
+            var price = pricingSearches.getValue(cols[1]);
+            var rate = pricingSearches.getValue(cols[2]);
+            customerPrices.push({
+                item: item,
+                price: price,
+                rate: rate
+            });
+            items.push(item);
         }
-        ///end customer check
-        var record = nlapiLoadRecord('customer', cust);
-        if (nlapiGetCurrentLineItemValue('item', 'item')) {
-            nlapiCommitLineItem('item');
-        }
+        // alert(JSON.stringify(items));
         for (x = 1; x <= nlapiGetLineItemCount('item'); x++) {
-            if (nlapiGetLineItemValue('item', 'custcol_custpriceupdate', x) == "T") {
-
-                var uid = nlapiGetLineItemValue('item', 'item', x);
-                var SOPrice = nlapiGetLineItemValue('item', 'price', x);
-
-                //----------------------------------------------------------
-
-                for (i = 1; i <= record.getLineItemCount('itempricing'); i++) {
-
-                    var thisitemid = record.getLineItemValue('itempricing', 'item', i);
-                    if (uid == thisitemid && SOPrice) {
-                        record.setLineItemValue('itempricing', 'level', i, SOPrice);
-                        //alert("Customer Price Record Updated");
-                        break;
-                    }
+            var lineItem = nlapiGetLineItemValue('item', 'item', x);
+            // alert(lineItem);
+            var priceIndex = findWithAttr(customerPrices, 'item', lineItem);
+            // alert("priceIndex " + priceIndex);
+            if (priceIndex != -1) {
+                var priceLevelIndex = priceLevelNames.indexOf(price);
+                // alert("priceLevelIndex " + priceLevelIndex);
+                if (priceLevelIndex != -1) {
+                    // alert("priceLevelIds[priceLevelIndex] " + priceLevelIds[priceLevelIndex]);
+                    //set to defined customer price level for given item
+                    nlapiSelectLineItem('item', x)
+                    nlapiSetCurrentLineItemValue('item', 'price', priceLevelIds[priceLevelIndex], false, false);
+                    nlapiCommitLineItem('item');
+                } else {
+                    // alert("customerPrices[priceIndex].rate " + customerPrices[priceIndex].rate);
+                    //set to custom, set rate to customer defined rate
+                    nlapiSelectLineItem('item', x)
+                    nlapiSetCurrentLineItemValue('item', 'price', '-1', false, false);
+                    nlapiSetCurrentLineItemValue('item', 'rate', customerPrices[priceIndex].rate, false, false);
+                    nlapiCommitLineItem('item');
                 }
-
-                //-----------------------------------------------------------------------
-
-                if (uid != thisitemid && SOPrice) {
-                    record.selectNewLineItem('itempricing');
-                    record.setCurrentLineItemValue('itempricing', 'item', uid);
-                    record.setCurrentLineItemValue('itempricing', 'level', SOPrice);
-                    record.commitLineItem('itempricing');
-                    //alert("Customer Price Record Updated 1");
-                }
+            } else {
+                //set to base price level
+                nlapiSelectLineItem('item', x)
+                nlapiSetCurrentLineItemValue('item', 'price', '1', false);
+                nlapiCommitLineItem('item');
             }
         }
-
-        nlapiSubmitRecord(record, false, true);
-        alert("Customer pricing has been updated for selected items");
+        alert("Pricing has been synced for all items.");
     }
 
     function makecopies() {
@@ -944,4 +1014,13 @@ function adjustcostestimate() {
             }
 
         }
+    }
+
+    function findWithAttr(array, attr, value) {
+        for(var i = 0; i < array.length; i += 1) {
+            if(array[i][attr] === value) {
+                return i;
+            }
+        }
+        return -1;
     }

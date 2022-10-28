@@ -1752,6 +1752,65 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                 }
             },
 
+            _cs_so_valfield: function (context) {
+                try {
+                    var sublistId = context.sublistId;
+                    var fieldId = context.fieldId;
+                    // alert('fieldId: ' + fieldId);
+                    if (sublistId === 'item' && (fieldId === 'rate' || fieldId === 'amount' || fieldId === 'custcol_custpriceupdate')) {
+                        var o_rec = context.currentRecord;
+                        var entity = o_rec.getValue('entity');
+                        var item = o_rec.getCurrentSublistValue({sublistId: 'item', fieldId: 'item'});
+                        // alert('item: ' + item);
+                        if (item != '' && entity != '') {
+                            var pricebookResults = tj.searchAll({
+                                'search': search.create({
+                                    type: "customrecord1281",
+                                    filters:
+                                    [
+                                    ["custrecord317","anyof",item], 
+                                    "AND", 
+                                    ["custrecord316.custrecord319","anyof",entity], 
+                                    "AND", 
+                                    ["custrecord316.custrecord320","before","today"], 
+                                    "AND", 
+                                    ["custrecord316.custrecord321","after","today"], 
+                                    "AND", 
+                                    ["isinactive","is","F"], 
+                                    "AND", 
+                                    ["custrecord316.isinactive","is","F"]
+                                    ],
+                                    columns: ['custrecord318']
+                                })
+                            });
+                            if (pricebookResults.length > 0) {
+                                var pricebookRate = pricebookResults[0].getValue({
+                                    name: 'custrecord318'
+                                });
+                                // alert('pb rate: ' + pricebookRate);
+                                var lineRate = o_rec.getCurrentSublistValue({sublistId: 'item', fieldId: 'rate'});
+                                // alert('line rate: ' + lineRate);
+                                if (lineRate != pricebookRate) {
+                                    if (fieldId === 'rate' || fieldId === 'amount') {
+                                        alert('The current line item you are editing is part of a pricebook for the customer on this order. The default price level, rate, and amount cannot be changed from what is defined in the pricebook.')
+                                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: pricebookRate });
+                                        return false;
+                                    } else {
+                                        alert('The current line item you are editing is part of a pricebook for the customer on this order. It cannot be marked for update customer pricing.')
+                                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: pricebookRate });
+                                        return false;
+                                    }
+                                }      
+                            }
+                        }
+                    }
+                    return true;
+                } catch (e) {
+                    log.error('tjincATX_validatelineSO', e);
+                    return true;
+                }
+            },
+
             tjincATX_pageInitSO: function (context) {
                 var o_user = runtime.getCurrentUser();
                 try {
@@ -1813,6 +1872,18 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     }
                 } catch (e) {
                     log.error('tjincATX_lineInitSO', e);
+                }
+            },
+
+            tjincATX_validatefieldSO: function (context) {
+                var o_response = true;
+                try {
+                    log.debug('tjincATX_validatefieldSO', 'IN');
+                    o_response = this._cs_so_valfield(context);
+
+                    return o_response;
+                } catch (e) {
+                    log.error('tjincATX_validatefieldSO', e);
                 }
             },
 
