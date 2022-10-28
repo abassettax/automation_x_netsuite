@@ -12,11 +12,11 @@ function beforesubitIR(type) {
     nlapiLogExecution('DEBUG', 'lineCount', lineCount);
     for (x = 1; x <= lineCount; x++) {
       //need to explicitly check context instead of implicitly checking qty. otherwise we may attribute landed shipping from other receivable lines, not just received lines
-      if (type == 'create') {
+      // if (type == 'create') {
         var receive = nlapiGetLineItemValue('item', 'itemreceive', x);
-      } else {
-        var receive = 'T';
-      }
+      // } else {
+      //   var receive = 'T';
+      // }
       nlapiLogExecution('DEBUG', 'receive', receive);
       var qty = nlapiGetLineItemValue('item', 'quantity', x);
       if ((qty && qty > 0) && receive == 'T') {
