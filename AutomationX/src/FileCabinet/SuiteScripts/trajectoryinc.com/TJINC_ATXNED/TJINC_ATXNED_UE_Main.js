@@ -418,6 +418,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                         });
 
                         if (o_rec.getValue('status') !== 'Closed' && o_rec.getValue('status') !== 'Billed') {
+                            //TODO: this button does nothing, need to verify function and test
                             o_form.addButton({
                                 label: 'Close Order', id: 'custpage_axclose',
                                 functionName: 'axClose(' + o_rec.id + ',' + o_rec.type.toLowerCase() + ')'
@@ -809,6 +810,8 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
             _dh_so_ue_bs: function (context) {
                 try {
                     if (runtime.executionContext !== runtime.ContextType.MAP_REDUCE) {
+                        var updatePrices = [];
+                        var cust = context.newRecord.getValue('entity');
                         for (let i = 0, lineCount = +context.newRecord.getLineCount({ sublistId: 'item' }); i < lineCount; i = i + 1) {
                             let createType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol90' });
                             let relatedTransactionId = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.RelatedTransaction });
@@ -830,6 +833,153 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                     case dh_pr.CreateType.TransferOrder:
                                         break;
                                 }
+                            }
+                            var updatePricing = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol_custpriceupdate' });
+                            if (updatePricing) {
+                                //TODO: push item/price data to array for next fn
+                                updatePrices.push({
+                                    item: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'item' }),
+                                    rate: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'rate' })
+                                });
+                                context.newRecord.setSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol_custpriceupdate', value: false });
+                            }
+                        }
+                        log.debug('beforeSubmit - updatePrices', JSON.stringify(updatePrices));
+                        if (updatePrices.length > 0) {
+                            var pricebookResults = tj.searchAll({
+                                'search': search.create({
+                                    type: "customrecord1281",
+                                    filters:
+                                    [
+                                    ["custrecord316.custrecord319","anyof",cust], 
+                                    "AND", 
+                                    ["custrecord316.custrecord320","before","today"], 
+                                    "AND", 
+                                    ["custrecord316.custrecord321","after","today"], 
+                                    "AND", 
+                                    ["isinactive","is","F"], 
+                                    "AND", 
+                                    ["custrecord316.isinactive","is","F"]
+                                    ],
+                                    columns: ['custrecord316']
+                                })
+                            });
+                            log.debug('beforeSubmit - pricebookResults', "pricebookResults: " + JSON.stringify(pricebookResults));
+                            if (pricebookResults.length > 0) {
+                                var pricebookId = pricebookResults[0].getValue({
+                                    name: 'custrecord316'
+                                });
+                                for (var i = 0; i < updatePrices.length; i++) {
+                                    var item = updatePrices[i].item;
+                                    var rate = updatePrices[i].rate;
+                                    var newPricebookItem = record.create({
+                                        type: 'customrecord1281'
+                                    });
+                                    newPricebookItem.setValue({
+                                        fieldId: 'custrecord316',
+                                        value: pricebookId
+                                    });
+                                    newPricebookItem.setValue({
+                                        fieldId: 'custrecord317',
+                                        value: item
+                                    });
+                                    newPricebookItem.setValue({
+                                        fieldId: 'custrecord318',
+                                        value: rate
+                                    });
+                                    var recordId = newPricebookItem.save();
+                                    log.debug('beforeSubmit - new pricebook item created', "recordId: " + recordId);
+                                }
+                                var priceUpdater = task.create({
+                                    taskType: task.TaskType.SCHEDULED_SCRIPT
+                                });
+                                priceUpdater.scriptId = 'customscript_ax_pricebook_update_ss';
+                                priceUpdater.deploymentId = null; // Setting this to null forces Netsuite to select the next available 'idle' deployment
+                                priceUpdater.params = {
+                                    custscript_ax_pricebook_id_ss: pricebookId,
+                                    custscript_ax_pricebook_prices_ss: JSON.stringify(updatePrices)
+                                };
+                                priceUpdater.submit();
+                            } else {
+                                //normal price update directly on customer
+                                var custLookup = search.lookupFields({
+                                    type: search.Type.CUSTOMER,
+                                    id: cust,
+                                    columns: ['parent']
+                                });
+                                if (custLookup.parent[0]) {
+                                    var parent = custLookup.parent[0].value;
+                                }
+                                //check to see if there is a parent customer if so update that customer
+                                if (parent) {
+                                    var custLookup2 = search.lookupFields({
+                                        type: search.Type.CUSTOMER,
+                                        id: parent,
+                                        columns: ['custentity333']
+                                    });
+                                    if (custLookup2.custentity333 == "T") {
+                                        cust = parent;
+                                    }
+                                }
+                                ///end customer check
+                                var custRecord = record.load({
+                                    type: record.Type.CUSTOMER,
+                                    id: cust
+                                });
+                                for (var i = 0; i < updatePrices.length; i++) {
+                                    var item = updatePrices[i].item;
+                                    var rate = updatePrices[i].rate;
+                                    for (var j = 0; j <= custRecord.getLineCount({sublistId:'itempricing'}); j++) {
+                                        var thisitemid = custRecord.getSublistValue({
+                                            sublistId: 'itempricing',
+                                            fieldId: 'item', 
+                                            line: j
+                                        });
+                                        if (item == thisitemid && rate) {
+                                            custRecord.setSublistValue({
+                                                sublistId: 'itempricing',
+                                                fieldId: 'level', 
+                                                line: j,
+                                                value: -1   //Custom price level
+                                            });
+                                            custRecord.setSublistValue({
+                                                sublistId: 'itempricing',
+                                                fieldId: 'price', 
+                                                line: j,
+                                                value: rate
+                                            });
+                                            break;
+                                        }
+                                    }
+                                    if (item != thisitemid && rate) {
+                                        custRecord.selectNewLineItem({
+                                            sublistId: 'itempricing'
+                                        });
+                                        custRecord.setCurrentSublistValue({
+                                            sublistId: 'itempricing',
+                                            fieldId: 'item',
+                                            value: item
+                                        });
+                                        custRecord.setCurrentSublistValue({
+                                            sublistId: 'itempricing',
+                                            fieldId: 'level',
+                                            value: -1,
+                                            ignoreFieldChange: true
+                                        });
+                                        custRecord.setCurrentSublistValue({
+                                            sublistId: 'itempricing',
+                                            fieldId: 'price',
+                                            value: rate,
+                                            ignoreFieldChange: true
+                                        });
+                                        custRecord.commitLine({
+                                            sublistId: 'itempricing'
+                                        });
+                                    }
+                                }    
+                                custRecord.save({
+                                    ignoreMandatoryFields: true
+                                });
                             }
                         }
                     }
