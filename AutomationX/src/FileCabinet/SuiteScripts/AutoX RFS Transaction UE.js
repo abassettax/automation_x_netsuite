@@ -45,53 +45,56 @@ define([
                     title: 'afterSubmit',
                     details: 'transactionLookup: ' + JSON.stringify(transactionLookup)
                 });
-                if (transactionLookup.custbody102[0]) {
-                    var receivedBy = transactionLookup.custbody102[0].value;
-                } else {
-                    var receivedBy = '';
-                }
-                if (empResults.length > 0 && (receivedBy && receivedBy == '')) {
-                    var empId = empResults[0];
-                    values.custbody102 = empId;
-                }
-                var location = transactionLookup.location[0].value;
-                log.debug({
-                    title: 'afterSubmit',
-                    details: 'location: ' + location
-                });
-                if (location && location != '') {
-                    var locationLookup = search.lookupFields({
-                        type: search.Type.LOCATION,
-                        id: location,
-                        columns: ['custrecord154']
-                    });
+                if (transactionLookup.length > 0) {
+                    if (transactionLookup.custbody102.length > 0) {
+                        var receivedBy = transactionLookup.custbody102[0].value;
+                    } else {
+                        var receivedBy = '';
+                    }
+                    if (empResults.length > 0 && (receivedBy && receivedBy == '')) {
+                        var empId = empResults[0];
+                        values.custbody102 = empId;
+                    }
+                    //should always be populated
+                    var location = transactionLookup.location[0].value;
                     log.debug({
                         title: 'afterSubmit',
-                        details: 'locationLookup: ' + JSON.stringify(locationLookup)
+                        details: 'location: ' + location
                     });
-                    if (locationLookup.custrecord154[0]) {
-                        var locationClass = locationLookup.custrecord154[0].value;
-                    } else {
-                        var locationClass = '';
+                    if (location && location != '') {
+                        var locationLookup = search.lookupFields({
+                            type: search.Type.LOCATION,
+                            id: location,
+                            columns: ['custrecord154']
+                        });
+                        log.debug({
+                            title: 'afterSubmit',
+                            details: 'locationLookup: ' + JSON.stringify(locationLookup)
+                        });
+                        if (locationLookup.custrecord154[0]) {
+                            var locationClass = locationLookup.custrecord154[0].value;
+                        } else {
+                            var locationClass = '';
+                        }
+                        if (transactionLookup.class[0]) {
+                            var irClass = transactionLookup.class[0].value;
+                        } else {
+                            var irClass = '';
+                        }
+                        if (irClass && irClass == '') {
+                            values.class = locationClass;
+                        }
                     }
-                    if (transactionLookup.class[0]) {
-                        var irClass = transactionLookup.class[0].value;
-                    } else {
-                        var irClass = '';
-                    }
-                    if (irClass && irClass == '') {
-                        values.class = locationClass;
-                    }
+                    log.debug({
+                        title: 'afterSubmit',
+                        details: 'values: ' + JSON.stringify(values)
+                    });
+                    record.submitFields({
+                        type: record.Type.ITEM_RECEIPT,
+                        id: createdFrom,
+                        values: values
+                    });
                 }
-                log.debug({
-                    title: 'afterSubmit',
-                    details: 'values: ' + JSON.stringify(values)
-                });
-                record.submitFields({
-                    type: record.Type.ITEM_RECEIPT,
-                    id: createdFrom,
-                    values: values
-                });
             }
         }
     }
