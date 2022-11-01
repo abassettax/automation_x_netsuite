@@ -1642,8 +1642,8 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
             _xto_trailerhide_linit: function (context) {
                 var o_rec = context.currentRecord;
                 try {
-                    if (o_rec.getValue({ fieldId: 'customform' }) === 363) { // Form does not longer exist
-                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 47 })
+                    if (o_rec.getValue({ fieldId: 'customform' }) === 364) {
+                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 211 })
                     }
                     if (o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362) {
                         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 69 })
@@ -1867,9 +1867,9 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     log.debug('tjincATX_lineinit', 'IN');
                     this._so_lineinit(context);
 
-                    if (o_user.roleCenter === s_customer_center || parseInt(o_user.id) === 6447 || parseInt(o_user.id) === 25918) {
+                    // if (o_user.roleCenter === s_customer_center || parseInt(o_user.id) === 6447 || parseInt(o_user.id) === 25918) {
                         this._xto_trailerhide_linit(context);
-                    }
+                    // }
                 } catch (e) {
                     log.error('tjincATX_lineInitSO', e);
                 }

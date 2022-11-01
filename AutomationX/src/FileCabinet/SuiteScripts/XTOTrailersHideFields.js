@@ -9,12 +9,20 @@ function TimeDelay(){
 function valLine(type, name)
 {
   if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362){ nlapiSetCurrentLineItemValue('item', 'location',69 ); } //
+  if( nlapiGetFieldValue('customform') == 364){ nlapiSetCurrentLineItemValue('item', 'location',211 ); } //
    
 if( (nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362) && ( //AX Seneca Sales Order form 
 	parseInt(nlapiGetCurrentLineItemValue('item', 'quantityavailable' )) < 				parseInt(nlapiGetCurrentLineItemValue('item', 'quantity' ))))
 {
    
  alert("STOCK ALERT\n\nThere is not enough avalible quantity to complete this line.  Please double check your part number or reduce the quantity to be less than or equal to Senecas available stock.");
+ return false;
+}
+if( (nlapiGetFieldValue('customform') == 364) && ( //AX Enlink Sales Order form 
+	parseInt(nlapiGetCurrentLineItemValue('item', 'quantityavailable' )) < 				parseInt(nlapiGetCurrentLineItemValue('item', 'quantity' ))))
+{
+   
+ alert("STOCK ALERT\n\nThere is not enough avalible quantity to complete this line.  Please double check your part number or reduce the quantity to be less than or equal to the available stock.");
  return false;
 } 
   return true;
@@ -72,8 +80,7 @@ function POSpageInt()
  
 if(tran == 'To Be Generated' ){         nlapiSetFieldValue('custbody173',nlapiGetContext().getContact() );                   nlapiSetFieldValue('custbody35', nlapiLookupField('contact', nlapiGetContext().getContact(), 'entityid') ); }
 
- 
-if(nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362) //
+if(nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 || nlapiGetFieldValue('customform') == 364) //
 {  
  var loeField= document.getElementById('custbody215_fs');
   var loeFieldLabel= document.getElementById('custbody215_fs_lbl_uir_label');  //
@@ -140,14 +147,18 @@ var source = nlapiGetFieldValue('custbody125');
      nlapiSetFieldValue( 'custbody68',  20);
  
 //nlapiSetCurrentLineItemValue('item', 'location',nlapiGetFieldValue('location') );
-//if( nlapiGetFieldValue('customform') == 363 ){nlapiSetCurrentLineItemValue('item', 'location', 47 ); }
+//if( nlapiGetFieldValue('customform') == 364 ){nlapiSetCurrentLineItemValue('item', 'location', 47 ); }
 //if( nlapiGetFieldValue('customform') == 347 ){nlapiSetCurrentLineItemValue('item', 'location', 69 ); }
 }
 
-if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 ){ 
-  nlapiSetFieldValue('terms', 2 ); //Seneca set terms to Net 30. Should keep payment method null
-  nlapiGetField('ccsave' ).setDisplayType('hidden');
-  nlapiGetField('ccdefault' ).setDisplayType('hidden');
+if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 || nlapiGetFieldValue('customform') == 364){ 
+  nlapiSetFieldValue('terms', 2 ); //set terms to Net 30. Should keep payment method null
+  try {
+    nlapiGetField('ccsave' ).setDisplayType('hidden');
+    nlapiGetField('ccdefault' ).setDisplayType('hidden');
+  } catch (e) {
+    //do nothing
+  }
 }
 
 }
@@ -160,7 +171,7 @@ function POSlineInt()
  // debugger;
 // nlapiSetCurrentLineItemValue('location', nlapiLookupField('contact', nlapiGetContext().getContact(), 'entityid'));
 // nlapiSetCurrentLineItemValue('item', 'location', headerlocation, false, false);
-if( nlapiGetFieldValue('customform') == 363 ){nlapiSetCurrentLineItemValue('item', 'location', 47 ); } //Enlink
+if( nlapiGetFieldValue('customform') == 364 ){nlapiSetCurrentLineItemValue('item', 'location', 211 ); } //Enlink
 if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 ){ nlapiSetCurrentLineItemValue('item', 'location',69 ); } //XTO
 return true;
 }
@@ -169,6 +180,6 @@ return true;
 
 function saverecsen()
 {
-// if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 ){ nlapiSetFieldValue('terms', 2 ); } //Seneca set terms to Net 30. Should keep payment method null
+// if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 || nlapiGetFieldValue('customform') == 364){ nlapiSetFieldValue('terms', 2 ); } //Seneca set terms to Net 30. Should keep payment method null
 return true;
 }
