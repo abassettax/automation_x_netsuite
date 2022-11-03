@@ -10,38 +10,37 @@ define(
         var getInputData = function () {
             log.debug('getInputData', 'IN');
             try {
-                var activeItems = getActiveItems();
-                log.debug({
-                    title: 'activeItems:',
-                    details: activeItems.length + ' | ' + JSON.stringify(activeItems)
-                });
+                // var activeItems = getActiveItems();
+                // log.debug({
+                //     title: 'activeItems:',
+                //     details: activeItems.length + ' | ' + JSON.stringify(activeItems)
+                // });
                 var itemPurchases = getPurchaseData();
                 log.debug({
                     title: 'itemPurchases:',
                     details: itemPurchases.length + ' | ' + JSON.stringify(itemPurchases)
                 });
-                var itemSubmitData = [];
-                for (var i = 0; i < activeItems.length; i++) {
-                    var itemId = activeItems[i];
-                    var itemPurchasesIndex = findWithAttr(itemPurchases, 'item', itemId);
-                    if (itemPurchasesIndex != -1) {
-                        //set last purchase date to date from results
-                        var datePurchased = itemPurchases[itemPurchasesIndex].date;
-                    } else {
-                        //set last purchase date to null
-                        var datePurchased = null;
-                    }
-                    itemSubmitData.push({
-                        item: itemId,
-                        val: datePurchased
-                    });
-                }
+                // var itemSubmitData = [];
+                // for (var i = 0; i < activeItems.length; i++) {
+                //     var itemId = activeItems[i];
+                //     var itemPurchasesIndex = findWithAttr(itemPurchases, 'item', itemId);
+                //     if (itemPurchasesIndex != -1) {
+                //         //set last purchase date to date from results
+                //         var datePurchased = itemPurchases[itemPurchasesIndex].date;
+                //     } else {
+                //         //set last purchase date to null
+                //         var datePurchased = null;
+                //     }
+                //     itemSubmitData.push({
+                //         item: itemId,
+                //         val: datePurchased
+                //     });
+                // }
             } catch (e) {
                 log.error('getInputData', e);
             }
             log.debug('getInputData', 'OUT');
-            log.debug('itemSubmitData', JSON.stringify(itemSubmitData));
-            return itemSubmitData;
+            return itemPurchases;
         }
         var reduce = function (context) {
             // log.debug('REDUCE', 'context: ' + JSON.stringify(context));
@@ -49,9 +48,9 @@ define(
             var key = context.key;
             //Netsuite encapsulates the values in an array, getting the first position we get the value object
             var values = JSON.parse(context.values[0]);
-            if(values.val != null) {
+            if(values.date != null) {
                 var formattedDate = format.parse({
-                    value: values.val,
+                    value: values.date,
                     type: format.Type.DATE
                 });
             } else {
@@ -80,47 +79,64 @@ define(
             });
             log.debug('SUMMARIZE Out');
         }
-        function getActiveItems() {
-            var searchId = 'customsearch7168'
-            var itemSearch = search.load({
-                type: search.Type.ITEM,
-                id: searchId
-            });
+        // function getActiveItems() {
+        //     var searchId = 'customsearch7168'
+        //     var itemSearch = search.load({
+        //         type: search.Type.ITEM,
+        //         id: searchId
+        //     });
 
-            var allResults = getAllResults(itemSearch);
-            var items = [];
-            for (var i = 0; i < allResults.length; i++) {
-                var itemId = allResults[i].getValue(allResults[i].columns[0]);
-                items.push(itemId);
-            }
-            return items;
-        }
+        //     var allResults = getAllResults(itemSearch);
+        //     var items = [];
+        //     for (var i = 0; i < allResults.length; i++) {
+        //         var itemId = allResults[i].getValue(allResults[i].columns[0]);
+        //         items.push(itemId);
+        //     }
+        //     return items;
+        // }
         function getPurchaseData() {
-            var searchId = 'customsearch_ax_purch_lastpurchdate_2'
+            var searchId = 'customsearch_ax_purch_lastpurchdate_3'
             var poSearch = search.load({
                 type: search.Type.TRANSACTION,
                 id: searchId
             });
             var allResults = getAllResults(poSearch);
+            log.debug({
+                title: 'allResults:',
+                details: allResults.length + ' | ' + JSON.stringify(allResults)
+            });
             var itemPurchases = [];
             for (var i = 0; i < allResults.length; i++) {
-                var itemId = allResults[i].getValue(allResults[i].columns[0]);
-                var date =  allResults[i].getValue( allResults[i].columns[3]);
+                var itemId = allResults[i].getValue({
+                    name: 'item',
+                    summary: 'GROUP'
+                });
+                var date =  allResults[i].getValue({
+                    name: 'formuladate',
+                    summary: 'MAX',
+                    formula: 'NVL2({actualshipdate}, {actualshipdate}, {trandate})'
+                });
                 itemPurchases.push({
                     item: itemId,
                     date: date
                 });
+                if (i == 0) {
+                    log.debug({
+                        title: 'itemPurchases test:',
+                        details: JSON.stringify(itemPurchases)
+                    });
+                }
             }
             return itemPurchases;
         }
-        function findWithAttr(array, attr, value) {
-            for(var i = 0; i < array.length; i += 1) {
-                if(array[i][attr] === value) {
-                    return i;
-                }
-            }
-            return -1;
-        }
+        // function findWithAttr(array, attr, value) {
+        //     for(var i = 0; i < array.length; i += 1) {
+        //         if(array[i][attr] === value) {
+        //             return i;
+        //         }
+        //     }
+        //     return -1;
+        // }
         function getAllResults(searchObj) {
             try {
                 var searchResultsArr = new Array();
