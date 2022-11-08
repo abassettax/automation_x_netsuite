@@ -811,6 +811,8 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                 try {
                     if (runtime.executionContext !== runtime.ContextType.MAP_REDUCE) {
                         var updatePrices = [];
+                        var commitVal = 0;
+                        var backVal = 0;
                         var cust = context.newRecord.getValue('entity');
                         for (let i = 0, lineCount = +context.newRecord.getLineCount({ sublistId: 'item' }); i < lineCount; i = i + 1) {
                             let createType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol90' });
@@ -836,14 +838,36 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             }
                             var updatePricing = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol_custpriceupdate' });
                             if (updatePricing) {
-                                //TODO: push item/price data to array for next fn
                                 updatePrices.push({
                                     item: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'item' }),
                                     rate: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'rate' })
                                 });
                                 context.newRecord.setSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol_custpriceupdate', value: false });
                             }
+                            var rate = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'rate' });
+                            var lineCommitted = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantitycommitted' });
+                            if (lineCommitted == null || lineCommitted == '' || lineCommitted == undefined) {
+                                lineCommitted = 0;
+                            }
+                            var lineQty = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantity' });
+                            var lineFFd = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantityshiprecv' });
+                            if (lineFFd == null || lineFFd == '' || lineFFd == undefined) {
+                                lineFFd = 0;
+                            }
+                            var backOrdered = lineQty - lineCommitted - lineFFd;
+                            commitVal = commitVal + (lineCommitted*rate).toFixed(2);
+                            backVal = backVal + (backOrdered*rate).toFixed(2);
                         }
+                        log.debug('beforeSubmit - commitVal', commitVal);
+                        log.debug('beforeSubmit - backVal', backVal);
+                        context.newRecord.setValue({
+                            fieldId: 'custbody239',
+                            value: commitVal
+                        });
+                        context.newRecord.setValue({
+                            fieldId: 'custbody240',
+                            value: backVal
+                        });
                         log.debug('beforeSubmit - updatePrices', JSON.stringify(updatePrices));
                         if (updatePrices.length > 0) {
                             var pricebookResults = tj.searchAll({
@@ -929,13 +953,16 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                 for (var i = 0; i < updatePrices.length; i++) {
                                     var item = updatePrices[i].item;
                                     var rate = updatePrices[i].rate;
-                                    for (var j = 0; j <= custRecord.getLineCount({sublistId:'itempricing'}); j++) {
+                                    var lineLen = custRecord.getLineCount({sublistId:'itempricing'});
+                                    log.debug('beforeSubmit - price update', 'lineLen: ' + lineLen);
+                                    for (var j = 0; j < lineLen; j++) {
                                         var thisitemid = custRecord.getSublistValue({
                                             sublistId: 'itempricing',
                                             fieldId: 'item', 
                                             line: j
                                         });
                                         if (item == thisitemid && rate) {
+                                            log.debug('beforeSubmit - price update', 'match found, updating');
                                             custRecord.setSublistValue({
                                                 sublistId: 'itempricing',
                                                 fieldId: 'level', 
@@ -952,34 +979,37 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                         }
                                     }
                                     if (item != thisitemid && rate) {
-                                        custRecord.selectNewLineItem({
-                                            sublistId: 'itempricing'
-                                        });
-                                        custRecord.setCurrentSublistValue({
+                                        log.debug('beforeSubmit - price update', 'no match found, adding');
+                                        // custRecord.selectNewLine({
+                                        //     sublistId: 'itempricing'
+                                        // });
+                                        custRecord.setSublistValue({
                                             sublistId: 'itempricing',
                                             fieldId: 'item',
+                                            line: lineLen,
                                             value: item
                                         });
-                                        custRecord.setCurrentSublistValue({
+                                        custRecord.setSublistValue({
                                             sublistId: 'itempricing',
                                             fieldId: 'level',
-                                            value: -1,
-                                            ignoreFieldChange: true
+                                            line: lineLen,
+                                            value: -1
                                         });
-                                        custRecord.setCurrentSublistValue({
+                                        custRecord.setSublistValue({
                                             sublistId: 'itempricing',
                                             fieldId: 'price',
-                                            value: rate,
-                                            ignoreFieldChange: true
+                                            line: lineLen,
+                                            value: rate
                                         });
-                                        custRecord.commitLine({
-                                            sublistId: 'itempricing'
-                                        });
+                                        // custRecord.commitLine({
+                                        //     sublistId: 'itempricing'
+                                        // });
                                     }
                                 }    
-                                custRecord.save({
+                                var custId = custRecord.save({
                                     ignoreMandatoryFields: true
                                 });
+                                log.debug('beforeSubmit - price update', 'customer saved: ' + custId);
                             }
                         }
                     }
