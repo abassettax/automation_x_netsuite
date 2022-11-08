@@ -311,6 +311,10 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                 purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsDropShip, value: true });
             } else if (options.poType == '4') {
                 purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.isWillCall, value: true });
+            } else if (options.poType == '5') {
+                purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsExpedite, value: true });
+                purchaseOrder.setValue({ fieldId: 'shipmethod', value: DH_Library_1.SHIPMETHOD.UPSNEXTDAY });
+                purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsDropShip, value: true });
             } else {
                 purchaseOrder.setValue({ fieldId: DH_Library_1.FIELDS.TRANSACTION.BODY.IsReStockPO, value: true });
             }
