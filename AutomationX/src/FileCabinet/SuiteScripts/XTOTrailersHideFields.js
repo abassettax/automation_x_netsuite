@@ -153,6 +153,7 @@ var source = nlapiGetFieldValue('custbody125');
 
 if( nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 || nlapiGetFieldValue('customform') == 364){ 
   nlapiSetFieldValue('terms', 2 ); //set terms to Net 30. Should keep payment method null
+  nlapiSetFieldValue('custbody_as_solutions_assist', 5 ); //None
   try {
     nlapiGetField('ccsave' ).setDisplayType('hidden');
     nlapiGetField('ccdefault' ).setDisplayType('hidden');
