@@ -849,14 +849,14 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             if (lineCommitted == null || lineCommitted == '' || lineCommitted == undefined) {
                                 lineCommitted = 0;
                             }
-                            var lineQty = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantity' });
-                            var lineFFd = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantityshiprecv' });
+                            var lineQty = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantity' }));
+                            var lineFFd = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantityshiprecv' }));
                             if (lineFFd == null || lineFFd == '' || lineFFd == undefined) {
                                 lineFFd = 0;
                             }
-                            var backOrdered = lineQty - lineCommitted - lineFFd;
-                            commitVal = commitVal + (lineCommitted*rate).toFixed(2);
-                            backVal = backVal + (backOrdered*rate).toFixed(2);
+                            var backOrdered = parseFloat(lineQty) - parseFloat(lineCommitted) - parseFloat(lineFFd);
+                            commitVal = parseFloat(commitVal) + (parseFloat(lineCommitted)*parseFloat(rate)).toFixed(2);
+                            backVal = parseFloat(backVal) + (parseFloat(backOrdered)*parseFloat(rate)).toFixed(2);
                         }
                         log.debug('beforeSubmit - commitVal', commitVal);
                         log.debug('beforeSubmit - backVal', backVal);
