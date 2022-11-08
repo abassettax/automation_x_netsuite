@@ -840,23 +840,32 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             if (updatePricing) {
                                 updatePrices.push({
                                     item: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'item' }),
+                                    level: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'price' }),
                                     rate: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'rate' })
                                 });
                                 context.newRecord.setSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol_custpriceupdate', value: false });
                             }
                             var rate = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'rate' });
+                            log.debug('beforeSubmit - rate', rate);
                             var lineCommitted = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantitycommitted' });
                             if (lineCommitted == null || lineCommitted == '' || lineCommitted == undefined) {
                                 lineCommitted = 0;
                             }
+                            log.debug('beforeSubmit - lineCommitted', lineCommitted);
                             var lineQty = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantity' }));
-                            var lineFFd = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantityshiprecv' }));
+                            log.debug('beforeSubmit - lineQty', lineQty);
+                            var lineFFd = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantityfulfilled' }));
                             if (lineFFd == null || lineFFd == '' || lineFFd == undefined) {
                                 lineFFd = 0;
                             }
-                            var backOrdered = parseFloat(lineQty) - parseFloat(lineCommitted) - parseFloat(lineFFd);
-                            commitVal = parseFloat(commitVal) + (parseFloat(lineCommitted)*parseFloat(rate)).toFixed(2);
-                            backVal = parseFloat(backVal) + (parseFloat(backOrdered)*parseFloat(rate)).toFixed(2);
+                            log.debug('beforeSubmit - lineFFd', lineFFd);
+                            var backOrdered = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantitybackordered' }));
+                            if (backOrdered == null || backOrdered == '' || backOrdered == undefined) {
+                                backOrdered = 0;
+                            }
+                            log.debug('beforeSubmit - backOrdered', backOrdered);
+                            commitVal = parseFloat(commitVal) + parseFloat((parseFloat(lineCommitted)*parseFloat(rate)).toFixed(2));
+                            backVal = parseFloat(backVal) + parseFloat((parseFloat(backOrdered)*parseFloat(rate)).toFixed(2));
                         }
                         log.debug('beforeSubmit - commitVal', commitVal);
                         log.debug('beforeSubmit - backVal', backVal);
@@ -952,6 +961,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                 });
                                 for (var i = 0; i < updatePrices.length; i++) {
                                     var item = updatePrices[i].item;
+                                    var level = updatePrices[i].level;
                                     var rate = updatePrices[i].rate;
                                     var lineLen = custRecord.getLineCount({sublistId:'itempricing'});
                                     log.debug('beforeSubmit - price update', 'lineLen: ' + lineLen);
@@ -967,14 +977,16 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                                 sublistId: 'itempricing',
                                                 fieldId: 'level', 
                                                 line: j,
-                                                value: -1   //Custom price level
+                                                value: level   //Custom price level
                                             });
-                                            custRecord.setSublistValue({
-                                                sublistId: 'itempricing',
-                                                fieldId: 'price', 
-                                                line: j,
-                                                value: rate
-                                            });
+                                            if (level == -1) {
+                                                custRecord.setSublistValue({
+                                                    sublistId: 'itempricing',
+                                                    fieldId: 'price', 
+                                                    line: j,
+                                                    value: rate
+                                                });
+                                            }
                                             break;
                                         }
                                     }
@@ -993,14 +1005,16 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                             sublistId: 'itempricing',
                                             fieldId: 'level',
                                             line: lineLen,
-                                            value: -1
+                                            value: level
                                         });
-                                        custRecord.setSublistValue({
-                                            sublistId: 'itempricing',
-                                            fieldId: 'price',
-                                            line: lineLen,
-                                            value: rate
-                                        });
+                                        if (level == -1) {
+                                            custRecord.setSublistValue({
+                                                sublistId: 'itempricing',
+                                                fieldId: 'price',
+                                                line: lineLen,
+                                                value: rate
+                                            });
+                                        }
                                         // custRecord.commitLine({
                                         //     sublistId: 'itempricing'
                                         // });
