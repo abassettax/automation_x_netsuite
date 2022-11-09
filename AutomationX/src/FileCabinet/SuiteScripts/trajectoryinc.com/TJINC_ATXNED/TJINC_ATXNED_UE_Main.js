@@ -846,21 +846,24 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                 context.newRecord.setSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol_custpriceupdate', value: false });
                             }
                             var rate = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'rate' });
+                            if (rate == null || rate == '' || rate == undefined || isNaN(rate)) {
+                                rate = 0;
+                            }
                             log.debug('beforeSubmit - rate', rate);
                             var lineCommitted = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantitycommitted' });
-                            if (lineCommitted == null || lineCommitted == '' || lineCommitted == undefined) {
+                            if (lineCommitted == null || lineCommitted == '' || lineCommitted == undefined || isNaN(lineCommitted)) {
                                 lineCommitted = 0;
                             }
                             log.debug('beforeSubmit - lineCommitted', lineCommitted);
-                            var lineQty = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantity' }));
-                            log.debug('beforeSubmit - lineQty', lineQty);
-                            var lineFFd = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantityfulfilled' }));
-                            if (lineFFd == null || lineFFd == '' || lineFFd == undefined) {
-                                lineFFd = 0;
-                            }
-                            log.debug('beforeSubmit - lineFFd', lineFFd);
+                            // var lineQty = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantity' }));
+                            // log.debug('beforeSubmit - lineQty', lineQty);
+                            // var lineFFd = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantityfulfilled' }));
+                            // if (lineFFd == null || lineFFd == '' || lineFFd == undefined) {
+                            //     lineFFd = 0;
+                            // }
+                            // log.debug('beforeSubmit - lineFFd', lineFFd);
                             var backOrdered = parseFloat(context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantitybackordered' }));
-                            if (backOrdered == null || backOrdered == '' || backOrdered == undefined) {
+                            if (backOrdered == null || backOrdered == '' || backOrdered == undefined || isNaN(backOrdered)) {
                                 backOrdered = 0;
                             }
                             log.debug('beforeSubmit - backOrdered', backOrdered);
