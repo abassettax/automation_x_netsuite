@@ -36,6 +36,10 @@ define([
                     details: 'createdFrom: ' + createdFrom
                 });
                 var empResults = getEmployee(rfSmartUser);
+                log.debug({
+                    title: 'afterSubmit',
+                    details: 'empResults: ' + empResults
+                });
                 var transactionLookup = search.lookupFields({
                     type: search.Type.ITEM_RECEIPT,
                     id: createdFrom,
@@ -45,13 +49,17 @@ define([
                     title: 'afterSubmit',
                     details: 'transactionLookup: ' + JSON.stringify(transactionLookup)
                 });
-                if (transactionLookup.length > 0) {
+                if (Object.keys(transactionLookup).length > 0) {
                     if (transactionLookup.custbody102.length > 0) {
                         var receivedBy = transactionLookup.custbody102[0].value;
                     } else {
                         var receivedBy = '';
                     }
-                    if (empResults.length > 0 && (receivedBy && receivedBy == '')) {
+                    log.debug({
+                        title: 'afterSubmit',
+                        details: 'receivedBy: ' + receivedBy + ' | type: ' + typeof(receivedBy)
+                    });
+                    if (empResults.length > 0 && (receivedBy == '')) {
                         var empId = empResults[0];
                         values.custbody102 = empId;
                     }
@@ -76,12 +84,20 @@ define([
                         } else {
                             var locationClass = '';
                         }
+                        log.debug({
+                            title: 'afterSubmit',
+                            details: 'locationClass: ' + locationClass
+                        });
                         if (transactionLookup.class[0]) {
                             var irClass = transactionLookup.class[0].value;
                         } else {
                             var irClass = '';
                         }
-                        if (irClass && irClass == '') {
+                        log.debug({
+                            title: 'afterSubmit',
+                            details: 'irClass: ' + irClass + ' | type: ' + typeof(irClass)
+                        });
+                        if (irClass == '') {
                             values.class = locationClass;
                         }
                     }
