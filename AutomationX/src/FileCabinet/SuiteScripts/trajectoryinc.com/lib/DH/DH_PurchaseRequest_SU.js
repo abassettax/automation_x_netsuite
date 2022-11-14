@@ -888,7 +888,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
             //aggregate quantity, average rate (or max? rate should be the same)
             //need to consolidate ids into array
             //check processingStatus. if purchase, add to purchase total. if transfer, add to tranfser total
-            //TODO: do NOT consolidate non inventory items (direct codes)
+            //do NOT consolidate non inventory items (direct codes)
 
             for (var i = 0; i < purchaseRequestItemDetails.length; i++) {
                 var localPurchReq = purchaseRequestItemDetails[i];
@@ -921,6 +921,21 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 //     details: itemType
                 // });
                 if (itemType === 'NonInvtPart') {
+                    localPurchReq.prids.push(prId);
+                    localPurchReq.soArr.push({
+                        id: soId,
+                        text: soText,
+                        line: soLine,
+                        type: tranType
+                    });
+                    localPurchReq.soIdArr.push({
+                        id: soId,
+                        text: soText,
+                        line: soLine,
+                        type: tranType
+                    });
+                    localPurchReq.key = key;
+                    localPurchReq.soNotesConcat = soNotes;
                     consolidatedReqs.push(localPurchReq);
                 } else {
                     var index = items.indexOf(item);
