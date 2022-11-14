@@ -1757,7 +1757,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     var sublistId = context.sublistId;
                     var fieldId = context.fieldId;
                     // alert('fieldId: ' + fieldId);
-                    if (sublistId === 'item' && (fieldId === 'rate' || fieldId === 'amount' || fieldId === 'custcol_custpriceupdate')) {
+                    if (sublistId === 'item' && (fieldId === 'rate' || fieldId === 'amount')) {
                         var o_rec = context.currentRecord;
                         var entity = o_rec.getValue('entity');
                         var item = o_rec.getCurrentSublistValue({sublistId: 'item', fieldId: 'item'});
@@ -1791,17 +1791,60 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                 var lineRate = o_rec.getCurrentSublistValue({sublistId: 'item', fieldId: 'rate'});
                                 // alert('line rate: ' + lineRate);
                                 if (lineRate != pricebookRate) {
-                                    if (fieldId === 'rate' || fieldId === 'amount') {
-                                        alert('The current line item you are editing is part of a pricebook for the customer on this order. The default price level, rate, and amount cannot be changed from what is defined in the pricebook.')
-                                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: pricebookRate });
-                                        return false;
-                                    } else {
-                                        alert('The current line item you are editing is part of a pricebook for the customer on this order. It cannot be marked for update customer pricing.')
-                                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: pricebookRate });
-                                        return false;
-                                    }
+                                    alert('The current line item you are editing is part of a pricebook for the customer on this order. The default price level, rate, and amount cannot be changed from what is defined in the pricebook.')
+                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: pricebookRate });
+                                    return false;
                                 }      
                             }
+                        }
+                    }
+                    if (sublistId === 'item' && fieldId === 'custcol_custpriceupdate') {
+                        var o_rec = context.currentRecord;
+                        var entity = o_rec.getValue('entity');
+                        var item = o_rec.getCurrentSublistValue({sublistId: 'item', fieldId: 'item'});
+                        // alert('item: ' + item);
+                        if (item != '' && entity != '') {
+                            var pricebookResults = tj.searchAll({
+                                'search': search.create({
+                                    type: "customrecord1281",
+                                    filters:
+                                    [
+                                    ["custrecord316.custrecord319","anyof",entity], 
+                                    "AND", 
+                                    ["custrecord316.custrecord320","before","today"], 
+                                    "AND", 
+                                    ["custrecord316.custrecord321","after","today"], 
+                                    "AND", 
+                                    ["isinactive","is","F"], 
+                                    "AND", 
+                                    ["custrecord316.isinactive","is","F"]
+                                    ],
+                                    columns: ['custrecord318']
+                                })
+                            });
+                            if (pricebookResults.length > 0) {
+                                //always throw error when checking update. can't add new items to pricebook, it is static. can't update existing prices.
+                                alert('The customer on this order belongs to a pricebook. The defined items and prices in that book are static and cannot be updated or added to.')
+                                o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: pricebookRate });
+                                return false;  
+                            }
+                        }
+                    }
+                    if (sublistId === 'item' && fieldId === 'costestimatetype') {
+                        var o_rec = context.currentRecord;
+                        var lineItem = o_rec.getCurrentSublistValue({sublistId: 'item', fieldId: 'item'});
+                        var itemLookup = search.lookupFields({
+                            type: search.Type.ITEM,
+                            id: lineItem,
+                            columns: ['type']
+                        });
+                        var itemType = itemLookup.type[0].value;
+                        var costEstType = o_rec.getCurrentSublistValue({sublistId: 'item', fieldId: 'costestimatetype'});
+                        // alert('costEstType: ' + costEstType);
+                        if (itemType == 'NonInvtPart' && costEstType != 'CUSTOM') {
+                            alert('The Cost Estimate Type for Non-Inventory Items must be set to Custom. Please set the Est Extended Cost for this item.')
+                            o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'costestimatetype', value: 'CUSTOM' });
+                            return false;  
                         }
                     }
                     return true;
