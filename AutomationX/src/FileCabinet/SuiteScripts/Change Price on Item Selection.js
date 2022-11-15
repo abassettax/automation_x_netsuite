@@ -9,6 +9,18 @@ define(['N/currentRecord', 'N/search', 'N/record'],
 
         }
 
+        function fieldChanged(context) {
+            var currentRecord = context.currentRecord;
+            var sublistName = context.sublistId;
+            var line = context.line;
+            if (sublistName === 'item' && context.fieldId != 'custcol_linenumber') {
+                currentRecord.setCurrentSublistValue({ 
+                    fieldId: 'custcol_linenumber', 
+                    sublistId: 'item', 
+                    value: parseInt(line) + 1 });
+            }    
+        }
+
         function postSourcing(context) {
             var currentRecord = context.currentRecord;
             var sublistName = context.sublistId;
@@ -110,6 +122,7 @@ define(['N/currentRecord', 'N/search', 'N/record'],
         }
         return {
             pageInit: pageInit,
-            postSourcing: postSourcing
+            postSourcing: postSourcing,
+            fieldChanged: fieldChanged
         };
     });
