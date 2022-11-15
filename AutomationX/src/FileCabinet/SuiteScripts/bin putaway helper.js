@@ -38,6 +38,6 @@ require(['N/currentRecord'],
             // invDet.cancelLine({sublistId: 'item'});
             // rec.cancelLine({sublistId: 'item'});
         }
-        console.log('data: ' + JSON.stringify(data));
+        console.log('data: ' + data.length + JSON.stringify(data));
     }
 );

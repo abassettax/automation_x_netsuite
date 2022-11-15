@@ -45,6 +45,7 @@
             invDet.setCurrentSublistValue({sublistId: 'inventoryassignment ', fieldId: 'quantity', value: lineQty});
             invDet.commitLine({sublistId: 'inventoryassignment'});
             binWksht.commitLine({sublistId: 'item'});
+            //https://suiteanswers.custhelp.com/app/answers/detail/a_id/85216/loc/en_US
         }
         var recId = binWksht.save();
         log.debug('Complete', 'wksht id: ' + recId);
