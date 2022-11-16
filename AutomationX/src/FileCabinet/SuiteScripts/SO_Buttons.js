@@ -569,6 +569,13 @@ function adjustcostestimate() {
         return true;
     }
 
+    function itemLookup() {
+        var w = screen.width - 50;
+        var h = screen.height - 50;
+        window.open("https://system.na3.netsuite.com/app/common/search/searchresults.nl?searchid=7220&whence=", "newwin", "dependent = yes, height=" + h + ", width=" + w + ", top=100, left=200, toolbar=no, scrollbars=yes, menubar=no, status=no, titlebar=no, resizable=yes, location=no");
+        return true;
+    }
+
     function getinv(type) {
         /*
         var uid =nlapiGetCurrentLineItemValue('item', 'item');
