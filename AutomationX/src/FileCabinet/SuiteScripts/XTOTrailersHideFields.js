@@ -78,9 +78,12 @@ function POSpageInt()
 //debugger;
     var tran = nlapiGetFieldValue('tranid');
  
-if(tran == 'To Be Generated' ){         nlapiSetFieldValue('custbody173',nlapiGetContext().getContact() );                   nlapiSetFieldValue('custbody35', nlapiLookupField('contact', nlapiGetContext().getContact(), 'entityid') ); }
+if(tran == 'To Be Generated' ){         
+  nlapiSetFieldValue('custbody173',nlapiGetContext().getContact() );                   
+  // nlapiSetFieldValue('custbody35', nlapiLookupField('contact', nlapiGetContext().getContact(), 'entityid') ); 
+}
 
-if(nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362 || nlapiGetFieldValue('customform') == 364) //
+if(nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') == 362) //
 {  
  var loeField= document.getElementById('custbody215_fs');
   var loeFieldLabel= document.getElementById('custbody215_fs_lbl_uir_label');  //
@@ -88,7 +91,6 @@ if(nlapiGetFieldValue('customform') == 347 || nlapiGetFieldValue('customform') =
 }
   //////////////////////////////////////
 
-  
   
 //   var headerIcon= document.getElementById('ns-header-menu-home-item0');
 // if(headerIcon){headerIcon.style.display = 'none'; }
