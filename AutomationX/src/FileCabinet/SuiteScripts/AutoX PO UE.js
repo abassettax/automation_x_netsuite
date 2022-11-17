@@ -14,7 +14,6 @@ define([
         if (context.type === context.UserEventType.DELETE) {
             return;
         } else {
-            //TODO: check on emails, rework for partials. May need to move to assemblies instead, run each time one is saved
             var oldPoRec = context.oldRecord;
             var oldDiscResolved = oldPoRec.getValue({
                 fieldId: 'custbody193'
@@ -59,6 +58,49 @@ define([
                 log.debug({
                     title: 'afterSubmit',
                     details: 'PO Disc Email Sent'
+                });
+            }
+
+            var oldPoRec = context.oldRecord;
+            var oldmatStatus = oldPoRec.getValue({
+                fieldId: 'custbody6'
+            });
+            log.debug({
+                title: 'afterSubmit',
+                details: 'oldmatStatus: ' + oldmatStatus
+            });
+            var poRec = context.newRecord;
+            var matStatus = poRec.getValue({
+                fieldId: 'custbody6'
+            });
+            log.debug({
+                title: 'afterSubmit',
+                details: 'matStatus: ' + matStatus
+            });
+            if (oldmatStatus != matStatus && (matStatus == 32 || matStatus == 32)) {
+                var recordid = context.newRecord.id;
+                var emailBody = 'A Purchase Order has been updated to Pending Prepayment/Deposit or Pending Final Prepayment/Deposit, please review.<br><br>PO Link: ';
+                var baseUrl = url.resolveDomain({
+                    hostType: url.HostType.APPLICATION,
+                    accountId: '422523'
+                });
+                var poUrl = url.resolveRecord({
+                    recordType: record.Type.PURCHASE_ORDER,
+                    recordId: recordid
+                });
+                emailBody += baseUrl + poUrl                
+                email.send({
+                    author: '48197',
+                    recipients: ['karen.dussaman@automation-x.com'],
+                    subject: 'Purchase Order PrePayment Requested',
+                    body: emailBody,
+                    relatedRecords: {
+                        transactionId: recordid
+                    }
+                });
+                log.debug({
+                    title: 'afterSubmit',
+                    details: 'PO PrePayment Email Sent'
                 });
             }
         }
