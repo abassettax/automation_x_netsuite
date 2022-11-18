@@ -83,8 +83,15 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             //o_rec.setValue('custbody172', o_temp.holdmessage);
                         }
 
-                        o_rec.setValue({ fieldId: 'custbody69', value: o_lf.custentity157 });
-                        o_rec.setValue({ fieldId: 'custbody73', value: o_lf.custentity158 });
+                        //don't reset these if field has value
+                        o_temp.approverid = o_rec.getValue({ fieldId: 'custbody73' });
+                        if (o_temp.plantcode == '') {
+                            o_rec.setValue({ fieldId: 'custbody73', value: o_lf.custentity158 });
+                        }
+                        o_temp.plantcode = o_rec.getValue({ fieldId: 'custbody69' });
+                        if (o_temp.plantcode == '') {
+                            o_rec.setValue({ fieldId: 'custbody69', value: o_lf.custentity157 });
+                        }
 
                         //if(o_rec.getValue('terms') !== 8){
                         //   o_rec.setValue({ fieldId:'terms', value: o_lf.terms});
