@@ -55,6 +55,36 @@ function PO_OnSave(type) {
   var soid = nlapiGetFieldValue('custbody184');
   var SO = nlapiGetFieldValue('custbody184'); //nlapiGetFieldText('createdfrom');
 
+  if (nlapiGetFieldValue('custbody147') == "T") //&& soid != null  && soid != "" )
+  {
+
+    //var address = nlapiLookupField('salesorder', soid , 'shipaddress');
+    //nlapiSetFieldValue('shipaddress',address);
+    var recid = nlapiGetRecordId();
+    if (recid) {
+      var columnsD = new Array();
+      columnsD[0] = new nlobjSearchColumn("formulatext", null, "GROUP").setFormula("{custrecord_po_so_linkage_so.shipaddress}").setSort(false);
+
+      var purchaseorderSearch = nlapiSearchRecord("customrecord_dh_po_so_linkage", null,
+        [["custrecord_po_so_linkage_po.internalidnumber", "equalto", recid]],
+        columnsD
+      );
+      if (purchaseorderSearch) {
+        if (purchaseorderSearch.length > 1) { alert('This PO has multiple Sales Order with different ship to addresses. Please update sales order addresses to match.'); }
+        else {
+          var soaddress = "";
+          var linkedSO = "";
+          for (var b = 0; purchaseorderSearch != null && b < purchaseorderSearch.length; b++) {
+            soaddress = purchaseorderSearch[b].getValue(columnsD[0]);
+          }
+
+          nlapiSetFieldValue('shipaddress', soaddress);
+        }
+      }
+    }
+
+  }
+
   var hasPOemail = nlapiGetFieldValue('custbody_po_follow_up'); //updated to look for follow up email not if its linked to SO    
   if (hasPOemail) {
     var CFtype = "salesorder"
@@ -269,38 +299,6 @@ function PO_OnSave(type) {
 
 
   }
-
-
-  if (nlapiGetFieldValue('custbody147') == "T") //&& soid != null  && soid != "" )
-  {
-
-    //var address = nlapiLookupField('salesorder', soid , 'shipaddress');
-    //nlapiSetFieldValue('shipaddress',address);
-    var recid = nlapiGetRecordId();
-    if (recid) {
-      var columnsD = new Array();
-      columnsD[0] = new nlobjSearchColumn("formulatext", null, "GROUP").setFormula("{custrecord_po_so_linkage_so.shipaddress}").setSort(false);
-
-      var purchaseorderSearch = nlapiSearchRecord("customrecord_dh_po_so_linkage", null,
-        [["custrecord_po_so_linkage_po.internalidnumber", "equalto", recid]],
-        columnsD
-      );
-      if (purchaseorderSearch) {
-        if (purchaseorderSearch.length > 1) { alert('This PO has multiple Sales Order with different ship to addresses. Please update sales order addresses to match.'); }
-        else {
-          var soaddress = "";
-          var linkedSO = "";
-          for (var b = 0; purchaseorderSearch != null && b < purchaseorderSearch.length; b++) {
-            soaddress = purchaseorderSearch[b].getValue(columnsD[0]);
-          }
-
-          nlapiSetFieldValue('shipaddress', soaddress);
-        }
-      }
-    }
-
-  }
-
 
   return (true);
 }
