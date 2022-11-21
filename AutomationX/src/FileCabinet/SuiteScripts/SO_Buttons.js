@@ -236,57 +236,56 @@ function adjustcostestimate() {
         }
     }
 
-    //TODO: this may be redefining the same function set in the UE script for the main button
-    function axClose() {
-        var SOid = nlapiGetRecordId();
-        var rec = nlapiLoadRecord(nlapiGetRecordType(), SOid);
+    // function axClose() {
+    //     var SOid = nlapiGetRecordId();
+    //     var rec = nlapiLoadRecord(nlapiGetRecordType(), SOid);
 
-        var salesorderSearch = nlapiSearchRecord("salesorder", null, [["type", "anyof", "SalesOrd"], "AND", ["mainline", "is", "F"], "AND", ["internalidnumber", "equalto", SOid]],
-            [
-                new nlobjSearchColumn("quantitypicked"),
-                new nlobjSearchColumn("quantitypacked"),
-                new nlobjSearchColumn("line")
-            ]
-        );
+    //     var salesorderSearch = nlapiSearchRecord("salesorder", null, [["type", "anyof", "SalesOrd"], "AND", ["mainline", "is", "F"], "AND", ["internalidnumber", "equalto", SOid]],
+    //         [
+    //             new nlobjSearchColumn("quantitypicked"),
+    //             new nlobjSearchColumn("quantitypacked"),
+    //             new nlobjSearchColumn("line")
+    //         ]
+    //     );
 
 
-        var lineCount = parseInt(rec.getLineItemCount('item'));
-        for (x = 1; x <= lineCount; x++) {
-            var lineMatched = 'N';
-            var SOline = rec.getLineItemValue('item', 'line', x);
+    //     var lineCount = parseInt(rec.getLineItemCount('item'));
+    //     for (x = 1; x <= lineCount; x++) {
+    //         var lineMatched = 'N';
+    //         var SOline = rec.getLineItemValue('item', 'line', x);
 
-            for (i = 0; i < salesorderSearch.length; i++) {
-                var searchline = salesorderSearch[i].getValue('line');
-                if (SOline == searchline) {
-                    lineMatched = 'T';
-                    var qtypicked = salesorderSearch[i].getValue('quantitypicked');
-                    var qtyPacked = salesorderSearch[i].getValue('quantitypacked');
-                    var qtybilled = rec.getLineItemValue('item', 'quantitybilled', x);
-                    var qtyfulfilled = rec.getLineItemValue('item', 'quantityfulfilled', x);
-                    var qty = rec.getLineItemValue('item', 'quantity', x);
+    //         for (i = 0; i < salesorderSearch.length; i++) {
+    //             var searchline = salesorderSearch[i].getValue('line');
+    //             if (SOline == searchline) {
+    //                 lineMatched = 'T';
+    //                 var qtypicked = salesorderSearch[i].getValue('quantitypicked');
+    //                 var qtyPacked = salesorderSearch[i].getValue('quantitypacked');
+    //                 var qtybilled = rec.getLineItemValue('item', 'quantitybilled', x);
+    //                 var qtyfulfilled = rec.getLineItemValue('item', 'quantityfulfilled', x);
+    //                 var qty = rec.getLineItemValue('item', 'quantity', x);
 
-                    var statusmessage = ' \n\n Quantity Pulled: ' + qtypicked + '\n Quantity PickPacked:  ' + qtyPacked + '\n Quantity Fulfilled:  ' + qtyfulfilled + '\n Quantity Invoiced:  ' + qtybilled;
-                    //alert(statusmessage);
-                    if (qtypicked > qtybilled) {
-                        alert('Line # ' + SOline + ' has a quantity fulfilled greater than billed so cannot be closed.  Please finish processing the fulfillment before closing. ' + statusmessage);
-                    }
-                    else if (qty > 0) {
-                        rec.selectLineItem('item', x);
-                        rec.setCurrentLineItemValue('item', 'isclosed', "T");
-                        rec.commitLineItem('item');
-                    }
-                }
-            }
-            if (lineMatched == 'N') {
-                rec.selectLineItem('item', x);
-                rec.setCurrentLineItemValue('item', 'isclosed', "T");
-                rec.commitLineItem('item');
-            }
+    //                 var statusmessage = ' \n\n Quantity Pulled: ' + qtypicked + '\n Quantity PickPacked:  ' + qtyPacked + '\n Quantity Fulfilled:  ' + qtyfulfilled + '\n Quantity Invoiced:  ' + qtybilled;
+    //                 //alert(statusmessage);
+    //                 if (qtypicked > qtybilled) {
+    //                     alert('Line # ' + SOline + ' has a quantity fulfilled greater than billed so cannot be closed.  Please finish processing the fulfillment before closing. ' + statusmessage);
+    //                 }
+    //                 else if (qty > 0) {
+    //                     rec.selectLineItem('item', x);
+    //                     rec.setCurrentLineItemValue('item', 'isclosed', "T");
+    //                     rec.commitLineItem('item');
+    //                 }
+    //             }
+    //         }
+    //         if (lineMatched == 'N') {
+    //             rec.selectLineItem('item', x);
+    //             rec.setCurrentLineItemValue('item', 'isclosed', "T");
+    //             rec.commitLineItem('item');
+    //         }
 
-        }
-        nlapiSubmitRecord(rec, true);
-        location.reload();
-    }
+    //     }
+    //     nlapiSubmitRecord(rec, true);
+    //     location.reload();
+    // }
 
     function printstaginglabel() {
         var docid = nlapiGetRecordId();

@@ -35,57 +35,111 @@ function (record, search, tj) {
             return true; 
         },
 
-        axClose: function(i_id,s_rectype){
-            var o_rec = record.load({ type: s_rectype, id: i_id, isDynamic: false });
-            var i_itemline, o_searchvalues, s_statmessage, o_qty;
-            var b_linematch = false;
-            try{
-                var o_so_search = tj.searchAll({
-                    'search': search.create({
-                        type: 'salesorder',
-                        filters: [
-                            ["type","anyof","SalesOrd"],"AND",
-                            ["mainline","is","F"],"AND",
-                            ["internalidnumber","equalto",i_id]
-                        ],     
-                        columns: ['line', 'quantitypicked', 'quantitypacked'],
-                    })
-                });
-                for(var i=0; i<=o_rec.getLineItemCount('item');i++){
-                    b_linematch = false;
-                    i_itemline = o_rec.getSublistValue({ fieldId: 'line', sublistId: 'item', line: i });
+        // axClose: function(i_id,s_rectype){
+        //     var o_rec = record.load({ type: s_rectype, id: i_id, isDynamic: false });
+        //     var i_itemline, o_searchvalues, s_statmessage, o_qty;
+        //     var b_linematch = false;
+        //     try{
+        //         var o_so_search = tj.searchAll({
+        //             'search': search.create({
+        //                 type: 'salesorder',
+        //                 filters: [
+        //                     ["type","anyof","SalesOrd"],"AND",
+        //                     ["mainline","is","F"],"AND",
+        //                     ["internalidnumber","equalto",i_id]
+        //                 ],     
+        //                 columns: ['line', 'quantitypicked', 'quantitypacked'],
+        //             })
+        //         });
+        //         for(var i=0; i<=o_rec.getLineItemCount('item');i++){
+        //             b_linematch = false;
+        //             i_itemline = o_rec.getSublistValue({ fieldId: 'line', sublistId: 'item', line: i });
 
-                    for(var j=0;j<o_so_search.length; j++){
-                        o_searchvalues = o_so_search[j];
-                        if(i_itemline ===  o_searchvalues.getValue('line')){
-                            b_linematch = true;
-                            o_qty = {
-                                qty: o_rec.getSublistValue({ fieldId: 'quantity', sublistId: 'item', line: i }),
-                                qtypicked: o_searchvalues.getValue('quantitypicked'),
-                                qtypacked: o_searchvalues.getValue('quantitypacked'),
-                                qtybilled: o_rec.getSublistValue({ fieldId: 'quantitybilled', sublistId: 'item', line: i }),
-                                qtyfulfilled: o_rec.getSublistValue({ fieldId: 'quantityfulfilled', sublistId: 'item', line: i })
-                            }
-                            s_statmessage ='\n\n Quantity Pulled: ' + o_qty.qty +'\n Quantity PickPacked:  ' + o_qty.qtypacked +'\n Quantity Fulfilled:  ' + o_qty.qtyfulfilled + '\n Quantity Invoiced:  ' + o_qty.qtybilled;
+        //             for(var j=0;j<o_so_search.length; j++){
+        //                 o_searchvalues = o_so_search[j];
+        //                 if(i_itemline ===  o_searchvalues.getValue('line')){
+        //                     b_linematch = true;
+        //                     o_qty = {
+        //                         qty: o_rec.getSublistValue({ fieldId: 'quantity', sublistId: 'item', line: i }),
+        //                         qtypicked: o_searchvalues.getValue('quantitypicked'),
+        //                         qtypacked: o_searchvalues.getValue('quantitypacked'),
+        //                         qtybilled: o_rec.getSublistValue({ fieldId: 'quantitybilled', sublistId: 'item', line: i }),
+        //                         qtyfulfilled: o_rec.getSublistValue({ fieldId: 'quantityfulfilled', sublistId: 'item', line: i })
+        //                     }
+        //                     s_statmessage ='\n\n Quantity Pulled: ' + o_qty.qty +'\n Quantity PickPacked:  ' + o_qty.qtypacked +'\n Quantity Fulfilled:  ' + o_qty.qtyfulfilled + '\n Quantity Invoiced:  ' + o_qty.qtybilled;
 
-                            if(o_qty.qtypicked > o_qty.qtybilled){  
-                                alert('Line # ' + i_itemline  + ' has a quantity fulfilled greater than billed so cannot be closed.  Please finish processing the fulfillment before closing. ' + s_statmessage ); 
-                            }else if(o_qty.qty > 0){
-                                o_rec.setSublistValue({ fieldId: 'isclosed', value: 'T', sublistId: 'item', line: i });
-                            }
-                            break;
+        //                     if(o_qty.qtypicked > o_qty.qtybilled){  
+        //                         alert('Line # ' + i_itemline  + ' has a quantity fulfilled greater than billed so cannot be closed.  Please finish processing the fulfillment before closing. ' + s_statmessage ); 
+        //                     }else if(o_qty.qty > 0){
+        //                         o_rec.setSublistValue({ fieldId: 'isclosed', value: 'T', sublistId: 'item', line: i });
+        //                     }
+        //                     break;
+        //                 }
+        //             }
+
+        //             if(!b_linematch ){
+        //                 o_rec.setSublistValue({ fieldId: 'isclosed', value: 'T', sublistId: 'item', line: i });
+        //             }
+        //         }
+        //         o_rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
+        //         window.location.reload()
+        //     }catch(e){
+        //         log.error('axClose',e);
+        //     }
+        // },
+
+        axCloseAB: function() {
+            var SOid = nlapiGetRecordId();
+            // alert('id: ' + SOid);
+            // alert('type: ' + nlapiGetRecordType(), SOid);
+            var rec = nlapiLoadRecord(nlapiGetRecordType(), SOid);
+            // alert('before so search');
+    
+            var salesorderSearch = nlapiSearchRecord("salesorder", null, [["type", "anyof", "SalesOrd"], "AND", ["mainline", "is", "F"], "AND", ["internalidnumber", "equalto", SOid]],
+                [
+                    new nlobjSearchColumn("quantitypicked"),
+                    new nlobjSearchColumn("quantitypacked"),
+                    new nlobjSearchColumn("line")
+                ]
+            );
+    
+    
+            var lineCount = parseInt(rec.getLineItemCount('item'));
+            for (x = 1; x <= lineCount; x++) {
+                var lineMatched = 'N';
+                var SOline = rec.getLineItemValue('item', 'line', x);
+    
+                for (i = 0; i < salesorderSearch.length; i++) {
+                    var searchline = salesorderSearch[i].getValue('line');
+                    if (SOline == searchline) {
+                        lineMatched = 'T';
+                        var qtypicked = salesorderSearch[i].getValue('quantitypicked');
+                        var qtyPacked = salesorderSearch[i].getValue('quantitypacked');
+                        var qtybilled = rec.getLineItemValue('item', 'quantitybilled', x);
+                        var qtyfulfilled = rec.getLineItemValue('item', 'quantityfulfilled', x);
+                        var qty = rec.getLineItemValue('item', 'quantity', x);
+    
+                        var statusmessage = ' \n\n Quantity Pulled: ' + qtypicked + '\n Quantity PickPacked:  ' + qtyPacked + '\n Quantity Fulfilled:  ' + qtyfulfilled + '\n Quantity Invoiced:  ' + qtybilled;
+                        //alert(statusmessage);
+                        if (qtypicked > qtybilled) {
+                            alert('Line # ' + SOline + ' has a quantity fulfilled greater than billed so cannot be closed.  Please finish processing the fulfillment before closing. ' + statusmessage);
+                        }
+                        else if (qty > 0) {
+                            rec.selectLineItem('item', x);
+                            rec.setCurrentLineItemValue('item', 'isclosed', "T");
+                            rec.commitLineItem('item');
                         }
                     }
-
-                    if(!b_linematch ){
-                        o_rec.setSublistValue({ fieldId: 'isclosed', value: 'T', sublistId: 'item', line: i });
-                    }
                 }
-                o_rec.save({ enableSourcing: true, ignoreMandatoryFields: true });
-                window.location.reload()
-            }catch(e){
-                log.error('axClose',e);
+                if (lineMatched == 'N') {
+                    rec.selectLineItem('item', x);
+                    rec.setCurrentLineItemValue('item', 'isclosed', "T");
+                    rec.commitLineItem('item');
+                }
+    
             }
+            nlapiSubmitRecord(rec, true);
+            location.reload();
         },
 
         printstaginglabel: function(i_id){

@@ -421,7 +421,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             //TODO: this button does nothing, need to verify function and test
                             o_form.addButton({
                                 label: 'Close Order', id: 'custpage_axclose',
-                                functionName: 'axClose(' + o_rec.id + ',' + o_rec.type.toLowerCase() + ')'
+                                functionName: 'axCloseAB()'
                             });
                         }
 
