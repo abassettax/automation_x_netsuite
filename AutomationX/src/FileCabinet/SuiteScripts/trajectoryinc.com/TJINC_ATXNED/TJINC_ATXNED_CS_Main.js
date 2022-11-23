@@ -1573,8 +1573,8 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             }
                             if (i_prVal != '6') {
                                 if (i_prVendor == '2491') {
-                                    alert('The current line you selected for a Purchase Request is using the placeholder vendor Credit Card Purchase Tracker %. Please select a real vendor on this line before submitting.')
-                                    return false;
+                                    alert('The current line you selected for a Purchase Request is using the placeholder vendor Credit Card Purchase Tracker %. Please verify this as a placeholder vendor or Credit Card PO before saving and include all required details in the PR Notes field.')
+                                    // return false;
                                 }
                             }
                             if (i_prVal == '5') {
