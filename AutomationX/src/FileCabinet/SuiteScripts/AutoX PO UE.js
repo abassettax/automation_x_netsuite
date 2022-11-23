@@ -77,7 +77,7 @@ define([
                 title: 'afterSubmit',
                 details: 'matStatus: ' + matStatus
             });
-            if (oldmatStatus != matStatus && (matStatus == 32 || matStatus == 32)) {
+            if (oldmatStatus != matStatus && (matStatus == 32 || matStatus == 33)) {
                 var recordid = context.newRecord.id;
                 var emailBody = 'A Purchase Order has been updated to Pending Prepayment/Deposit or Pending Final Prepayment/Deposit, please review.<br><br>PO Link: ';
                 var baseUrl = url.resolveDomain({
