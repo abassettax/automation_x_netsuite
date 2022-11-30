@@ -887,7 +887,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                         i_creditrem = parseInt(o_lf.creditlimit) - parseInt(i_ctotal);
 
                         if (i_creditrem < 0) {
-                            tj.alert('Warning: Customer balance of $' + i_ctotal + ' exceeds credit limit of $' + i_creditrem);
+                            tj.alert('Warning: Customer oustanding balance (balance + unbilled + current order total) of $' + i_ctotal + ' exceeds credit limit by $' + (-1*i_creditrem));
                         }
                         this._forcehold(context);
 

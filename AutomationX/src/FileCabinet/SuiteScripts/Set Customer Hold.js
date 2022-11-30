@@ -25,6 +25,7 @@ function AXSetHold()
   invsearchcolumns[2] = new nlobjSearchColumn("custentity154","customerMain","GROUP");
 
   //NTS: AX Hold Search 1-15-18
+  //https://422523.app.netsuite.com/app/common/search/searchresults.nl?searchid=4898&whence=
   var searchresults = nlapiSearchRecord('transaction', 4898, null, invsearchcolumns );
   var custid ="";
   var MaxDaysOverdue ="";
