@@ -90,10 +90,10 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             // });
                             // for (var i = 0; i < recIdsArr.length; i++) {
                                 var recId = stockRequest.value;
-                                log.debug({
-                                    title: 'recId',
-                                    details: recId
-                                });
+                                // log.debug({
+                                //     title: 'recId',
+                                //     details: recId
+                                // });
                                 var recUrl = url.resolveRecord({
                                     recordType: 'customrecord463',
                                     recordId: recId
@@ -102,10 +102,10 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             // }
                         } else if (stockRequest.config.id == 'so') {
                             var soArr = JSON.parse(stockRequest.value);
-                            log.debug({
-                                title: 'soArr',
-                                details: JSON.stringify(soArr) + 'type1 : ' + typeof(soArr) + ' len: ' + soArr.length + ' type2: ' + typeof(soArr[0])
-                            });
+                            // log.debug({
+                            //     title: 'soArr',
+                            //     details: JSON.stringify(soArr) + 'type1 : ' + typeof(soArr) + ' len: ' + soArr.length + ' type2: ' + typeof(soArr[0])
+                            // });
                             for (var i = 0; i < soArr.length; i++) {
                                 var recId = soArr[i].id;
                                 if (soArr[i].type == 'salesorder') {
@@ -369,6 +369,24 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         case 'dropshipadd':
                             itemListField.value = purchaseRequestItemDetail.dropShipAdd;
                             break;
+                        case 'created':
+                            var ogDate = purchaseRequestItemDetail.created;
+                            // log.debug({
+                            //     title: 'ogDate',
+                            //     details: ogDate
+                            // });
+                            var a = ogDate.split(' '); // break date from time
+                            // log.debug({
+                            //     title: 'a',
+                            //     details: JSON.stringify(a)
+                            // });
+	                        var date = a[0];
+                            // var formattedDate = format.parse({
+                            //     value: date,
+                            //     type: format.Type.DATE
+                            // });
+                            itemListField.value = date;
+                            break;
                     }
                 });
                 stockRequests.push(stockRequest);
@@ -430,7 +448,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     search.createColumn({ name: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Rate }),//31 SO rate added
                     search.createColumn({ name: 'cost', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//32 Item purchase price added
                     search.createColumn({ name: 'custitem115', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//33 Item purchase method added
-                    search.createColumn({ name: 'custrecord314' })//34 Pr type added
+                    search.createColumn({ name: 'custrecord314' }),//34 Pr type added
+                    search.createColumn({ name: 'created' })//35 date created added
                 ]
             }).run().each(function (result) {
                 var purchaseRequestItemDetail = {
@@ -483,7 +502,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     soArr: [],
                     soIdArr: [],
                     soNotesConcat: '',
-                    dropShipAdd: ''
+                    dropShipAdd: '',
+                    created: result.getValue(result.columns[35])
                 };
                 var estCost = +result.getValue(result.columns[20]);
                 if (estCost == 0) {
@@ -508,20 +528,20 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         loctionId: purchaseRequestItemDetail.locationId
                     });
                 }
-                log.debug({
-                    title: 'result.getValue(result.columns[21])',
-                    details: result.getValue(result.columns[21])
-                });
+                // log.debug({
+                //     title: 'result.getValue(result.columns[21])',
+                //     details: result.getValue(result.columns[21])
+                // });
                 if (result.getValue(result.columns[21]).length > 0) {
                     var soLookup = search.lookupFields({
                         type: search.Type.TRANSACTION,
                         id: result.getValue(result.columns[21]),
                         columns: ['shipaddress']
                     });
-                    log.debug({
-                        title: 'soLookup',
-                        details: JSON.stringify(soLookup)
-                    });
+                    // log.debug({
+                    //     title: 'soLookup',
+                    //     details: JSON.stringify(soLookup)
+                    // });
                     var soShipTo = soLookup.shipaddress;
                     purchaseRequestItemDetail.dropShipAdd = soShipTo;
                 }
@@ -589,6 +609,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'status', type: serverWidget.FieldType.SELECT, label: 'Action'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'prtype', type: serverWidget.FieldType.SELECT, label: 'Request Type', source: 'customlist1277' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'purchmethod', type: serverWidget.FieldType.SELECT, label: 'Purchase Method', source: 'customlist1276' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'created', type: serverWidget.FieldType.DATE, label: 'Date Created'}, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'locationid', type: serverWidget.FieldType.SELECT, label: 'Location', source: 'location'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'fromlocationid', type: serverWidget.FieldType.SELECT, label: 'From Location', source: 'location'}, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'links', type: serverWidget.FieldType.TEXTAREA, label: 'Links' }, displayType: serverWidget.FieldDisplayType.DISABLED });

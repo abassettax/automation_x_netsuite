@@ -52,7 +52,6 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 title: 'context.request.parameters.prType',
                 details: context.request.parameters.prType
             });
-            //TODO: add Expedite Drop Ship. Update post/MR to update both exp and drop ship fields for that value
             if (context.request.parameters.prType) {
                 prType = +context.request.parameters.prType;
             } else {
@@ -311,6 +310,9 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 title: 'post purchaseRequestIds',
                 details: JSON.stringify(purchaseRequestIds)
             });
+            //set User who approved/rejected the PR
+            var userObj = runtime.getCurrentUser();
+            log.debug('Internal ID of current user: ' + userObj.id);
             //Set placeholder "Processing" status on each record
             for (var i = 0; i < purchaseRequestIds.length; i++) {
                 var updateValues = {};
@@ -320,6 +322,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     updateValues[PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus] = 5;
                 }
                 updateValues[PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.PurchaseNotes] = purchaseRequestNotes[i];
+                updateValues['custrecord351'] = userObj.id;
                 record.submitFields({
                     type: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.RECORD_TYPE,
                     id: purchaseRequestIds[i],
@@ -489,6 +492,24 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         case 'dropshipadd':
                             itemListField.value = purchaseRequestItemDetail.dropShipAdd;
                             break;
+                            case 'created':
+                                var ogDate = purchaseRequestItemDetail.created;
+                                // log.debug({
+                                //     title: 'ogDate',
+                                //     details: ogDate
+                                // });
+                                var a = ogDate.split(' '); // break date from time
+                                // log.debug({
+                                //     title: 'a',
+                                //     details: JSON.stringify(a)
+                                // });
+                                var date = a[0];
+                                // var formattedDate = format.parse({
+                                //     value: date,
+                                //     type: format.Type.DATE
+                                // });
+                                itemListField.value = date;
+                                break;
                     }
                 });
                 stockRequests.push(stockRequest);
@@ -497,7 +518,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         };
         var getPurchaseRequestItemDetails = function (clearAll, locationId, isStock, prType, purchMethod) {
             var itemIds = [], itemLocationIds = [], purchaseRequestItemDetails = [];
-            var filter = [['isinactive', 'is', 'F'], 'AND', ['custrecord315', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', ['@NONE@','4']]];
+            var filter = [['isinactive', 'is', 'F'], 'AND', ['custrecord315', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', ['@NONE@','4']], 'AND', ['custrecord349', 'anyof', ['1']]];
             if (locationId > 0) {
                 filter.push('AND');
                 filter.push([PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Location, 'anyof', locationId]);
@@ -578,7 +599,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     search.createColumn({ name: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Rate }),//31 SO rate added
                     search.createColumn({ name: 'cost', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//32 Item purchase price added
                     search.createColumn({ name: 'custitem115', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//33 Item purchase method added
-                    search.createColumn({ name: 'custrecord314' })//34 Pr type added
+                    search.createColumn({ name: 'custrecord314' }),//34 Pr type added
+                    search.createColumn({ name: 'created' })//35 date created added
                 ]
             }).run().each(function (result) {
                 var purchaseRequestItemDetail = {
@@ -631,7 +653,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     soArr: [],
                     soIdArr: [],
                     soNotesConcat: '',
-                    dropShipAdd: ''
+                    dropShipAdd: '',
+                    created: result.getValue(result.columns[35])
                 };
                 var estCost = +result.getValue(result.columns[20]);
                 if (estCost == 0) {
@@ -747,6 +770,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'status', type: serverWidget.FieldType.SELECT, label: 'Action'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'prtype', type: serverWidget.FieldType.SELECT, label: 'Request Type', source: 'customlist1277' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'purchmethod', type: serverWidget.FieldType.SELECT, label: 'Purchase Method', source: 'customlist1276' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'created', type: serverWidget.FieldType.DATE, label: 'Date Created'}, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'locationid', type: serverWidget.FieldType.SELECT, label: 'Location', source: 'location'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'fromlocationid', type: serverWidget.FieldType.SELECT, label: 'From Location', source: 'location'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'links', type: serverWidget.FieldType.TEXTAREA, label: 'Links' }, displayType: serverWidget.FieldDisplayType.DISABLED });
