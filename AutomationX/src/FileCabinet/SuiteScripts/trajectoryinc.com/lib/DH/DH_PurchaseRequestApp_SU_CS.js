@@ -150,7 +150,7 @@
         return (false);
     };
     exports.reset = function () {
-        window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2234&deploy=1&compid=422523', '_self');
+        window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2456&deploy=1&compid=422523', '_self');
         return true;
     };
 });

@@ -551,7 +551,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         };
         var getPurchaseRequestItemDetails = function (clearAll, locationId, isStock, prType, purchMethod, ax5code) {
             var itemIds = [], itemLocationIds = [], purchaseRequestItemDetails = [];
-            var filter = [['isinactive', 'is', 'F'], 'AND', ['custrecord315', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', ['@NONE@','4']]];
+            var filter = [['isinactive', 'is', 'F'], 'AND', ['custrecord315', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', ['@NONE@','4']], 'AND', ['custrecord349', 'anyof', ['1']]];
             if (locationId > 0) {
                 filter.push('AND');
                 filter.push([PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Location, 'anyof', locationId]);
@@ -741,7 +741,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
             
             var allPrItemData = [];
             var allPrItems = [];
-            var filter2 = [['isinactive', 'is', 'F'], 'AND', ['custrecord315', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', ['@NONE@','4']], 'AND', ['custrecord349', 'anyof', ['@NONE@','2']], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Location, 'noneof', '@NONE@']];
+            var filter2 = [['isinactive', 'is', 'F'], 'AND', ['custrecord315', 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.FromSalesOrderProcess, 'is', 'F'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Date, 'onorbefore', 'today'], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus, 'anyof', ['@NONE@','4']], 'AND', ['custrecord349', 'anyof', ['1']], 'AND', [PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Location, 'noneof', '@NONE@']];
             search.create({
                 type: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.RECORD_TYPE,
                 filters: filter2,
