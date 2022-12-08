@@ -66,6 +66,15 @@
         //         ignoreFieldChange: true
         //     });
         }
+        var filterax5code = getParameterFromURL('ax5code');
+              if (filterax5code) {
+            var currentRecord = context.currentRecord;
+            currentRecord.setValue({
+                fieldId: 'custpage_ax5code',
+                value: filterax5code,
+                ignoreFieldChange: true
+            });
+        }
       
         if (screenHeight < 400) {
             screenHeight = 400;
@@ -84,12 +93,13 @@
     };
     exports.fieldChanged = function (context) {
         var currentRecord = context.currentRecord, FieldName = context.fieldId;
-        if (FieldName === 'custpage_filterlocationid'  || FieldName === 'custpage_nonstockonly' || FieldName === 'custpage_prtype' || FieldName === 'custpage_purchmethod') {
+        if (FieldName === 'custpage_filterlocationid'  || FieldName === 'custpage_nonstockonly' || FieldName === 'custpage_prtype' || FieldName === 'custpage_purchmethod' || FieldName === 'custpage_ax5code') {
             var location_1 = currentRecord.getValue('custpage_filterlocationid');
             var normallystocked = currentRecord.getValue('custpage_nonstockonly');
             var prType = currentRecord.getValue('custpage_prtype');
             var purchMethod = currentRecord.getValue('custpage_purchmethod');
-            window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2234&deploy=1&compid=422523' + '&locationFilter=' + location_1 + '&normallystocked=' + normallystocked + '&prType=' + prType + '&purchMethod=' + purchMethod, '_self');
+            var ax5code = currentRecord.getValue('custpage_ax5code');
+            window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2234&deploy=1&compid=422523' + '&locationFilter=' + location_1 + '&normallystocked=' + normallystocked + '&prType=' + prType + '&purchMethod=' + purchMethod + '&ax5code=' + ax5code, '_self');
             return true;
         }
       

@@ -22,6 +22,40 @@
                 ignoreFieldChange: true
             });
         }
+        var filterPrType = getParameterFromURL('prType');
+              if (filterPrType) {
+            var currentRecord = context.currentRecord;
+            currentRecord.setValue({
+                fieldId: 'custpage_prtype',
+                value: filterPrType,
+                ignoreFieldChange: true
+            });
+        // } else {
+        //     var currentRecord = context.currentRecord;
+        //     currentRecord.setValue({
+        //         fieldId: 'custpage_prtype',
+        //         value: '1',
+        //         ignoreFieldChange: true
+        //     });
+        }
+        var filterax5code = getParameterFromURL('ax5code');
+              if (filterax5code) {
+            var currentRecord = context.currentRecord;
+            currentRecord.setValue({
+                fieldId: 'custpage_ax5code',
+                value: filterax5code,
+                ignoreFieldChange: true
+            });
+        }
+        var filterSourcing = getParameterFromURL('sourcing');
+              if (filterSourcing) {
+            var currentRecord = context.currentRecord;
+            currentRecord.setValue({
+                fieldId: 'custpage_sourcing',
+                value: filterSourcing,
+                ignoreFieldChange: true
+            });
+        }
         if (screenHeight < 400) {
             screenHeight = 400;
         }
@@ -39,9 +73,12 @@
     };
     exports.fieldChanged = function (context) {
         var currentRecord = context.currentRecord, FieldName = context.fieldId;
-        if (FieldName === 'custpage_filterlocationid'  || FieldName === 'custpage_nonstockonly' || FieldName === 'custpage_prtype' || FieldName === 'custpage_purchmethod') {
+        if (FieldName === 'custpage_filterlocationid'  || FieldName === 'custpage_ax5code' || FieldName === 'custpage_prtype' || FieldName === 'custpage_sourcing') {
             var location_1 = currentRecord.getValue('custpage_filterlocationid');
-            window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2456&deploy=1&compid=422523' + '&locationFilter=' + location_1, '_self');
+            var prType = currentRecord.getValue('custpage_prtype');
+            var ax5code = currentRecord.getValue('custpage_ax5code');
+            var sourcing = currentRecord.getValue('custpage_sourcing');
+            window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2456&deploy=1&compid=422523' + '&locationFilter=' + location_1 + '&prType=' + prType + '&ax5code=' + ax5code + '&sourcing=' + sourcing, '_self');
             return true;
         }
       
@@ -86,16 +123,17 @@
                 duration: 10000 // will disappear after 5s
             });
             return false;
-        } else if (emptyStatus) {
-            var myMsg = message.create({
-                title: 'NO ACTION ON LINE ' + failedLine,
-                message: 'At least one of the requests you selected does not have an Action set. Please fill in the required fields before submitting.',
-                type: message.Type.ERROR
-            });
-            myMsg.show({
-                duration: 10000 // will disappear after 5s
-            });
-            return false;
+        // allow empty status to just update the PR records with notes/assigning to sourcing
+        // } else if (emptyStatus) {
+        //     var myMsg = message.create({
+        //         title: 'NO ACTION ON LINE ' + failedLine,
+        //         message: 'At least one of the requests you selected does not have an Action set. Please fill in the required fields before submitting.',
+        //         type: message.Type.ERROR
+        //     });
+        //     myMsg.show({
+        //         duration: 10000 // will disappear after 5s
+        //     });
+        //     return false;
         } else {
             return true;
         }
