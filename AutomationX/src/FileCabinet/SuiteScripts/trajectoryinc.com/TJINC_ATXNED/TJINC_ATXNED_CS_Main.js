@@ -491,6 +491,26 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                 value: ''
                             });
                         }
+                    } else if (context.fieldId == 'custcol90') {
+                        var customer = o_rec.getValue('entity');
+                        var custOnHold = false;
+                        if (customer) {
+                            var custLookup = tj.lookupFields(search.lookupFields({ id: customer, type: record.Type.CUSTOMER.toLowerCase(), columns: ['custentity327'] }));
+                            var custHoldStatus = custLookup.custentity327;
+                            if (custHoldStatus == '4' || custHoldStatus == '9') {
+                                custOnHold = true;
+                            }
+                        }
+                        //if customer is on hold, prevent user from setting purchase request field
+                        if (custOnHold) {
+                            tj.alert('You are attempting to source inventory for a customer who is on hold.  Please reach out to Accounting to get the customer off hold before sourcing product for them.');
+                            o_rec.setCurrentSublistValue({
+                                sublistId: 'item',
+                                fieldId: 'custcol90',
+                                value: '',
+                                ignoreFieldChange: true
+                            });
+                        }
                     } else if (context.fieldId == 'custcol90' || context.fieldId == 'custcol118') {
                         var prType = o_rec.getCurrentSublistValue({
                             sublistId: 'item',
