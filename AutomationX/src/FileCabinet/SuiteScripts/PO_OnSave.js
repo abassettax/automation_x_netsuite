@@ -279,17 +279,17 @@ function PO_OnSave(type) {
       var author = nlapiGetUser();
 
       //alert('setemail');
-      if (locEmail && rec != locEmail) { locEmail = ['sourcing@automation-x.com', locEmail]; } else { locEmail = 'sourcing@automation-x.com'; }
+      if (locEmail && rec != locEmail) { locEmail = ['database@automation-x.com', locEmail]; } else { locEmail = 'database@automation-x.com'; }
       //--------------------------
 
       //alert("To Email");
       var sub = ("PO Line Item Price Change Alert: " + PO + " Created From " + SO + " Vendor: " + VN + " Customer : " + CUS);
-      var body = ("Please review the price changes and contact purchasing if you would like to hold this purchase order while an alternative is sourced.<br> <b>NOTE: This PO will continue to be processed unless purchasing is notified.</b><br><br>" + content + "<br><br> " + PO + " created from " + SO + " for " + CUS + " containg items from " + VN + " has had pricing changes <br><br>" + " <b>Next Action: </b>" + NA + "<br>" + " <b>Material Status: </b>" + MS + "<br>" + " <b>Expected Ship Date(Line1):</b> " + redate + "<br><br>" + " <b>Release Notes:</b><br> " + RN + "<BR><BR> Please review the price changes and contact purchasing if you would like to hold this purchase order while an alternative is sourced.<br> <b>NOTE: This PO will continue to be processed unless purchasing is notified.</b><br><br>");
+      var body = ("Please review the price changes and contact purchasing if you would like to hold this purchase order while an alternative is sourced.<br> <b>NOTE: This PO will continue to be processed unless purchasing is notified.</b><br><br>" + content + "<br><br> " + PO + " created from " + SO + " for " + CUS + " containing items from " + VN + " has had pricing changes <br><br>" + " <b>Next Action: </b>" + NA + "<br>" + " <b>Material Status: </b>" + MS + "<br>" + " <b>Expected Ship Date(Line1):</b> " + redate + "<br><br>" + " <b>Release Notes:</b><br> " + RN + "<BR><BR> Please review the price changes and contact purchasing if you would like to hold this purchase order while an alternative is sourced.<br> <b>NOTE: This PO will continue to be processed unless purchasing is notified.</b><br><br>");
       var pricechangeTrue = 0;
       //alert(VenHoldCheck);
       //  if (rec){}
       if (VenHoldCheck != 37) { nlapiSendEmail(author, rec, sub, body, locEmail, 'mike.harris@automation-x.com', porecord); }
-      else { var rec = 'sourcing@automation-x.com'; nlapiSendEmail(author, rec, sub, body, locEmail, ['mike.harris@automation-x.com'], porecord); }
+      else { var rec = 'database@automation-x.com'; nlapiSendEmail(author, rec, sub, body, locEmail, ['mike.harris@automation-x.com'], porecord); }
       //return(true);
 
       //  alert('sent');
