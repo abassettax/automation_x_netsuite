@@ -472,6 +472,14 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             }
                             itemListField.value = stringVal;
                             break;
+                        case 'noalts':
+                            if (purchaseRequestItemDetail.noAlts == true) {
+                                var stringVal = 'T';
+                            } else {
+                                var stringVal = 'F';
+                            }
+                            itemListField.value = stringVal;
+                            break;
                     }
                 });
                 stockRequests.push(stockRequest);
@@ -557,7 +565,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     search.createColumn({ name: 'custrecord314' }),//34 Pr type added
                     search.createColumn({ name: 'created' }),//35 date created added
                     search.createColumn({ name: 'custitem116', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//36 item stock class added
-                    search.createColumn({ name: 'custrecord352' })//37 assigned to sourcing checkbox added
+                    search.createColumn({ name: 'custrecord352' }),//37 assigned to sourcing checkbox added
+                    search.createColumn({ name: 'custrecord353' })//38 does not accept alternates checkbox added
                 ]
             }).run().each(function (result) {
                 var purchaseRequestItemDetail = {
@@ -613,7 +622,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     dropShipAdd: '',
                     created: result.getValue(result.columns[35]),
                     stockClass: result.getText(result.columns[36]),
-                    sourcing: result.getValue(result.columns[37])
+                    sourcing: result.getValue(result.columns[37]),
+                    noAlts: result.getValue(result.columns[38])
                 };
                 var estCost = +result.getValue(result.columns[20]);
                 if (estCost == 0) {
@@ -851,6 +861,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'links', type: serverWidget.FieldType.TEXTAREA, label: 'Links' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'multiitem', type: serverWidget.FieldType.TEXT, label: 'Multi Location' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: DH_Library_1.FIELDS.ITEM.AX5Code, type: serverWidget.FieldType.TEXT, label: 'AX 5 Code' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'noalts', type: serverWidget.FieldType.CHECKBOX, label: 'Does Not Accept Alternates'}, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemid', type: serverWidget.FieldType.SELECT, label: 'Item', source: 'Item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemtype', type: serverWidget.FieldType.TEXT, label: 'Item Type' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemclass', type: serverWidget.FieldType.TEXT, label: 'Item Stock Type' }, displayType: serverWidget.FieldDisplayType.DISABLED });

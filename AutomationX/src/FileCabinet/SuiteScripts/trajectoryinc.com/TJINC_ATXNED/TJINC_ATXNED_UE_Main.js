@@ -654,6 +654,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             let createType = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol90' });
                             let notes = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol116'});
                             let prType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol117'});
+                            let noAlts = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol119'});
                             let relatedTransactionId = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.RelatedTransaction });
                             let purchaseRequestId = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.PurchaseRequest });
                             let costEstimateType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'costestimatetype' });
@@ -753,7 +754,8 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                             isCustomPrice: estimatedCost !== -1,
                                             vendorNotes: vendorNotes,
                                             notes: notes,
-                                            prType: prType
+                                            prType: prType,
+                                            noAlts: noAlts
                                         });
                                         // Skip the next line, if it was vendor notes
                                         if (vendorNotes !== null) {
@@ -872,6 +874,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                         }
                         log.debug('beforeSubmit - commitVal', commitVal);
                         log.debug('beforeSubmit - backVal', backVal);
+                        //TODO: make sure this works on create
                         context.newRecord.setValue({
                             fieldId: 'custbody239',
                             value: commitVal
