@@ -260,13 +260,14 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 if (purchaseRequestData[i].process == '1') {
                     //approve
                     updateValues['custrecord349'] = 1;
+                    updateValues['custrecord350'] = userObj.id;
                 } else if (purchaseRequestData[i].process == '2') {
                     //reject
                     updateValues['custrecord349'] = 2;
+                    updateValues['custrecord350'] = userObj.id;
                     updateValues[PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.ProcessingStatus] = PurchaseRequestItemDetail_1.PurchaseRequestProcessingStatus.Reject
                 }   
                 updateValues[PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.PurchaseNotes] = purchaseRequestData[i].notes;
-                updateValues['custrecord350'] = userObj.id;
                 updateValues['custrecord192'] = parseInt(purchaseRequestData[i].loc);
                 updateValues['custrecord189'] = parseInt(purchaseRequestData[i].qty);
                 updateValues['custrecord352'] = purchaseRequestData[i].sourcing;
