@@ -32,6 +32,7 @@ function AXSetHold()
   var CustMarketCodes = "";
    var  searchresultsarray = new Array();
  
+  nlapiLogExecution('AUDIT', 'searchresults', JSON.stringify(searchresults)); 
   for ( var i = 0; searchresults != null && i < searchresults.length; i++ ){
 
 	  custid = searchresults[i].getValue(invsearchcolumns[0]);
@@ -64,14 +65,16 @@ function AXSetHold()
 
 var customerSearch = nlapiSearchRecord("customer",null,
 [
-   ["custentity327","anyof","4","3"]
+  ["isinactive","is","F"], 
+  "AND", 
+  ["custentity327","anyof","4"]
 ], 
 [
    new nlobjSearchColumn("internalid",null,null)
 ]
 );
   var custonhold = "";
-nlapiLogExecution('AUDIT', 'searchresultsarray', searchresultsarray); 
+nlapiLogExecution('AUDIT', 'searchresultsarray', JSON.stringify(searchresultsarray)); 
   for ( var f = 0; customerSearch != null && f < customerSearch.length; f++ )
  		{
 custonhold = customerSearch[f].getValue("internalid",null,null);
