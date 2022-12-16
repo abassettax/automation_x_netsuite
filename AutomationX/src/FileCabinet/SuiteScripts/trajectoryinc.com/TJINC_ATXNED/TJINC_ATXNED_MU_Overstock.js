@@ -23,10 +23,10 @@ define(['N/record', 'N/search', 'N/format', '/SuiteBundles/Bundle 310544/TJINC_N
     function (record, search, format, tj) {
         function each(params) {
             let o_rec, o_totals, o_fields, o_temp, o_location;
-            let b_overstock = false, b_overstockcompy = false;
+            let b_overstock = false, b_overstockcompy = false, b_prefmatch = false;
             let i;
             const i_monthsago = 3;
-            const o_locclass = { 'A': 1, 'C': 3 };
+            // const o_locclass = { 'A': 1, 'C': 3 };
             const o_formula = search.createColumn({ name: 'formulanumeric', formula: 'CASE WHEN {type}=\'Inventory Item\' THEN {transaction.quantity} ELSE ({transaction.quantity}*{memberquantity}) END' });
             
             try {
@@ -39,8 +39,8 @@ define(['N/record', 'N/search', 'N/format', '/SuiteBundles/Bundle 310544/TJINC_N
                     overstock_loc: false
                 };
     
-                let d_date = new Date();
-                d_date.setDate(d_date.getDate() + 30);
+                // let d_date = new Date();
+                // d_date.setDate(d_date.getDate() + 30);
     
                 let o_item_locations = tj.searchAll({
                     search: search.create({
@@ -55,14 +55,7 @@ define(['N/record', 'N/search', 'N/format', '/SuiteBundles/Bundle 310544/TJINC_N
                            'inventorylocation',
                            'locationquantityonhand',
                            'locationquantityavailable',
-                           'locationinvtcountinterval',
-                           'locationnextinvtcountdate',
-                           'locationpreferredstocklevel',
-                           'locationinvtclassification',
-                           search.createColumn({
-                            name: "formulanumeric",
-                            formula: "{locationquantityonhand}"
-                         })
+                           'locationpreferredstocklevel'
                         ]
                     })
                 });
@@ -81,8 +74,11 @@ define(['N/record', 'N/search', 'N/format', '/SuiteBundles/Bundle 310544/TJINC_N
                     o_totals.available += o_location.available;
                     o_totals.preffered += o_location.peferredstock;
 
-                    if (o_location.available - o_location.peferredstock > 0) {
-                        o_fields.overstock_loc = true;
+                    if (o_location.peferredstock > 0) {
+                        b_prefmatch = true;
+                        if (o_location.available - o_location.peferredstock > 0) {
+                            o_fields.overstock_loc = true;
+                        }
                     }
                 }
     
@@ -91,7 +87,7 @@ define(['N/record', 'N/search', 'N/format', '/SuiteBundles/Bundle 310544/TJINC_N
                 // If more than one location needs update, it should be done all together.
     
                 // Is this item over stocked, Company wide?
-                if ((o_totals.available - o_totals.preffered) > 0) {
+                if (b_prefmatch && (o_totals.available - o_totals.preffered) > 0) {
                     // Don't bother updating if it is ALREADY flagged as overstocked (keeps the logs clean).
                     if (o_fields.overstock_tj !== 'T') {
                         b_overstockcompy = true
@@ -119,58 +115,41 @@ define(['N/record', 'N/search', 'N/format', '/SuiteBundles/Bundle 310544/TJINC_N
                     }
                 }
     
-                let o_itemusage = tj.searchAll({
-                    search: search.create({
-                        type: search.Type.ITEM,
-                        filters: [
-                            [
-                                ['internalid', 'anyof', params.id], 'OR',
-                                ['memberitem.internalid', 'anyof', params.id]
-                            ], 'AND',
-                            ['type', 'anyof', 'Kit'], 'AND',
-                            ['transaction.type', 'anyof', 'ItemShip'], 'AND',
-                            ['transaction.trandate', 'onorafter', 'monthsago' + i_monthsago], 'AND',
-                            ['transaction.mainline', 'is', 'F'], 'AND',
-                            ['transaction.custbody133', 'doesnotstartwith', 'Transfer'], 'AND',
-                            ['transaction.taxline', 'is', 'F'], 'AND',
-                            ['transaction.shipping', 'is', 'F'], 'AND',
-                            ['transaction.accounttype', 'anyof', 'COGS'], 'AND',
-                            ['formulanumeric: {transaction.quantity}', 'greaterthan', '0']
-                        ],
-                        columns: [
-                            'type',
-                            'memberquantity',
-                            search.createColumn({ name: 'itemid', sort: 'ASC' }),
-                            search.createColumn({ name: 'internalid', join: 'transaction', }),
-                            search.createColumn({ name: 'quantity', join: 'transaction', }),
-                            search.createColumn({ name: 'trandate', join: 'transaction', }),
-                            search.createColumn({ name: 'tranid', join: 'transaction', }),
-                            o_formula
-                        ]
-                    })
-                });
-   
+                //TODO: this gets demand data, specifically from IFs. should switch to SOs and their ship dates
                 let o_itemusage_v2 = tj.searchAll({
                     search: search.create({
-                        type: search.Type.ITEM_FULFILLMENT,
+                        type: "transaction",
                         filters:
-                            [
-                                ["mainline", "is", false], "AND",
-                                ["taxline", "is", false], "AND",
-                                ["shipping", "is", false], "AND",
-                                ["trandate", search.Operator.ONORAFTER, 'monthsago3'], "AND",
-                                ["trandate", search.Operator.NOTWITHIN, "thismonth"], "AND",
-                                [
-                                    ["item", "anyof", params.id], "OR",
-                                    ["item.parent", "anyof", params.id]
-                                ]
-                            ],
+                        [
+                            ["type","anyof","WorkOrd","SalesOrd"], 
+                            "AND", 
+                            ["mainline","is","F"], 
+                            "AND", 
+                            ["taxline","is","F"], 
+                            "AND", 
+                            ["shipping","is","F"], 
+                            "AND", 
+                            ["shipdate","onorafter","daysago90"], 
+                            "AND", 
+                            ["closed","is","F"], 
+                            "AND", 
+                            ["location","anyof","82","227","74","228","215","223","47","229","55","230","34","231","42","232","32","233","4","234","41","235","17","236","60","237","219","218"], 
+                            "AND", 
+                            ["quantity","greaterthan","0"],
+                            "AND", 
+                            ["item","anyof",params.id]
+                        ],
                         columns:
-                            [
-                                search.createColumn({ name: "item", summary: "GROUP" }),
-                                search.createColumn({ name: "trandate", summary: "GROUP", function: "month", sort: search.Sort.DESC }),
-                                search.createColumn({ name: "quantity", summary: "SUM" })
-                            ]
+                        [
+                            search.createColumn({
+                                name: "shipdate",
+                                label: "Date"
+                            }),
+                            search.createColumn({
+                                name: "quantity",
+                                label: "Quantity"
+                            })
+                        ]
                     })
                 });
 
@@ -178,7 +157,7 @@ define(['N/record', 'N/search', 'N/format', '/SuiteBundles/Bundle 310544/TJINC_N
                 var i_avgdemand_v2 = 0;
 
                 for(let j=0; j < o_itemusage_v2.length;j++){
-                    i_totalsold_v2 += parseInt(o_itemusage_v2[j].getValue({ name: 'quantity', summary: 'SUM' }));
+                    i_totalsold_v2 += parseInt(o_itemusage_v2[j].getValue({ name: 'quantity'}));
                 }
 
                 i_avgdemand_v2 = (i_totalsold_v2/i_monthsago).toFixed(1);
@@ -196,7 +175,7 @@ define(['N/record', 'N/search', 'N/format', '/SuiteBundles/Bundle 310544/TJINC_N
                 o_temp.start.setDate(1);
                 o_temp.start.setMonth(o_temp.today.getMonth() - i_monthsago);
     
-                if (o_itemusage) {
+                if (o_itemusage_v2) {
     
                     for (i = 0; i <= i_monthsago; i++) {
                         o_temp.tempval = o_temp.start.getFullYear() + '' + pad2(o_temp.start.getMonth());
@@ -205,11 +184,11 @@ define(['N/record', 'N/search', 'N/format', '/SuiteBundles/Bundle 310544/TJINC_N
                         o_temp.start.setMonth(o_temp.start.getMonth() + 1);
                     }
     
-                    for (i = 0; i < o_itemusage.length; i++) {
-                        o_temp.tempval = new Date(o_itemusage[i].getValue({ name: 'trandate', join: 'transaction' }));
+                    for (i = 0; i < o_itemusage_v2.length; i++) {
+                        o_temp.tempval = new Date(o_itemusage_v2[i].getValue({ name: 'shipdate'}));
                         o_temp.monthkey = o_temp.tempval.getFullYear() + '' + pad2(o_temp.tempval.getMonth());
-                        o_temp.montht[o_temp.monthkey] += parseFloat(o_itemusage[i].getValue(o_formula));
-                        o_temp.totalu += parseFloat(o_itemusage[i].getValue(o_formula));
+                        o_temp.montht[o_temp.monthkey] += parseFloat(o_itemusage_v2[i].getValue({ name: 'quantity'}));
+                        o_temp.totalu += parseFloat(o_itemusage_v2[i].getValue({ name: 'quantity'}));
                     }
                 }
     
@@ -252,12 +231,12 @@ define(['N/record', 'N/search', 'N/format', '/SuiteBundles/Bundle 310544/TJINC_N
                     id: params.id,
                     values: {
                         custitem_tjinc_summaryperiod: i_monthsago,
-                        custitem_tjinc_totalunitssold: i_totalsold_v2,//o_temp.totalu,
-                        custitem_tjinc_averagedemand: i_avgdemand_v2,//i_avgDemand,
+                        custitem_tjinc_totalunitssold: i_totalsold_v2,
+                        custitem_tjinc_averagedemand: i_avgdemand_v2,
                         custitem_tjinc_averagedemandtrend: i_avgdemandtrend,
                         custitem_tjinc_monthlytotals: JSON.stringify(o_temp.montht),
                         custitem_tjinc_monthlydifferences: JSON.stringify(o_temp.monthd),
-                        custitem_tjinc_monthsonhand: i_monthsOnHand_v2,//i_monthsOnHand,
+                        custitem_tjinc_monthsonhand: i_monthsOnHand_v2,
                         custitem_tjinc_overstocked_company: b_overstock,
                         custitemoverstocked: b_overstockcompy
                     },
