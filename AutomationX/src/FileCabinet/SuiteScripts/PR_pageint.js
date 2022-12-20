@@ -17,13 +17,13 @@ function PR_PageInt(type) {
 }
 function PR_valfield(type, name) {
 
-    ///////--------------------------------Set margin est field ----------------------------------
+    //TODO: lock down all field changes if related transaction
     if (name == 'custrecord214') {
         var procStat = nlapiGetFieldValue('custrecord214');
         var relatedTransaction = nlapiGetFieldValue('custrecord215')
         var userRole = nlapiGetRole();
         // alert(userRole);
-        var allowedRoles = [3, 1052, 1115, 1078, 1083, 1090];    //admin, purch, purch man, inv db, sol arch, admin lim
+        var allowedRoles = [3];    //[3, 1052, 1115, 1078, 1083, 1090] admin, purch, purch man, inv db, sol arch, admin lim
         // alert(allowedRoles.indexOf(parseInt(userRole)));
         if (allowedRoles.indexOf(parseInt(userRole)) == -1) {
             if (relatedTransaction != '') {
@@ -32,8 +32,13 @@ function PR_valfield(type, name) {
             } else if (procStat != '') {
                 alert('Your role is only allowed to change the processing status to blank for pending PRs. Please verify PR status and try again.');
                 return false;
+            } else {
+                return true;
             }
-        } 
-        return true;   
-    }    
+        } else {
+            return true;
+        }
+    } else {
+        return true;
+    }
 }
