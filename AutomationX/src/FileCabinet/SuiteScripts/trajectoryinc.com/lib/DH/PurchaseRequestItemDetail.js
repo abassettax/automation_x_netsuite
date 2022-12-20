@@ -29,7 +29,7 @@ define(["require", "exports", "N/record", "./DH_Library"],
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.SalesOrderQuantity, value: options.details.quantity }); // From the Sales Order
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.Location, value: options.details.locationId });
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.Vendor, value: options.details.vendorId });
-                    this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.PurchaseNotes, value: options.details.purchasingNotes });
+                    // this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.PurchaseNotes, value: options.details.purchasingNotes });
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.SalesOrder, value: options.details.salesOrderId[0].id });
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.SalesOrderLine, value: options.details.salesOrderLine });
                     this.recordObj.setValue({ fieldId: PurchaseRequestItemDetail.FIELD.IsCustomPrice, value: options.details.isCustomPrice });

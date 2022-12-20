@@ -311,7 +311,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 stockRequest.values.forEach(function (itemListField) {
                     switch (itemListField.config.id) {
                         case 'status':
-                            itemListField.value = purchaseRequestItemDetail.processingStatus;
+                            itemListField.value = purchaseRequestItemDetail.appStatus;
                             break;
                         case 'line':
                             itemListField.value = 'test';  //placeholder so indexing on field set forEach doesn't break
@@ -567,7 +567,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     search.createColumn({ name: 'custrecord212' }),//35 date created added
                     search.createColumn({ name: 'custitem116', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//36 item stock class added
                     search.createColumn({ name: 'custrecord352' }),//37 assigned to sourcing checkbox added
-                    search.createColumn({ name: 'custrecord353' })//38 does not accept alternates checkbox added
+                    search.createColumn({ name: 'custrecord353' }),//38 does not accept alternates checkbox added
+                    search.createColumn({ name: 'custrecord349' }),//39 approval status added
                 ]
             }).run().each(function (result) {
                 var purchaseRequestItemDetail = {
@@ -624,8 +625,10 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     created: result.getValue(result.columns[35]),
                     stockClass: result.getText(result.columns[36]),
                     sourcing: result.getValue(result.columns[37]),
-                    noAlts: result.getValue(result.columns[38])
+                    noAlts: result.getValue(result.columns[38]),
+                    appStatus: result.getValue(result.columns[39])
                 };
+                //TODO: add approval status so we can default rejected but open PRs
                 var estCost = +result.getValue(result.columns[20]);
                 if (estCost == 0) {
                     estCost = +result.getValue(result.columns[32]);
