@@ -16,20 +16,20 @@ function PR_PageInt(type) {
     // }
 }
 function PR_valfield(type, name) {
-
+    var procStat = nlapiGetFieldValue('custrecord214');
+    var relatedTransaction = nlapiGetFieldValue('custrecord215')
+    var userRole = nlapiGetRole();
+    // alert(userRole);
+    var allowedRoles = [3];    //[3, 1052, 1115, 1078, 1083, 1090] admin, purch, purch man, inv db, sol arch, admin lim
+    // alert(allowedRoles.indexOf(parseInt(userRole)));
     //TODO: lock down all field changes if related transaction
+    if (relatedTransaction != '' && allowedRoles.indexOf(parseInt(userRole)) == -1) {
+        alert('You cannot change the values for a PR that has already been processed into a transaction.');
+        return false;
+    }
     if (name == 'custrecord214') {
-        var procStat = nlapiGetFieldValue('custrecord214');
-        var relatedTransaction = nlapiGetFieldValue('custrecord215')
-        var userRole = nlapiGetRole();
-        // alert(userRole);
-        var allowedRoles = [3];    //[3, 1052, 1115, 1078, 1083, 1090] admin, purch, purch man, inv db, sol arch, admin lim
-        // alert(allowedRoles.indexOf(parseInt(userRole)));
         if (allowedRoles.indexOf(parseInt(userRole)) == -1) {
-            if (relatedTransaction != '') {
-                alert('You cannot change the processing status for a PR that has already been processed into a transaction.');
-                return false;
-            } else if (procStat != '') {
+            if (procStat != '') {
                 alert('Your role is only allowed to change the processing status to blank for pending PRs. Please verify PR status and try again.');
                 return false;
             } else {
