@@ -27,15 +27,15 @@ function beforesubitIR(type) {
         amountrate = parseFloat(amountrate) + itemrate * parseInt(qty);
       }
     }
-    var landed1 = nlapiGetFieldValue('landedcostamount1');
-    var landed2 = nlapiGetFieldValue('landedcostamount2');
-    var landed3 = nlapiGetFieldValue('landedcostamount3');
-    var landed4 = nlapiGetFieldValue('landedcostamount4');
-    var actLanded = landed1 + landed2 + landed3 + landed4;
-    if ((landed1 == '' && landed2 == '' && landed3 == '' && landed4 == '') && nlapiGetFieldValue('landedcostsource1') == 'MANUAL' && amountlandedcost > .01) {
-      actLanded = amountlandedcost;
+    //remove check on existing fields, should recalc every time
+    var actLanded = amountlandedcost;
+    if (nlapiGetFieldValue('landedcostsource1') == 'MANUAL' && amountlandedcost > .01) {
       nlapiSetFieldValue('landedcostmethod', 'VALUE');
       nlapiSetFieldValue('landedcostamount1', amountlandedcost);
+    } else {
+      nlapiSetFieldValue('landedcostmethod', 'VALUE');
+      nlapiSetFieldValue('landedcostamount1', 0);
+      actLanded = 0;
     }
     nlapiLogExecution('DEBUG', 'actLanded', actLanded);
     nlapiLogExecution('DEBUG', 'amountrate', amountrate);
