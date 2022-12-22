@@ -904,42 +904,43 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                 })
                             });
                             log.debug('beforeSubmit - pricebookResults', "pricebookResults: " + JSON.stringify(pricebookResults));
-                            if (pricebookResults.length > 0) {
-                                var pricebookId = pricebookResults[0].getValue({
-                                    name: 'custrecord316'
-                                });
-                                for (var i = 0; i < updatePrices.length; i++) {
-                                    var item = updatePrices[i].item;
-                                    var rate = updatePrices[i].rate;
-                                    var newPricebookItem = record.create({
-                                        type: 'customrecord1281'
-                                    });
-                                    newPricebookItem.setValue({
-                                        fieldId: 'custrecord316',
-                                        value: pricebookId
-                                    });
-                                    newPricebookItem.setValue({
-                                        fieldId: 'custrecord317',
-                                        value: item
-                                    });
-                                    newPricebookItem.setValue({
-                                        fieldId: 'custrecord318',
-                                        value: rate
-                                    });
-                                    var recordId = newPricebookItem.save();
-                                    log.debug('beforeSubmit - new pricebook item created', "recordId: " + recordId);
-                                }
-                                var priceUpdater = task.create({
-                                    taskType: task.TaskType.SCHEDULED_SCRIPT
-                                });
-                                priceUpdater.scriptId = 'customscript_ax_pricebook_update_ss';
-                                priceUpdater.deploymentId = null; // Setting this to null forces Netsuite to select the next available 'idle' deployment
-                                priceUpdater.params = {
-                                    custscript_ax_pricebook_id_ss: pricebookId,
-                                    custscript_ax_pricebook_prices_ss: JSON.stringify(updatePrices)
-                                };
-                                priceUpdater.submit();
-                            } else {
+                            // remove logic for setting pricebook records. item list is static, just update prices like normal
+                            // if (pricebookResults.length > 0) {
+                            //     var pricebookId = pricebookResults[0].getValue({
+                            //         name: 'custrecord316'
+                            //     });
+                            //     for (var i = 0; i < updatePrices.length; i++) {
+                            //         var item = updatePrices[i].item;
+                            //         var rate = updatePrices[i].rate;
+                            //         var newPricebookItem = record.create({
+                            //             type: 'customrecord1281'
+                            //         });
+                            //         newPricebookItem.setValue({
+                            //             fieldId: 'custrecord316',
+                            //             value: pricebookId
+                            //         });
+                            //         newPricebookItem.setValue({
+                            //             fieldId: 'custrecord317',
+                            //             value: item
+                            //         });
+                            //         newPricebookItem.setValue({
+                            //             fieldId: 'custrecord318',
+                            //             value: rate
+                            //         });
+                            //         var recordId = newPricebookItem.save();
+                            //         log.debug('beforeSubmit - new pricebook item created', "recordId: " + recordId);
+                            //     }
+                            //     var priceUpdater = task.create({
+                            //         taskType: task.TaskType.SCHEDULED_SCRIPT
+                            //     });
+                            //     priceUpdater.scriptId = 'customscript_ax_pricebook_update_ss';
+                            //     priceUpdater.deploymentId = null; // Setting this to null forces Netsuite to select the next available 'idle' deployment
+                            //     priceUpdater.params = {
+                            //         custscript_ax_pricebook_id_ss: pricebookId,
+                            //         custscript_ax_pricebook_prices_ss: JSON.stringify(updatePrices)
+                            //     };
+                            //     priceUpdater.submit();
+                            // } else {
                                 //normal price update directly on customer
                                 var custLookup = search.lookupFields({
                                     type: search.Type.CUSTOMER,
@@ -1030,7 +1031,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                     ignoreMandatoryFields: true
                                 });
                                 log.debug('beforeSubmit - price update', 'customer saved: ' + custId);
-                            }
+                            // }
                         }
                     }
                 } catch (e) {
