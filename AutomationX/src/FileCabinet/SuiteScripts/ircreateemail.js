@@ -32,7 +32,7 @@ function beforesubitIR(type) {
     if (nlapiGetFieldValue('landedcostsource1') == 'MANUAL' && amountlandedcost > .01) {
       nlapiSetFieldValue('landedcostmethod', 'VALUE');
       nlapiSetFieldValue('landedcostamount1', amountlandedcost);
-    } else {
+    } else if (nlapiGetFieldValue('landedcostsource1') == 'MANUAL' && amountlandedcost <= .01) {
       nlapiSetFieldValue('landedcostmethod', 'VALUE');
       nlapiSetFieldValue('landedcostamount1', 0);
       actLanded = 0;
