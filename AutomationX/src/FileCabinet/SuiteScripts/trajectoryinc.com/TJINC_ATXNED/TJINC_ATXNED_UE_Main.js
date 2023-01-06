@@ -655,6 +655,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             let notes = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol116'});
                             let prType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol117'});
                             let noAlts = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol119'});
+                            let prDate = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol120'});
                             let relatedTransactionId = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.RelatedTransaction });
                             let purchaseRequestId = +context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: dh_lib.FIELDS.TRANSACTION.COLUMN.PurchaseRequest });
                             let costEstimateType = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'costestimatetype' });
@@ -755,7 +756,8 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                             vendorNotes: vendorNotes,
                                             notes: notes,
                                             prType: prType,
-                                            noAlts: noAlts
+                                            noAlts: noAlts,
+                                            prDate: prDate
                                         });
                                         // Skip the next line, if it was vendor notes
                                         if (vendorNotes !== null) {
