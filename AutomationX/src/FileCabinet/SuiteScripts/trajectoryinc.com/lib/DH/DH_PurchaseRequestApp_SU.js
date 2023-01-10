@@ -481,6 +481,9 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                             }
                             itemListField.value = stringVal;
                             break;
+                        case 'altitemid':
+                            itemListField.value = purchaseRequestItemDetail.prefAlt;
+                            break;
                     }
                 });
                 stockRequests.push(stockRequest);
@@ -569,6 +572,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     search.createColumn({ name: 'custrecord352' }),//37 assigned to sourcing checkbox added
                     search.createColumn({ name: 'custrecord353' }),//38 does not accept alternates checkbox added
                     search.createColumn({ name: 'custrecord349' }),//39 approval status added
+                    search.createColumn({ name: 'custitem108', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//40 item pref alt added
                 ]
             }).run().each(function (result) {
                 var purchaseRequestItemDetail = {
@@ -626,7 +630,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     stockClass: result.getText(result.columns[36]),
                     sourcing: result.getValue(result.columns[37]),
                     noAlts: result.getValue(result.columns[38]),
-                    appStatus: result.getValue(result.columns[39])
+                    appStatus: result.getValue(result.columns[39]),
+                    prefAlt: result.getValue(result.columns[40])
                 };
                 //TODO: add approval status so we can default rejected but open PRs
                 var estCost = +result.getValue(result.columns[20]);
@@ -870,6 +875,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemtype', type: serverWidget.FieldType.TEXT, label: 'Item Type' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemclass', type: serverWidget.FieldType.TEXT, label: 'Item Stock Type' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'isstocked', type: serverWidget.FieldType.TEXT, label: 'Netstock Item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'altitemid', type: serverWidget.FieldType.SELECT, label: 'Pref Alt', source: 'Item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'custbu', type: serverWidget.FieldType.TEXT, label: 'BU/Customer' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'estcost', type: serverWidget.FieldType.TEXT, label: 'Estimated Cost' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'avgcost', type: serverWidget.FieldType.TEXT, label: 'Item Unit Cost' }, displayType: serverWidget.FieldDisplayType.DISABLED });
