@@ -86,6 +86,50 @@ if(searchresultsarray.indexOf(custonhold)==-1  ){ nlapiSubmitField("customer", c
   //////////////////////////////////////////
 
 }
+
+function AXSetHold2() {
+
+  var customerSearch = nlapiSearchRecord("customer",null,
+    [
+      ["isinactive","is","F"], 
+      "AND", 
+      [[["daysoverdue","greaterthan","15"],"AND",["custentity327","anyof","5"]],"OR",[["daysoverdue","lessthanorequalto","15"],"AND",["custentity327","anyof","4"]]], 
+      "AND", 
+      ["custentity327","noneof","8","9"]
+    ], 
+    [
+      new nlobjSearchColumn("custentity327").setSort(false),
+      new nlobjSearchColumn("internalid").setSort(false), 
+      new nlobjSearchColumn("daysoverdue"), 
+      new nlobjSearchColumn("overduebalance"),
+    ]
+  );
+  nlapiLogExecution('AUDIT', 'customerSearch', JSON.stringify(customerSearch));
+  var holdCustomers = [];
+  var offHoldCustomers = [];
+  for ( var f = 0; customerSearch != null && f < customerSearch.length; f++ ){
+      var custonhold = customerSearch[f].getValue("custentity327");
+      var custid = customerSearch[f].getValue("internalid");     
+      if(custonhold == '4'){
+        //on hold customers should be off hold based off of filters
+        offHoldCustomers.push(custid);
+      } else {
+        //off hold customers should be on hold based off of filters
+        holdCustomers.push(custid);
+      }
+  }
+  nlapiLogExecution('AUDIT', 'holdCustomers', JSON.stringify(holdCustomers));
+  nlapiLogExecution('AUDIT', 'offHoldCustomers', JSON.stringify(offHoldCustomers));
+  for ( var f = 0; f < holdCustomers.length; f++ ){
+    var custid = holdCustomers[f];
+    nlapiSubmitField("customer", custid, "custentity327", 4);
+  }
+  for ( var f = 0; f < offHoldCustomers.length; f++ ){
+    var custid = offHoldCustomers[f];
+    nlapiSubmitField("customer", custid, "custentity327", 5);
+  }
+}
+
 //Hour Hold Lift   1  
 //Day Hold Lift   2  
 //Soft Hold   3  
