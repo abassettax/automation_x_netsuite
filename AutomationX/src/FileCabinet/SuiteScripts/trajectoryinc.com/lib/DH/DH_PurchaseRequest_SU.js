@@ -265,6 +265,10 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                 var status_1 = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'process', line: i });
                 var processStatus = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'status', line: i });
                 var purchNotes = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'purchasingnotes', line: i });
+                var salesNotes = context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'forecastnotes', line: i });
+                if (salesNotes == null) {
+                    salesNotes = '';
+                }
                 log.debug({
                     title: 'checking line',
                     details: 'line: ' + i + ' | process: '  + status_1
@@ -299,7 +303,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         vendorNotes: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'vendornotes', line: i }),
                         LastNegotiationDate: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'lastnegotiationdate', line: i }), //MH added
                         LocationPreferredStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'LocationPreferredStockLevel', line: i }), //MH added
-                        AddLocalStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'AddLocalStockLevel', line: i }) //MH added
+                        AddLocalStockLevel: context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'AddLocalStockLevel', line: i }), //MH added
+                        salesNotes: salesNotes
                     });
                     var prIdsArr = JSON.parse(context.request.getSublistValue({ group: ITEMSUBLIST.id, name: 'id', line: i }));
                     log.debug({

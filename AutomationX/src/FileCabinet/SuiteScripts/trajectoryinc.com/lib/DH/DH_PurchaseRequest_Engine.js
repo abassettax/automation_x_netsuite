@@ -162,12 +162,12 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                                     }
                                     purchaseRequestInfos.push(purchaseRequestInfo);
                                     if (lineNotes.indexOf("Purchasing Request #" + purchaseRequest.internalId) === -1) {
-                                        if (purchaseRequest.purchasingNotes && purchaseRequest.purchasingNotes.length > 0) {
-                                            lineNotes.push("Purchasing Request #" + purchaseRequest.internalId + ": " + purchaseRequest.purchasingNotes);
-                                        }
-                                        else {
-                                            lineNotes.push("Purchasing Request #" + purchaseRequest.internalId);
-                                        }
+                                        // if (purchaseRequest.purchasingNotes && purchaseRequest.purchasingNotes.length > 0) {
+                                            lineNotes.push("Purchasing Request #" + purchaseRequest.internalId + "\nPurch Notes: " + purchaseRequest.purchasingNotes + "\nSales Notes: " + purchaseRequest.salesNotes);
+                                        // }
+                                        // else {
+                                        //     lineNotes.push("Purchasing Request #" + purchaseRequest.internalId);
+                                        // }
                                     }
                                 });
                                 var quantity = _.sumBy(rateGroup, function (purchaseRequest) {
