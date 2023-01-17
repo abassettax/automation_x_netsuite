@@ -93,7 +93,7 @@ function AXSetHold2() {
     [
       ["isinactive","is","F"], 
       "AND", 
-      [[["daysoverdue","greaterthan","15"],"AND",["custentity327","anyof","5"]],"OR",[["daysoverdue","lessthanorequalto","15"],"AND",["custentity327","anyof","4"]]], 
+      [[["daysoverdue","greaterthan","25"],"AND",["custentity327","anyof","5"]],"OR",[["daysoverdue","lessthanorequalto","25"],"AND",["custentity327","anyof","4"]]], 
       "AND", 
       ["custentity327","noneof","8","9"]
     ], 
