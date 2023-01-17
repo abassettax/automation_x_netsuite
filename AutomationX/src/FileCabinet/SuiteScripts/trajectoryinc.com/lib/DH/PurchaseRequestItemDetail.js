@@ -1,5 +1,5 @@
-define(["require", "exports", "N/record", "./DH_Library"],
-    function (require, exports, record, DH_Library_1) {
+define(["require", "exports", "N/record", "N/format", "./DH_Library"],
+    function (require, exports, record, format, DH_Library_1) {
         Object.defineProperty(exports, "__esModule", { value: true });
         var PurchaseRequestItemDetail = /** @class */ (function () {
             function PurchaseRequestItemDetail(options) {
@@ -38,7 +38,22 @@ define(["require", "exports", "N/record", "./DH_Library"],
                     this.recordObj.setValue({ fieldId: 'custrecord314', value: options.details.prType });
                     this.recordObj.setValue({ fieldId: 'custrecord353', value: options.details.noAlts });
                     if (options.details.prDate != '') {
-                        this.recordObj.setValue({ fieldId: 'custrecord212', value: options.details.prDate });
+                        log.debug('options.details.prDate',options.details.prDate);
+                        var parsedDate = format.parse({
+                            value: options.details.prDate,
+                            type: format.Type.DATE
+                        });
+                        log.debug('parsedDate',parsedDate);
+                        // var formattedDate = format.format({
+                        //     value: parsedDate,
+                        //     type: format.Type.DATE
+                        // });
+                        // log.debug('formattedDate',formattedDate);
+                        var todayTest = new Date ();
+                        log.debug('todayTest',todayTest);
+                        var newDate = new Date (Date.parse(options.details.prDate));
+                        log.debug('newDate',newDate);
+                        this.recordObj.setValue({ fieldId: 'custrecord212', value: newDate });      
                     }
                     // Allow this field to be overridden by incoming EstimateCost
                     if (options.details.estimatedCost !== -1) {

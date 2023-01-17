@@ -22,12 +22,13 @@
             employeeId: +runtime.getCurrentScript().getParameter({ name: 'custscript_tjinc_dh_owner' }),
             purchaseRequest: JSON.parse(context.value)
         });
+        log.debug('createPurchaseRequestResponse', JSON.stringify(createPurchaseRequestResponse));
         if (createPurchaseRequestResponse.purchaseRequest.fromSalesOrderProcess) {
             context.write(createPurchaseRequestResponse.purchaseRequest.internalId, JSON.stringify(createPurchaseRequestResponse.purchaseRequest));
         }
         else {
             DH_Library_1.updateSalesOrder({
-                id: createPurchaseRequestResponse.purchaseRequest.salesOrderId,
+                id: createPurchaseRequestResponse.purchaseRequest.salesOrderId[0].id,
                 salesOrderLineInfos: [createPurchaseRequestResponse.salesOrderLineInfo]
             });
         }
