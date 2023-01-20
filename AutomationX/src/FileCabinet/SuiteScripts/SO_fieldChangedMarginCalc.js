@@ -3,20 +3,10 @@ function FchangedMarginCalc(type, name) {
 
     if (name == 'povendor') { nlapiSetCurrentLineItemValue('item', 'costestimatetype', 'PURCHPRICE'); }
 
-    if (name == 'price' || (type === 'item' && name == 'location') || name == 'custcol81') {
+    if (name == 'price' || (type === 'item' && name == 'location') || name == 'costestimate' || name == 'rate') {
 
 
       //nlapiSetCurrentLineItemValue('item', 'custcol61', "",false);
-
-      var linepricegroup = nlapiGetCurrentLineItemValue('item', 'price');
-      // alert(linepricegroup);
-      if (linepricegroup < 0) {
-        nlapiSetCurrentLineItemValue('item', 'custcol61', "Please enter a target margin or select a price level to see margin.", false);
-        return true;
-      }
-
-
-
 
       var margincalcfield = "";
       var itemType = nlapiGetCurrentLineItemValue('item', 'itemtype');
@@ -37,12 +27,19 @@ function FchangedMarginCalc(type, name) {
         case 'Group':
           itemLookupType = 'kititem';
           break;
-
+        case 'NonInvtPart':
+          itemLookupType = 'noninventoryitem';
+          break;
       }
 
       if (itemLookupType == 'inventoryitem' || itemLookupType == 'assemblyitem') {
 
-
+        var linepricegroup = nlapiGetCurrentLineItemValue('item', 'price');
+        // alert(linepricegroup);
+        if (linepricegroup < 0) {
+          nlapiSetCurrentLineItemValue('item', 'custcol61', "Please enter a target margin or select a price level to see margin.", false);
+          return true;
+        }
 
         if (!window.preferedvendorrate && uid) {
 
@@ -148,6 +145,23 @@ function FchangedMarginCalc(type, name) {
         window.source = "";
         window.locationAva = "";
         //window.lastNegotiationDate = "";
+        return true;
+      } else if (itemLookupType == 'noninventoryitem') {
+        var qty = parseFloat(nlapiGetCurrentLineItemValue('item', 'quantity'));
+        var costEstRate = parseFloat(nlapiGetCurrentLineItemValue('item', 'costestimate'))/ qty;
+        if (name == 'costestimate') { 
+          var startingRate = (costEstRate/(1 - .32)).toFixed(2);
+          nlapiSetCurrentLineItemValue('item', 'rate', startingRate, false);
+        } else if (name == 'rate') {
+          var startingRate = parseFloat(nlapiGetCurrentLineItemValue('item', 'rate'));
+        }
+        var ppMargin = ((1 - (costEstRate / startingRate)) * 100).toFixed(2); //-2
+        //alert(window.itemaveragecost);
+        var purchasepricemargintext = "";
+        var purchasepricemargintext = "PP: " + ppMargin + "% \n";
+        var marginfieldvalue = purchasepricemargintext;
+        nlapiSetCurrentLineItemValue('item', 'custcol61', marginfieldvalue, false);
+
         return true;
       }
       return true;
