@@ -354,6 +354,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                     s_softholdmessage = "Customer account is Past Due and has been placed on <u>SOFT CREDIT HOLD</u>.  Please contact accounting to lift the hold for the remanider of the day.<br/><br/>";
                     s_onholdmessage = "Customer account is Past Due and has been placed on <u>CREDIT HOLD</u>. Please resolve outstanding invoces before processing order.<br/><br/>";
                     s_forceholdmessage = "Customer account is Past Due and has been placed on <u>HARD CREDIT HOLD</u>. Please contact accounting.<br/><br/>";
+                    s_inactivemessage = "Customer account is Inactive. Please have their account reactivated or use a different customer before processing order.<br/><br/>"
                     i_isproccesing = 0;
 
                     let o_col4 = o_form.getSublist({ id: 'item' }).getField({ id: 'custcol4' });
@@ -479,7 +480,8 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                     }*/
                     //End PO set up SO
                     if (i_customer) {
-                        o_lkupfields = tj.lookupFields(search.lookupFields({ id: i_customer, type: record.Type.CUSTOMER.toLowerCase(), columns: ['custentity327', 'balance', 'unbilledorders', 'consolbalance', 'consolunbilledorders', 'creditlimit', 'parent'] }));
+                        o_lkupfields = tj.lookupFields(search.lookupFields({ id: i_customer, type: record.Type.CUSTOMER.toLowerCase(), columns: ['custentity327', 'balance', 'unbilledorders', 'consolbalance', 'consolunbilledorders', 'creditlimit', 'parent', 'isinactive'] }));
+                        log.debug('o_lkupfields :', JSON.stringify(o_lkupfields));
                         o_tempobj = {
                             custentity327: parseInt(o_lkupfields.custentity327),
                             balance: o_lkupfields.balance,
@@ -487,7 +489,8 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             creditlimit: o_lkupfields.creditlimit,
                             parent: o_lkupfields.parent,
                             consolbalance: o_lkupfields.consolbalance,
-                            consolunbilledorders: o_lkupfields.consolunbilledorders
+                            consolunbilledorders: o_lkupfields.consolunbilledorders,
+                            inactive: o_lkupfields.isinactive
                         }
 
                         if (!o_tempobj.creditlimit && o_tempobj.parent) {
@@ -584,7 +587,15 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             o_form.removeButton('submitfulfill');
                             o_form.removeButton('process');
                         }
-
+                        //add block for inactive customer
+                        if (o_tempobj.inactive) {
+                            s_holdmessage += s_inactivemessage;
+                            s_holdmessage += "</b></font></div >";
+                            o_rec.setValue('custbody172', s_holdmessage);
+                            o_form.removeButton('submitfulfill');
+                            o_form.removeButton('billremaining');
+                            o_form.removeButton('process');
+                        }
                     }
                 } catch (e) {
                     log.error('_hidecolumns', e);
