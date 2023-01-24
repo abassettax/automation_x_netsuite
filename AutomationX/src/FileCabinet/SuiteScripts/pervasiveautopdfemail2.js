@@ -410,7 +410,7 @@ function autosendpdf() {
 
 
                 // template 113
-                var author = 'ar@automation-x.com';
+                var author = 35803;
 
                 var emailMerger = nlapiCreateEmailMerger('113'); // Initiate Email Merger
                 emailMerger.setTransaction(recordid); // Set the ID of the transaction where you are going to fetch the values to populate the variables on the template
@@ -911,7 +911,7 @@ function autosendpdf() {
                 //////////////////////////////////////////////////end create csv
 
                 //create email Pervasvie
-                var author = 'ar@automation-x.com';
+                var author = 35803;
                 var recipient = 'webdi@actian.com'; // "webdi@pervasive.com";             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
