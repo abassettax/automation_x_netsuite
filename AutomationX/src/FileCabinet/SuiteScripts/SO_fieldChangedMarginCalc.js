@@ -48,6 +48,8 @@ function FchangedMarginCalc(type, name) {
           ///
 
           if (linelocation) {
+            // alert(linepricegroup);
+            // alert(uid);
             var columnsAC = new Array();
             columnsAC[0] = new nlobjSearchColumn("locationaveragecost", null, "AVG");
             columnsAC[1] = new nlobjSearchColumn("averagecost", null, "AVG");
@@ -59,6 +61,7 @@ function FchangedMarginCalc(type, name) {
             columnsAC[7] = new nlobjSearchColumn("locationquantityavailable", null, "GROUP");
             columnsAC[8] = new nlobjSearchColumn("custitem50", null, "MAX");
             columnsAC[9] = new nlobjSearchColumn("custrecord302", "CUSTRECORD301", "COUNT")
+            // alert(JSON.stringify(columnsAC));
             var itemSearchAC = nlapiSearchRecord("item", null,
               [
                 ["inventorylocation", "anyof", linelocation],
@@ -70,11 +73,12 @@ function FchangedMarginCalc(type, name) {
 
             var locationac = 0;
             var isStocked = 'N';
-            window.source = itemSearchAC[0].getValue(columnsAC[6]);
-            window.locationAva = itemSearchAC[0].getValue(columnsAC[7]);
-            window.lastNegotiationDate = itemSearchAC[0].getValue(columnsAC[8]);
-            window.altCount = itemSearchAC[0].getValue(columnsAC[9]);
+            // alert(JSON.stringify(itemSearchAC));
             if (itemSearchAC) {
+              window.source = itemSearchAC[0].getValue(columnsAC[6]);
+              window.locationAva = itemSearchAC[0].getValue(columnsAC[7]);
+              window.lastNegotiationDate = itemSearchAC[0].getValue(columnsAC[8]);
+              window.altCount = itemSearchAC[0].getValue(columnsAC[9]);
               locationac = itemSearchAC[0].getValue(columnsAC[0]);
               window.preferedvendorrate = itemSearchAC[0].getValue(columnsAC[2]);
               window.itemaveragecost = itemSearchAC[0].getValue(columnsAC[1]);
@@ -82,31 +86,38 @@ function FchangedMarginCalc(type, name) {
               window.LocationClass = itemSearchAC[0].getValue(columnsAC[4]);
               window.userClass = itemSearchAC[0].getValue(columnsAC[5]);
 
+              var itemSource = window.source;
+              if (itemSource == 2 && window.itemaveragecost) {
+                nlapiSetCurrentLineItemValue('item', 'costestimatetype', 'AVGCOST', false, true);
+              }
+              else {
+
+                var lineQty = nlapiGetCurrentLineItemValue('item', 'quantity');
+                var qtyAva = window.locationAva;
+
+                if (parseInt(qtyAva) >= parseInt(lineQty) && locationac) { nlapiSetCurrentLineItemValue('item', 'costestimatetype', 'AVGCOST'); } else { nlapiSetCurrentLineItemValue('item', 'costestimatetype', 'PURCHPRICE'); }
+
+              }
+
+
+              //alert(window.preferedvendorrate );
+              if (locationac > 0) { window.itemaveragecost = locationac; window.labelac = "LAC:"; }
+              /// end location average cost 
             }
 
-            var itemSource = window.source;
-            if (itemSource == 2 && window.itemaveragecost) {
-              nlapiSetCurrentLineItemValue('item', 'costestimatetype', 'AVGCOST', false, true);
-            }
-            else {
-
-              var lineQty = nlapiGetCurrentLineItemValue('item', 'quantity');
-              var qtyAva = window.locationAva;
-
-              if (parseInt(qtyAva) >= parseInt(lineQty) && locationac) { nlapiSetCurrentLineItemValue('item', 'costestimatetype', 'AVGCOST'); } else { nlapiSetCurrentLineItemValue('item', 'costestimatetype', 'PURCHPRICE'); }
-
-            }
-
-
-            //alert(window.preferedvendorrate );
-            if (locationac > 0) { window.itemaveragecost = locationac; window.labelac = "LAC:"; }
-            /// end location average cost 
           }
         }
 
 
         var itemrate = nlapiGetCurrentLineItemValue('item', 'rate');
-        var ppMargin = ((1 - (window.preferedvendorrate / itemrate)) * 100).toFixed(2); //-2
+        if (window.preferedvendorrate) {
+          var ppMargin = ((1 - (window.preferedvendorrate / itemrate)) * 100).toFixed(2); //-2
+        } else {
+          var qty = parseFloat(nlapiGetCurrentLineItemValue('item', 'quantity'));
+          var costEstRate = parseFloat(nlapiGetCurrentLineItemValue('item', 'costestimate'))/ qty;
+          // alert(costEstRate)
+          var ppMargin = ((1 - (costEstRate / itemrate)) * 100).toFixed(2); //-2
+        }
         //alert(window.itemaveragecost);
         var avgcostMargin = ((1 - (window.itemaveragecost / itemrate)) * 100).toFixed(2);
         //alert(avgcostMargin);
@@ -149,19 +160,21 @@ function FchangedMarginCalc(type, name) {
       } else if (itemLookupType == 'noninventoryitem') {
         var qty = parseFloat(nlapiGetCurrentLineItemValue('item', 'quantity'));
         var costEstRate = parseFloat(nlapiGetCurrentLineItemValue('item', 'costestimate'))/ qty;
-        if (name == 'costestimate') { 
+        if (name == 'costestimate' && costEstRate != '') { 
           var startingRate = (costEstRate/(1 - .32)).toFixed(2);
           nlapiSetCurrentLineItemValue('item', 'rate', startingRate, false);
         } else if (name == 'rate') {
           var startingRate = parseFloat(nlapiGetCurrentLineItemValue('item', 'rate'));
         }
-        var ppMargin = ((1 - (costEstRate / startingRate)) * 100).toFixed(2); //-2
-        //alert(window.itemaveragecost);
-        var purchasepricemargintext = "";
-        var purchasepricemargintext = "PP: " + ppMargin + "% \n";
-        var marginfieldvalue = purchasepricemargintext;
-        nlapiSetCurrentLineItemValue('item', 'custcol61', marginfieldvalue, false);
-
+        if (startingRate) {
+          var ppMargin = ((1 - (costEstRate / startingRate)) * 100).toFixed(2); //-2
+          //alert(window.itemaveragecost);
+          var purchasepricemargintext = "";
+          var purchasepricemargintext = "PP: " + ppMargin + "% \n";
+          var marginfieldvalue = purchasepricemargintext;
+          nlapiSetCurrentLineItemValue('item', 'custcol61', marginfieldvalue, false);
+        
+      }
         return true;
       }
       return true;
