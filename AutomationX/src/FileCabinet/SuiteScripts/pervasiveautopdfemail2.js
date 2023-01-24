@@ -5,7 +5,7 @@ function autosendpdf() {
         var searchresults = nlapiSearchRecord('transaction', 1111, null, null); // results from the Pervasive Auto Send PDF Email Report
 
     } catch (error) {
-        var author = 3354;
+        var author = 'andrew.bassett@automation-x.com';
         var recipienterror = "accounting@automation-x.com";
         var emailSubject = "Automation-X Invoice Email Error";
         var emailBody = "Error on Pervasive Auto Send PDF Email Report saved search for auto generated emails has occured.  Please Contact your administrator.  Saved Search ID 1111  Script ID  customscript163 " + error;  // Get the body for the email
@@ -410,7 +410,7 @@ function autosendpdf() {
 
 
                 // template 113
-                var author = 35803;
+                var author = 'ar@automation-x.com';
 
                 var emailMerger = nlapiCreateEmailMerger('113'); // Initiate Email Merger
                 emailMerger.setTransaction(recordid); // Set the ID of the transaction where you are going to fetch the values to populate the variables on the template
@@ -911,7 +911,7 @@ function autosendpdf() {
                 //////////////////////////////////////////////////end create csv
 
                 //create email Pervasvie
-                var author = 17890;
+                var author = 'ar@automation-x.com';
                 var recipient = 'webdi@actian.com'; // "webdi@pervasive.com";             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
