@@ -392,7 +392,7 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
             //set Related Transactions field
             purchaseOrder.setValue({ fieldId: 'custbody236', value: salesOrderIds });
             // In the case of a dropship, I need to pull the ShipTo from the Sales Order forward to the DropShip PO ShipTo
-            if (options.poType === PurchaseRequestItemDetail_1.CreateType.DropShipPO && salesOrderIds.length > 0) {
+            if ((options.poType == '3' || options.poType == '5') && salesOrderIds.length > 0) {
                 //alter structure to get id from first value in array. no consolidation, so is just an array with one json at pos 0, if consolidation, should be same cust/address so just get first id
                 var salesOrder = record.load({ type: record.Type.SALES_ORDER, id: salesOrderIds[0] });
                 purchaseOrder.setValue({ fieldId: 'shipaddress', value: salesOrder.getValue({ fieldId: 'shipaddress' }) });
