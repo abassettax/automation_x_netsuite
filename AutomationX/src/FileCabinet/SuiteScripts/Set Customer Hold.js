@@ -93,17 +93,20 @@ function AXSetHold2() {
     [
       ["isinactive","is","F"], 
       "AND", 
-      [[["daysoverdue","greaterthan","25"],"AND",["custentity327","anyof","5"]],"OR",[["daysoverdue","lessthanorequalto","25"],"AND",["custentity327","anyof","4"]]], 
+      [[[["daysoverdue","greaterthan","25"],"AND",["custentity327","anyof","5"]],"OR",[["formulanumeric: {creditlimit}-{balance}","lessthan","0"],"AND",["custentity327","anyof","5"]]],"OR",[[["daysoverdue","lessthanorequalto","25"],"AND",["custentity327","anyof","4"]],"AND",[["formulanumeric: {creditlimit}-{balance}","greaterthanorequalto","0"],"AND",["custentity327","anyof","4"]]]], 
       "AND", 
       ["custentity327","noneof","8","9"]
-    ], 
-    [
-      new nlobjSearchColumn("custentity327").setSort(false),
-      new nlobjSearchColumn("internalid").setSort(false), 
+  ], 
+  [
+      new nlobjSearchColumn("internalid"), 
+      new nlobjSearchColumn("entityid").setSort(false), 
       new nlobjSearchColumn("daysoverdue"), 
-      new nlobjSearchColumn("overduebalance"),
-    ]
-  );
+      new nlobjSearchColumn("overduebalance"), 
+      new nlobjSearchColumn("custentity327").setSort(false), 
+      new nlobjSearchColumn("balance"), 
+      new nlobjSearchColumn("creditlimit")
+  ]
+ );
   nlapiLogExecution('AUDIT', 'customerSearch', JSON.stringify(customerSearch));
   var holdCustomers = [];
   var offHoldCustomers = [];
