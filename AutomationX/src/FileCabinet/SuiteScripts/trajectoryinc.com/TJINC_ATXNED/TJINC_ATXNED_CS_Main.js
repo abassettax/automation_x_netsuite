@@ -1403,6 +1403,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
 
                     i_splitinv = parseInt(o_rec.getValue('custbody_totalnumberofchildinvoices'));
                     i_itemcheck = 0;
+                    var i_multbincheck = false;
                     for (i = 0; i < o_rec.getLineCount('item'); i++) {
                         switch (o_rec.getSublistValue({ fieldId: 'itemtype', sublistId: 'item', line: i })) {
                             case 'Assembly':
@@ -1413,6 +1414,17 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             case 'Group':
                                 i_itemcheck++;
                                 break;
+                        }
+                        var objSubRecord = o_rec.getSublistSubrecord({
+                            sublistId: 'item',
+                            fieldId: 'inventorydetail',
+                            line: i
+                        });
+                        var invAssignLines = objSubRecord.getLineCount({
+                            sublistId: 'inventoryassignment'
+                        });
+                        if (invAssignLines > 1) {
+                            i_multbincheck = true;
                         }
                     }
 
@@ -1483,6 +1495,12 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                     return false;
                                 }
                             }
+                        }
+                    }
+                    if (i_multbincheck) {
+                        if (splitInvoiceCount > 0) {
+                            tj.alert('The bin detail for this order is too complex to be split by the script. Please split up the invoices manually.');
+                            return false;
                         }
                     }
                     o_rec.setValue({ fieldId: 'shippingcostoverridden', value: true });
