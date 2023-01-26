@@ -114,8 +114,22 @@ function TJINC_AfterSubmit(type) {
             for (j = 1; j <= lineItemCount; j = j + 1) {
                 lineAmt = roundUpCurrency(childInvoice.getLineItemValue('item', 'amount', j) / numberOfCopies);
                 lineQty = childInvoice.getLineItemValue('item', 'quantity', j) / numberOfCopies;
-                childInvoice.setLineItemValue('item', 'amount', j, lineAmt);
-                childInvoice.setLineItemValue('item', 'quantity', j, lineQty);
+                nlapiLogExecution('DEBUG', 'TJINC_AfterSubmit', 'Checking vals ' + lineAmt + ' | ' + lineQty);
+                // var lineDetRec = childInvoice.viewLineItemSubrecord('item', 'inventorydetail', j);
+                // nlapiLogExecution('DEBUG', 'TJINC_AfterSubmit', 'lineDetRec ' + JSON.stringify(lineDetRec));
+                // var detLines = lineDetRec.getLineItemCount('inventoryassignment');
+                // var binNum = lineDetRec.getLineItemValue('inventoryassignment', 'binnumber', 1);
+                // nlapiLogExecution('DEBUG', 'TJINC_AfterSubmit', 'binNum: ' + binNum);
+                childInvoice.selectLineItem('item', j);
+                childInvoice.setCurrentLineItemValue('item', 'amount', lineAmt);
+                childInvoice.setCurrentLineItemValue('item', 'quantity', lineQty);
+                var compSubRecord = childInvoice.editCurrentLineItemSubrecord('item', 'inventorydetail');
+                compSubRecord.selectLineItem('inventoryassignment', 1);
+                // compSubRecord.setCurrentLineItemValue('inventoryassignment', 'binnumber', binNum);
+                compSubRecord.setCurrentLineItemValue('inventoryassignment', 'quantity', lineQty);
+                compSubRecord.commitLineItem('inventoryassignment');
+                compSubRecord.commit();
+                childInvoice.commitLineItem('item');
             }
 
             //Split out the Header Totals
@@ -184,6 +198,13 @@ function TJINC_AfterSubmit(type) {
             originalInvoice.setLineItemValue('item', 'amount', k, 0);
             originalInvoice.setLineItemValue('item', 'tax1Amt', k, 0);
             originalInvoice.setLineItemValue('item', 'quantity', k, 0);
+            //TODO: remove line inv det
+            originalInvoice.selectLineItem('item', k);
+            var invDetailSubrecord = originalInvoice.viewCurrentLineItemSubrecord('item', 'inventorydetail');
+            if (invDetailSubrecord != null) {
+                originalInvoice.removeCurrentLineItemSubrecord('item', 'inventorydetail');
+                originalInvoice.commitLineItem('item');
+            }
         }
 
         originalInvoice.setFieldValue('subtotal', 0);
