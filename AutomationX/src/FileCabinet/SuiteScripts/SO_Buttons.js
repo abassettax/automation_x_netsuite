@@ -542,7 +542,7 @@ function adjustcostestimate() {
         var sloc = "ALL";
         if (lineloc) { sloc = lineloc; }
         if (!uid && !lineloc) {
-            alert("Please select a line to check inventory.");
+            alert("Please select a line to check transaction history.");
             return true;
         }
 
@@ -571,7 +571,32 @@ function adjustcostestimate() {
     function itemLookup() {
         var w = screen.width - 50;
         var h = screen.height - 50;
-        window.open("https://system.na3.netsuite.com/app/common/search/searchresults.nl?searchid=7220&whence=", "newwin", "dependent = yes, height=" + h + ", width=" + w + ", top=100, left=200, toolbar=no, scrollbars=yes, menubar=no, status=no, titlebar=no, resizable=yes, location=no");
+        var thisitemid = nlapiGetCurrentLineItemValue('item', 'item');
+        var itype = nlapiGetCurrentLineItemValue('item', 'itemtype'); // Get the item type
+        var recordtype = '';
+
+        switch (itype) {  
+            case 'InvtPart':
+                recordtype = 'inventoryitem';
+                break;
+            case 'NonInvtPart':
+                recordtype = 'noninventoryitem';
+                break;
+            case 'Service':
+                recordtype = 'serviceitem';
+                break;
+            case 'Assembly':
+                recordtype = 'assemblyitem';
+                break;
+
+            case 'GiftCert':
+                recordtype = 'giftcertificateitem';
+                break;
+            default:
+        }
+        var itemCat1 = nlapiLookupField(recordtype, thisitemid, 'custitem_item_main_category');
+        var itemManu = nlapiLookupField(recordtype, thisitemid, 'manufacturer');
+        window.open('https://422523.app.netsuite.com/app/common/search/searchresults.nl?searchtype=Item&CUSTITEM_ITEM_MAIN_CATEGORY=' + itemCat1 + '&Item_MANUFACTURER=' + itemManu + '&Item_MANUFACTURERtype=STARTSWITH&searchid=7220', "newwin", "dependent = yes, height=" + h + ", width=" + w + ", top=100, left=200, toolbar=no, scrollbars=yes, menubar=no, status=no, titlebar=no, resizable=yes, location=no");
         return true;
     }
 
