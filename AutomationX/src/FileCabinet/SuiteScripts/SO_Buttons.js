@@ -572,6 +572,10 @@ function adjustcostestimate() {
         var w = screen.width - 50;
         var h = screen.height - 50;
         var thisitemid = nlapiGetCurrentLineItemValue('item', 'item');
+        if (!thisitemid) {
+            alert("Please select a line before doing an Item Lookup.");
+            return true;
+        }
         var itype = nlapiGetCurrentLineItemValue('item', 'itemtype'); // Get the item type
         var recordtype = '';
 
@@ -597,6 +601,20 @@ function adjustcostestimate() {
         var itemCat1 = nlapiLookupField(recordtype, thisitemid, 'custitem_item_main_category');
         var itemManu = nlapiLookupField(recordtype, thisitemid, 'manufacturer');
         window.open('https://422523.app.netsuite.com/app/common/search/searchresults.nl?searchtype=Item&CUSTITEM_ITEM_MAIN_CATEGORY=' + itemCat1 + '&Item_MANUFACTURER=' + itemManu + '&Item_MANUFACTURERtype=STARTSWITH&searchid=7220', "newwin", "dependent = yes, height=" + h + ", width=" + w + ", top=100, left=200, toolbar=no, scrollbars=yes, menubar=no, status=no, titlebar=no, resizable=yes, location=no");
+        return true;
+    }
+
+    function startRFQ() {
+        var w = screen.width - 50;
+        var h = screen.height - 50;
+        var itemId = nlapiGetCurrentLineItemValue('item', 'item');
+        if (!itemId) {
+            alert("Please select a line before starting a RFQ.");
+            return true;
+        }
+        var docid = nlapiGetRecordId();
+
+        window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2472&deploy=1&compid=422523&type=1&tranid=' + docid + '&itemid=' + itemId, "newwin", "dependent = yes, height=" + h + ", width=" + w + ", top=100, left=200, toolbar=no, scrollbars=yes, menubar=no, status=no, titlebar=no, resizable=yes, location=no");
         return true;
     }
 
