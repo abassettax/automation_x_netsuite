@@ -2,7 +2,7 @@ function avaCash() {
 
    ///////////////////////////////////117	
    ///***************************
-   var linemax = 12000000;      //***********************************************************************************
+   var linemax = 10500000;      //***********************************************************************************
    ///***************************
 
    ////total ap 
@@ -165,7 +165,7 @@ function avaCash() {
 
    content += "<table style=\"table-layout:auto; width:800px\"> <tr> <th align=\"center\"  style= \"border-bottom: solid; background-color:#dadada; width:200px\"></TH> <th align=\"center\"  style= \"border-bottom: solid;   background-color:#dadada;  padding: 5;  width:200px\"> Amount </TH>  <th align=\"center\"  style= \"border-bottom: solid; border-left: solid;  background-color:#dadada;   width:200px\"> Days Past Due </br> <font size =2>(Due Date <=)</font> </TH>     <th align=\"center\"  style= \"border-bottom: solid;   background-color:#dadada;   width:200px\"> Past Due Amount </TH></tr>" +
 
-      "<tr ><td><table align=\"center\"><tr><td align=\"center\"> G\L Cash - 3808: </td></tr><tr><td align=\"center\"> G\L Cash - 2906: </td></tr><tr><td align=\"center\"> G\L Cash - 3205: </td></tr></table></td><td><table ><tr><td align=\"center\">" + FormatedglCash + "</td></tr><tr><td align=\"center\">" + FormatedglCash2 + "</td></tr><tr><td align=\"center\">" + FormatedglCash3 + "</td></tr></table></td>   <td style=\" padding: 2px; border-left: solid;  text-align:center; \" > 7+  <font size =2>(" + sevenplus + ")</font </td><td style=\" padding: 2px;  text-align: left;\"> " + Formatedsevenplusamount + "</td> </tr>" +
+      "<tr ><td><table align=\"center\"><tr><td align=\"center\"> G\L Cash - 3808: </td></tr><tr><td align=\"center\"> G\L Cash - 3205: </td></tr></table></td><td><table ><tr><td align=\"center\">" + FormatedglCash + "</td></tr><tr><td align=\"center\">" + FormatedglCash3 + "</td></tr></table></td>   <td style=\" padding: 2px; border-left: solid;  text-align:center; \" > 7+  <font size =2>(" + sevenplus + ")</font </td><td style=\" padding: 2px;  text-align: left;\"> " + Formatedsevenplusamount + "</td> </tr>" +
 
       "<tr style=\"  padding: 2px;   background-color: #f2f4f7 \"><td style=\" padding: 2px;  text-align: center;  \" > G\L Undeposited Funds: </td>  <td>" + Formatedglundepfunds + "</td><td style=\" padding: 2px; border-left: solid;  text-align:center; \" > 15+  <font size =2>(" + fifteenplus + ")</font </td><td style=\"  text-align: left;\"> " + Formatedfifteenplusamount + "</td></tr>  " +
 
