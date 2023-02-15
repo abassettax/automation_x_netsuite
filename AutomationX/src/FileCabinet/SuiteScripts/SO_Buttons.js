@@ -613,8 +613,12 @@ function adjustcostestimate() {
             return true;
         }
         var docid = nlapiGetRecordId();
+        var qty = nlapiGetCurrentLineItemValue('item', 'quantity');
+        var cust = nlapiGetFieldValue('entity');
+        var vendor = nlapiGetCurrentLineItemValue('item', 'custcol118'); //prvendor, sources from preferred vendor but can be changed
+        var date = nlapiGetFieldValue('shipdate');
 
-        window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2472&deploy=1&compid=422523&type=1&tranid=' + docid + '&itemid=' + itemId, "newwin", "dependent = yes, height=" + h + ", width=" + w + ", top=100, left=200, toolbar=no, scrollbars=yes, menubar=no, status=no, titlebar=no, resizable=yes, location=no");
+        window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2472&deploy=1&compid=422523&type=1&tranid=' + docid + '&itemid=' + itemId + '&qty=' + qty + '&vendor=' + vendor + '&customer=' + cust + '&deadline=' + date, "newwin", "dependent = yes, height=" + h + ", width=" + w + ", top=100, left=200, toolbar=no, scrollbars=yes, menubar=no, status=no, titlebar=no, resizable=yes, location=no");
         return true;
     }
 
