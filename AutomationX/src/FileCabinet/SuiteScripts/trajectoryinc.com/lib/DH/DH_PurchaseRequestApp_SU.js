@@ -484,6 +484,14 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                         case 'altitemid':
                             itemListField.value = purchaseRequestItemDetail.prefAlt;
                             break;
+                        case 'appreq':
+                            if (purchaseRequestItemDetail.appreq == true) {
+                                var stringVal = 'T';
+                            } else {
+                                var stringVal = 'F';
+                            }
+                            itemListField.value = stringVal;
+                            break;
                     }
                 });
                 stockRequests.push(stockRequest);
@@ -573,6 +581,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     search.createColumn({ name: 'custrecord353' }),//38 does not accept alternates checkbox added
                     search.createColumn({ name: 'custrecord349' }),//39 approval status added
                     search.createColumn({ name: 'custitem108', join: PurchaseRequestItemDetail_1.PurchaseRequestItemDetail.FIELD.Item }),//40 item pref alt added
+                    search.createColumn({ name: 'custrecord359' })//41 approval req added
                 ]
             }).run().each(function (result) {
                 var purchaseRequestItemDetail = {
@@ -631,7 +640,8 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
                     sourcing: result.getValue(result.columns[37]),
                     noAlts: result.getValue(result.columns[38]),
                     appStatus: result.getValue(result.columns[39]),
-                    prefAlt: result.getValue(result.columns[40])
+                    prefAlt: result.getValue(result.columns[40]),
+                    appreq: result.getValue(result.columns[41])
                 };
                 //TODO: add approval status so we can default rejected but open PRs
                 var estCost = +result.getValue(result.columns[20]);
@@ -856,6 +866,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         var FORM_BUTTONS = [];
         FORM_BUTTONS.push({ id: 'custpage_reset', label: 'Reset', functionName: 'reset' });
 
+        //TODO: add field for Approval Required
         var STOCK_REQUEST_FIELDS = [];
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'line', type: serverWidget.FieldType.TEXT, label: 'Line ID'}, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'process', type: serverWidget.FieldType.CHECKBOX, label: 'Process'}, displayType: serverWidget.FieldDisplayType.ENTRY });
@@ -870,6 +881,7 @@ define(["require", "exports", "N/log", "N/record", "N/url", "N/https", "N/search
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'links', type: serverWidget.FieldType.TEXTAREA, label: 'Links' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'multiitem', type: serverWidget.FieldType.TEXT, label: 'Multi Location' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: DH_Library_1.FIELDS.ITEM.AX5Code, type: serverWidget.FieldType.TEXT, label: 'AX 5 Code' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'appreq', type: serverWidget.FieldType.CHECKBOX, label: 'Approval Required'}, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'noalts', type: serverWidget.FieldType.CHECKBOX, label: 'Does Not Accept Alternates'}, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemid', type: serverWidget.FieldType.SELECT, label: 'Item', source: 'Item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         STOCK_REQUEST_FIELDS.push({ value: '', config: { id: 'itemtype', type: serverWidget.FieldType.TEXT, label: 'Item Type' }, displayType: serverWidget.FieldDisplayType.DISABLED });
