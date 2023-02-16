@@ -2,6 +2,8 @@ function buQuotaCard(request, response) {
   ////////////////////////sales search
   nlapiLogExecution('debug', 'entry', 'test');
 
+  //TODO: maybe need to track booked/invoiced amounts on this. review/verify with carl/mike
+
   var columnsA = new Array();
   columnsA[0] = new nlobjSearchColumn("class",null,"GROUP").setSort(false);
   columnsA[1] = new nlobjSearchColumn("tranid",null,"COUNT");
@@ -54,8 +56,8 @@ function buQuotaCard(request, response) {
   var currGoals = allGoals[currMonth];
   nlapiLogExecution('debug', 'currGoals', JSON.stringify(currGoals));
 
-  var content = "<table font-family: \"Arial\"; style=\"font-size:14px\" ><tr><td><th align=\"center\" colspan =4  style= \"border-bottom: solid; \">Quota Progress</br><font size=\"1\">Current Month</font> </td></tr>" 
-  + "<tr><td></td><td></td></tr><tr><th valign=\"middle\" bgcolor=\"#dadada\"><b>BU</b></th> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Sales </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"> Quota </Th> <th align=\"center\" bgcolor=\"#dadada\"><b> Remaining </b></th><th valign=\"middle\" bgcolor=\"#dadada\"><b> % Remaining </b></th>";
+  var content = "<table font-family: \"Arial\"; style=\"font-size:14px\" ><tr><td><th align=\"center\" colspan =4  style= \"border-bottom: solid; \">Target Progress</br><font size=\"1\">Current Month</font> </td></tr>" 
+  + "<tr><td></td><td></td></tr><tr><th valign=\"middle\" bgcolor=\"#dadada\"><b>BU</b></th> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Sales </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"> Target </Th> <th align=\"center\" bgcolor=\"#dadada\"><b> Remaining </b></th><th valign=\"middle\" bgcolor=\"#dadada\"><b> % Remaining </b></th>";
 
   var runningSales = 0;
   var runningDiff = 0;
@@ -96,7 +98,7 @@ function buQuotaCard(request, response) {
   var finalRemaining = finalGoal - runningSales;
   var finalPerc = 100 * (finalRemaining / finalGoal);
   content += "<tr><td  width=\"20\%\" bgcolor=\"#dadada\" align= \"center\"><b> Automation-X </td>" + "<td style= \"border-top: solid;   \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningSales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td  style= \"border-top: solid; \" bgcolor=\"#dadada\" align= \"center\"> <b>$" + finalGoal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>";
-  if (remaining > 0) {
+  if (finalRemaining > 0) {
     content +=  "<td  style= \"border-top: solid; \" bgcolor=\"#c79999\" align= \"center\"> <b>$" + finalRemaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<TD  style= \"border-top: solid; \" bgcolor=\"#c79999\" align= \"center\"> <b>" + finalPerc.toFixed(2) + "%</td></table>";
   } else {
     content +=  "<td  style= \"border-top: solid; \" bgcolor=\"#99c7a4\" align= \"center\"> <b>$" + finalRemaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<TD  style= \"border-top: solid; \" bgcolor=\"#99c7a4\" align= \"center\"> <b>" + finalPerc.toFixed(2) + "%</td></table>";
