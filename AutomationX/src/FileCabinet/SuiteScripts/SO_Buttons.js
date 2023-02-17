@@ -890,7 +890,6 @@ function adjustcostestimate() {
 
     // function itemprice() {
 
-    //     //TODO: need to move this function to before submit. No longer need a button, need to move this logic to TJINC UE Main
     //     alert("Starting price update.  This may take several minutes.  You will be prompted when completed.");
 
     //     cust = nlapiGetFieldValue('entity');
@@ -943,7 +942,7 @@ function adjustcostestimate() {
     function updateprice() {
         alert("Starting price sync. This may take several minutes. You will be notified when it is completed.");
 
-        //TODO: iterate through all lines to get item ids. loop through item ids. see if customer has defined pricing for each item. if yes, set custom rate. else, set current base rate for item
+        //iterate through all lines to get item ids. loop through item ids. see if customer has defined pricing for each item. if yes, set custom rate. else, set current base rate for item
         var cust = nlapiGetFieldValue('entity');
         var pricingSearch = nlapiSearchRecord("pricing",null,
             [
@@ -1013,7 +1012,7 @@ function adjustcostestimate() {
         //alert(orderid);
         var numc = nlapiGetFieldValue('custbody94');
         var idstring = '';
-        if (numc > 1) {
+        if (numc > 1 && numc < 5) {
             alert("Please wait while your Sales Order is Copied, process may take several minutes. You will be notified When Complete");
             if (orderid == '' || orderid == null) {
                 alert("Please save the Sales Order Before Making Copies");
@@ -1037,6 +1036,9 @@ function adjustcostestimate() {
             alert("Finished copy process. Please update customer codes in the new window.");
 
             window.open("https://system.na3.netsuite.com/app/accounting/transactions/transactionlist.nl?searchtype=Transaction&Transaction_TYPE=SalesOrd&Transaction_EMPLOYEE=@ALL@&Transaction_INTERNALID=" + uidstrig + "&Transaction_LISTSTATUS=ALL&sortcol=Transaction_TRANDATE_raw&sortdir=ASC&csv=HTML&OfficeXML=F&pdf=&style=GRID&report=&grid=T&searchid=676&quicksort=&dle=T", "newwin", "dependent = yes,    toolbar=no, scrollbars=yes, menubar=no, status=no, titlebar=no, resizable=yes, location=no");  //height=100%, width=100%, top=100, left=200,
+        } else if (numc > 5) {
+            alert("You cannot make more than 5 copies of an order at a time. Please verify your selection and try again.");
+                return false;
         }
 
 
