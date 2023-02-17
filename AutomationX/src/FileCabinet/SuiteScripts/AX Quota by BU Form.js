@@ -1,6 +1,6 @@
 function quotaPortlet(portlet, column) {
 
-  portlet.setTitle('BU Monthly Targets');
+  portlet.setTitle('BU Monthly Tracking');
   var portletsearch = nlapiResolveURL('SUITELET', 'customscript2473', 'customdeploy1');
   var results = portlet.addField('custpage_lblproductrating', 'inlinehtml')
   results.setLayoutType('outsidebelow', 'startrow')
