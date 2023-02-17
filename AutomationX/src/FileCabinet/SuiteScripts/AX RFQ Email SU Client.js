@@ -61,11 +61,11 @@
             });
         }
         var deadline = getParameterFromURL('deadline');
-        var deadlineParsed = format.parse({
-            value: deadline,
-            type: format.Type.DATE
-        });
-        if (deadlineParsed) {
+        if (deadline) {
+            var deadlineParsed = format.parse({
+                value: deadline,
+                type: format.Type.DATE
+            });
             var currentRecord = context.currentRecord;
             currentRecord.setValue({
                 fieldId: 'custpage_due',

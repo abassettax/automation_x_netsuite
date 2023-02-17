@@ -298,18 +298,8 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/run
                 var attachments = [];
             }
             
-            //TODO: currently testing, works as expected. remove static email when ready.
-            emailTo = 'andrew.bassett@automation-x.com';
-            var ccEmails = [];
-
-            //TODO: add this block back to SO Buttons 2 field
-            /*
-            <td style=" padding: 10px"  nowrap=""  height="20px" valign="top" >
-            <input type="button" style ="border-radius: 3px; height:100%;  background-color:#F2F2F2; "  onMouseOver=this.style.backgroundColor='#d9d9d9'   onMouseOut=this.style.backgroundColor='#F2F2F2'   value=" Start RFQ " id="custformbutton_btn12" name="custformbutton_customscript350_4" onclick="nsapiButtonCall('button', 'customscript350', 'startRFQ'); return false;" >
-            </td>
-            */
-           
-           //TODO: add to AX Tools center tab. Might need to add a category first with the link underneath
+            // emailTo = 'andrew.bassett@automation-x.com';
+            // var ccEmails = [];
 
             if (tranId != '') {
                 email.send({
