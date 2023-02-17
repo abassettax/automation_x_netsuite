@@ -419,11 +419,11 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                         });
 
                         if (o_rec.getValue('status') !== 'Closed' && o_rec.getValue('status') !== 'Billed') {
-                            //TODO: this button does nothing, need to verify function and test
-                            o_form.addButton({
-                                label: 'Close Order', id: 'custpage_axclose',
-                                functionName: 'axCloseAB()'
-                            });
+                            //removing this button. should use native button for Close Remaining Lines that shows on edit
+                            // o_form.addButton({
+                            //     label: 'Close Order', id: 'custpage_axclose',
+                            //     functionName: 'axCloseAB()'
+                            // });
                         }
 
                     } else {
@@ -887,7 +887,6 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                         }
                         log.debug('beforeSubmit - commitVal', commitVal);
                         log.debug('beforeSubmit - backVal', backVal);
-                        //TODO: make sure this works on create
                         context.newRecord.setValue({
                             fieldId: 'custbody239',
                             value: commitVal
