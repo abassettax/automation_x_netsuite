@@ -106,17 +106,18 @@ function buQuotaCard(request, response) {
   //this is booked sales. can still show, but goals are for invoiced sales
   var columnsA = new Array();
   columnsA[0] = new nlobjSearchColumn("class", null, "GROUP").setSort(false);
-  columnsA[1] = new nlobjSearchColumn("tranid", null, "COUNT");
-  columnsA[2] = new nlobjSearchColumn("amount", null, "SUM");
+  columnsA[1] = new nlobjSearchColumn("amount", null, "SUM");
   nlapiLogExecution('debug', 'columnsA', JSON.stringify(columnsA));
 
   var salesSearch = nlapiSearchRecord("salesorder", null,
     [
-      ["type", "anyof", "SalesOrd"],
-      "AND",
-      ["status", "noneof", "SalesOrd:C", "SalesOrd:H"],
-      "AND",
-      ["trandate", "within", "thismonth"],
+      ["type","anyof","SalesOrd"], 
+      "AND", 
+      ["postingperiod","rel","TP"], 
+      "AND", 
+      ["mainline","is","T"], 
+      "AND", 
+      ["status","noneof","SalesOrd:H","SalesOrd:C"],
       "AND",
       ["class", "anyof", "43", "51", "73", "40", "33", "46", "72", "25", "31", "39", "65"]
     ],
@@ -127,7 +128,7 @@ function buQuotaCard(request, response) {
   var data = [];
   for (var i = 0; i < salesSearch.length; i++) {
     var salesClass = salesSearch[i].getValue(columnsA[0]);
-    var salesVal = salesSearch[i].getValue(columnsA[2]);
+    var salesVal = salesSearch[i].getValue(columnsA[1]);
     data.push({
       class: salesClass,
       total: salesVal
@@ -157,7 +158,7 @@ function buQuotaCard(request, response) {
   nlapiLogExecution('debug', 'currGoals', JSON.stringify(currGoals));
 
   var content = ''
-  content += "<table font-family: \"Arial\"; style=\"font-size:14px\" ><tr><td><th align=\"center\" colspan =7  style= \"border-bottom: solid; \">Invoiced Sales Targets</br><font size=\"1\">Current Month</font><th align=\"center\" colspan =1  style= \"border-bottom: solid; border-left: solid;\">Booked Sales</br><font size=\"1\">Current Month</font> </td></tr>"
+  content += "<table font-family: \"Arial\"; style=\"font-size:16px\" ><tr><td><th align=\"center\" colspan =7  style= \"border-bottom: solid; \">Invoiced Sales Targets</br><font size=\"1\">Current Month</font><th align=\"center\" colspan =1  style= \"border-bottom: solid; border-left: solid;\">Booked Sales</br><font size=\"1\">Current Month</font> </td></tr>"
     + "<tr><td></td><td></td></tr><tr><th valign=\"middle\" bgcolor=\"#dadada\"><b>BU</b></th> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Invoiced Sales </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > FF Pending Billing </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > FF Single Inv </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Total </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"> Target </Th> <th align=\"center\" bgcolor=\"#dadada\"><b> Remaining </b></th><th valign=\"middle\" bgcolor=\"#dadada\"><b> % Remaining </b></th><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Booked Sales </TH>";
 
   var runningSales = 0;
