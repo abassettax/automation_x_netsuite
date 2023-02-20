@@ -51,7 +51,7 @@ if(name =='entity' &&  nlapiGetFieldValue('entity') != "")
 var ven = nlapiGetFieldValue('entity');
 var userrole = nlapiGetRole();
 var  IsInternational = nlapiLookupField('vendor', ven,'custentity_as_intl_supplier');
-if( IsInternational == "T" && userrole  != 1052)  
+if( IsInternational == "T" && (userrole  != 1052 && userrole  != 3 && userrole  != 1115))  
 {
 nlapiSetFieldValue('entity',"",false,true)
   return true;
