@@ -2,6 +2,7 @@ function buQuotaCard(request, response) {
   ////////////////////////sales search
   nlapiLogExecution('debug', 'entry', 'test');
 
+  //TODO: split out JEs into a seperate column
   //income statement revenue current period
   var columnsA = new Array();
   columnsA[0] = new nlobjSearchColumn("class",null,"GROUP");
@@ -13,7 +14,9 @@ function buQuotaCard(request, response) {
       "AND",
       ["posting", "is", "T"],
       "AND",
-      ["postingperiod", "rel", "TP"]
+      ["postingperiod", "rel", "TP"],
+      "AND",
+      ["type", "noneof", "Journal"]
     ],
     columnsA
   );
@@ -28,6 +31,35 @@ function buQuotaCard(request, response) {
     });
   }
   nlapiLogExecution('debug', 'incomeData', JSON.stringify(incomeData));
+
+  //income statement journals current period
+  var columnsA = new Array();
+  columnsA[0] = new nlobjSearchColumn("class",null,"GROUP");
+  columnsA[1] = new nlobjSearchColumn("amount", null, "SUM");
+  nlapiLogExecution('debug', 'columnsA', JSON.stringify(columnsA));
+  var incomeJSearch = nlapiSearchRecord("transaction", null,
+    [
+      ["accounttype", "anyof", "Income", "OthIncome"],
+      "AND",
+      ["posting", "is", "T"],
+      "AND",
+      ["postingperiod", "rel", "TP"],
+      "AND",
+      ["type", "anyof", "Journal"]
+    ],
+    columnsA
+  );
+  nlapiLogExecution('debug', 'incomeJSearch', JSON.stringify(incomeJSearch));
+  var incomeJData = [];
+  for (var i = 0; i < incomeJSearch.length; i++) {
+    var incomeClass = incomeJSearch[i].getValue(columnsA[0]);
+    var incomeVal = incomeJSearch[i].getValue(columnsA[1]);
+    incomeJData.push({
+      class: incomeClass,
+      total: incomeVal
+    });
+  }
+  nlapiLogExecution('debug', 'incomeJData', JSON.stringify(incomeJData));
 
   //so fulfilled - pending billing
   var columnsA = new Array();
@@ -158,8 +190,8 @@ function buQuotaCard(request, response) {
   nlapiLogExecution('debug', 'currGoals', JSON.stringify(currGoals));
 
   var content = ''
-  content += "<table font-family: \"Arial\"; style=\"font-size:16px\" ><tr><td><th align=\"center\" colspan =7  style= \"border-bottom: solid; \">Invoiced Sales Targets</br><font size=\"1\">Current Month</font><th align=\"center\" colspan =1  style= \"border-bottom: solid; border-left: solid;\">Booked Sales</br><font size=\"1\">Current Month</font> </td></tr>"
-    + "<tr><td></td><td></td></tr><tr><th valign=\"middle\" bgcolor=\"#dadada\"><b>BU</b></th> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Invoiced Sales </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > FF Pending Billing </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > FF Single Inv </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Total </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"> Target </Th> <th align=\"center\" bgcolor=\"#dadada\"><b> Remaining </b></th><th valign=\"middle\" bgcolor=\"#dadada\"><b> % Remaining </b></th><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Booked Sales </TH>";
+  content += "<table font-family: \"Arial\"; style=\"font-size:16px\" ><tr><td><th align=\"center\" colspan =8  style= \"border-bottom: solid; \">Invoiced Sales Targets</br><font size=\"1\">Current Month</font><th align=\"center\" colspan =1  style= \"border-bottom: solid; border-left: solid;\">Booked Sales</br><font size=\"1\">Current Month</font> </td></tr>"
+    + "<tr><td></td><td></td></tr><tr><th valign=\"middle\" bgcolor=\"#dadada\"><b>BU</b></th> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Invoiced Sales </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > FF Pending Billing </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > FF Single Inv </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > Journals </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Total </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"> Target </Th> <th align=\"center\" bgcolor=\"#dadada\"><b> Remaining </b></th><th valign=\"middle\" bgcolor=\"#dadada\"><b> % Remaining </b></th><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Booked Sales </TH>";
 
   var runningSales = 0;
   var runningPending1 = 0;
@@ -167,6 +199,7 @@ function buQuotaCard(request, response) {
   var runningTotal = 0;
   var runningDiff = 0;
   var runningBooked = 0;
+  var runningJournals = 0;
 
   for (var i = 0; i < buLabels.length - 1; i++) {
     if (i % 2 == 0) {
@@ -181,6 +214,7 @@ function buQuotaCard(request, response) {
     var pending1 = 0;
     var pending2 = 0;
     var booked = 0;
+    var journals = 0;
     
     for (var j = 0; j < matchingClassIds.length; j++) {
       var index = findWithAttrLim(incomeData, 'class', matchingClassIds[j]);
@@ -203,12 +237,18 @@ function buQuotaCard(request, response) {
       }
       var index4 = findWithAttrLim(data, 'class', matchingClassIds[j]);
       nlapiLogExecution('debug', 'index4', index4);
-      if (index != -1) {
+      if (index4 != -1) {
         booked = parseFloat(booked) + parseFloat(data[index4].total);
         runningBooked = parseFloat(runningBooked) + parseFloat(data[index4].total);
       }
+      var index5 = findWithAttrLim(incomeJData, 'class', matchingClassIds[j]);
+      nlapiLogExecution('debug', 'index5', index5);
+      if (index5 != -1) {
+        journals = parseFloat(journals) + parseFloat(incomeJData[index5].total);
+        runningJournals = parseFloat(runningJournals) + parseFloat(incomeJData[index5].total);
+      }
     }
-    var total = sales + pending1 + pending2;
+    var total = sales + pending1 + pending2 + journals;
     runningTotal = parseFloat(runningTotal) + total;
     var goal = parseFloat(currGoals[i]);
     var remaining = goal - total;
@@ -216,7 +256,7 @@ function buQuotaCard(request, response) {
     var percRemaining = 100 * (remaining / goal);
 
 
-    content += "<td  ><b>" + buLabels[i] + "</b></td>" + "<td align= \"center\" style= \"border-left: solid;\">$" + sales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" >$" + pending1.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" >$" + pending2.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" style= \"border-left: solid;\">$" + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\">$" + goal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    content += "<td  ><b>" + buLabels[i] + "</b></td>" + "<td align= \"center\" style= \"border-left: solid;\">$" + sales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" >$" + pending1.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" >$" + pending2.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\">$" + journals.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" style= \"border-left: solid;\">$" + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\">$" + goal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     if (remaining > 0) {
       content += "</td>" + "<td align= \"center\" bgcolor=\"#c79999\">$" + remaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" bgcolor=\"#c79999\">" + percRemaining.toFixed(2) + "%</td>"
     } else {
@@ -227,7 +267,7 @@ function buQuotaCard(request, response) {
   var finalGoal = parseFloat(currGoals[buLabels.length - 1]);
   var finalRemaining = finalGoal - runningTotal;
   var finalPerc = 100 * (finalRemaining / finalGoal);
-  content += "<tr><td  width=\"20\%\" bgcolor=\"#dadada\" align= \"center\"><b> Automation-X </td>" + "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningSales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid;   \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningPending1.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid;   \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningPending2.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td  style= \"border-top: solid; \" bgcolor=\"#dadada\" align= \"center\"> <b>$" + finalGoal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>";
+  content += "<tr><td  width=\"20\%\" bgcolor=\"#dadada\" align= \"center\"><b> Automation-X </td>" + "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningSales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid;   \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningPending1.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid;   \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningPending2.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid; \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningJournals.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td  style= \"border-top: solid; \" bgcolor=\"#dadada\" align= \"center\"> <b>$" + finalGoal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>";
   if (finalRemaining > 0) {
     content += "<td  style= \"border-top: solid; \" bgcolor=\"#c79999\" align= \"center\"> <b>$" + finalRemaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<TD  style= \"border-top: solid; \" bgcolor=\"#c79999\" align= \"center\"> <b>" + finalPerc.toFixed(2) + "%</td>";
   } else {
