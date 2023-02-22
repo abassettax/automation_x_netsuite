@@ -70,6 +70,10 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/run
                 value: '3',
                 text: 'Sourcing - Inactive/Direct 5 Code'
             });
+            rfqTypeFld.addSelectOption({
+                value: '4',
+                text: 'Sourcing - New 5 Code'
+            });
 
             if (rfqType != -1) {
                 rfqTypeFld.defaultValue = rfqType;
@@ -203,7 +207,7 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/run
                         displayType : serverWidget.FieldDisplayType.HIDDEN
                     });
                     tranFld.isMandatory = true;
-                } else {
+                } else if (rfqType == '3') {
                     //Inactive/Direct Code
                     emailFld.defaultValue = 'sourcing@automation-x.com';
                     subjectFld.defaultValue = 'Inactive/Direct 5 Code Inquiry | [5 Code]';
@@ -227,6 +231,30 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/run
                         displayType : serverWidget.FieldDisplayType.HIDDEN
                     });
                     fiveCodeFld.isMandatory = true;
+                } else {
+                    //New 5 Code
+                    emailFld.defaultValue = 'sourcing@automation-x.com';
+                    subjectFld.defaultValue = 'New 5 Code Inquiry | [VND]';
+                    emailBodyFld.defaultValue = 'Hello,<br><br>I would like to create a new 5 code for an item from [VND]. See additional notes below.<br><br>Thanks,<br>'+finalName;
+                    tranFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    itemFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    qtyFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    customerFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    dueDateFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    fiveCodeFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    vendorFld.isMandatory = true;
                 }
     
                 form.addSubmitButton({

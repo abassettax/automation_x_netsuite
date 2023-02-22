@@ -273,7 +273,7 @@
                     value: newEmailBody,
                     ignoreFieldChange: true
                 });
-            } else {
+            } else if (rfqType == '3') {
                 var urgent = currentRecord.getValue('custpage_urgent');
                 var fiveCode = currentRecord.getValue('custpage_fivecode');
                 if (!fiveCode) {
@@ -295,6 +295,34 @@
                     var newEmailBody = 'Hello,<br><br>Please reactivate ' + fiveCode + ' or provide an alternative that I can use.<br><br>'+notes+'<br><br>Thanks,<br>'+finalName;
                 } else {
                     var newEmailBody = 'Hello,<br><br>Please reactivate ' + fiveCode + ' or provide an alternative that I can use.<br><br>Thanks,<br>'+finalName;
+                }
+                currentRecord.setValue({
+                    fieldId: 'custpage_emailbody',
+                    value: newEmailBody,
+                    ignoreFieldChange: true
+                });
+            } else {
+                var urgent = currentRecord.getValue('custpage_urgent');
+                var vendor = currentRecord.getText('custpage_vendor');
+                if (!vendor) {
+                    vendor = '[VND]';
+                }
+                var notes = currentRecord.getValue('custpage_notes');
+
+                if (urgent) {
+                    var newSubject = 'URGENT New 5 Code Inquiry | '+vendor;
+                } else {
+                    var newSubject = 'New 5 Code Inquiry | ' + vendor;
+                }
+                currentRecord.setValue({
+                    fieldId: 'custpage_subject',
+                    value: newSubject,
+                    ignoreFieldChange: true
+                });
+                if (notes != '') {
+                    var newEmailBody = 'Hello,<br><br>I would like to create a new 5 code for an item from ' + vendor +'. See additional notes below.<br><br>'+notes+'<br><br>Thanks,<br>'+finalName;
+                } else {
+                    var newEmailBody = 'Hello,<br><br>I would like to create a new 5 code for an item from ' + vendor +'. See additional notes below.<br><br>Thanks,<br>'+finalName;
                 }
                 currentRecord.setValue({
                     fieldId: 'custpage_emailbody',
