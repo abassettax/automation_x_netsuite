@@ -107,7 +107,20 @@ function FchangedSelectpercentoff(type, name) {
         } return true;
       } return true;
     }
-
+    if (name == 'custcol123') {
+      var margincalcfield = nlapiGetCurrentLineItemValue('item', 'custcol123');
+      var splitMargin= margincalcfield.split('%');
+      var finalMargin = splitMargin[0]/100;
+      // alert(finalMargin);
+      if (finalMargin > 0) {
+        var itemcostrate = nlapiGetCurrentLineItemValue('item', 'costestimaterate');
+        var calcrate = (itemcostrate / (1 - finalMargin)).toFixed(2);
+        nlapiSetCurrentLineItemValue('item', 'price', '-1');  //custom price level
+        nlapiSetCurrentLineItemValue('item', 'rate', calcrate); //calc rate from given margin
+        return true;
+      } 
+      return false;
+    }
 
   }
 
