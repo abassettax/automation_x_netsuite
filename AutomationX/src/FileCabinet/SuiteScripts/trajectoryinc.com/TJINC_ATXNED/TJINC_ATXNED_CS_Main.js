@@ -1195,7 +1195,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                         var itemcostrate = o_rec.getCurrentSublistValue({ fieldId: 'costestimaterate', sublistId: 'item' });
                         if (itemrate > 0) {
                         var estMargin = (100*(itemrate - itemcostrate)/itemrate).toFixed(2);
-                        o_rec.setCurrentSublistValue({ fieldId: 'custcol123', sublistId: 'item', value: estMargin });
+                        o_rec.setCurrentSublistValue({ fieldId: 'custcol123', sublistId: 'item', value: estMargin, ignoreFieldChange: true });
                         }
                     }
                 } catch (e) {
@@ -1343,7 +1343,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             var itemcostrate = o_rec.getCurrentSublistValue({ fieldId: 'costestimaterate', sublistId: 'item' });
                             if (itemrate > 0) {
                                 var estMargin = (100*(itemrate - itemcostrate)/itemrate).toFixed(2);
-                                o_rec.setCurrentSublistValue({ fieldId: 'custcol123', sublistId: 'item', value: estMargin });
+                                o_rec.setCurrentSublistValue({ fieldId: 'custcol123', sublistId: 'item', value: estMargin, ignoreFieldChange: true });
                             }
                             
                             return;
