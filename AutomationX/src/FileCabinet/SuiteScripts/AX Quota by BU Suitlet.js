@@ -2,7 +2,20 @@ function buQuotaCard(request, response) {
   ////////////////////////sales search
   nlapiLogExecution('debug', 'entry', 'test');
 
-  //TODO: split out JEs into a seperate column
+  //TODO: add ability to use last month/this month as filters. default to this month
+  //for last month, remove ff pending columns/data and exclude from total. just need to know actuals
+  var periodField = request.getParameter('custpage_periodselect');
+  nlapiLogExecution('debug', 'periodField', periodField);
+  if (periodField == 'last') {
+    var periodStr = 'LP';
+    var excludePending = true;
+  } else {
+    var periodStr = 'TP';
+    var excludePending = false;
+  }
+  nlapiLogExecution('debug', 'periodStr', periodStr);
+  nlapiLogExecution('debug', 'excludePending', excludePending);
+
   //income statement revenue current period
   var columnsA = new Array();
   columnsA[0] = new nlobjSearchColumn("class",null,"GROUP");
@@ -14,7 +27,7 @@ function buQuotaCard(request, response) {
       "AND",
       ["posting", "is", "T"],
       "AND",
-      ["postingperiod", "rel", "TP"],
+      ["postingperiod", "rel", periodStr],
       "AND",
       ["type", "noneof", "Journal"]
     ],
@@ -22,14 +35,17 @@ function buQuotaCard(request, response) {
   );
   nlapiLogExecution('debug', 'incomeSearch', JSON.stringify(incomeSearch));
   var incomeData = [];
-  for (var i = 0; i < incomeSearch.length; i++) {
-    var incomeClass = incomeSearch[i].getValue(columnsA[0]);
-    var incomeVal = incomeSearch[i].getValue(columnsA[1]);
-    incomeData.push({
-      class: incomeClass,
-      total: incomeVal
-    });
+  if (incomeSearch) {
+    for (var i = 0; i < incomeSearch.length; i++) {
+      var incomeClass = incomeSearch[i].getValue(columnsA[0]);
+      var incomeVal = incomeSearch[i].getValue(columnsA[1]);
+      incomeData.push({
+        class: incomeClass,
+        total: incomeVal
+      });
+    }
   }
+  
   nlapiLogExecution('debug', 'incomeData', JSON.stringify(incomeData));
 
   //income statement journals current period
@@ -43,7 +59,7 @@ function buQuotaCard(request, response) {
       "AND",
       ["posting", "is", "T"],
       "AND",
-      ["postingperiod", "rel", "TP"],
+      ["postingperiod", "rel", periodStr],
       "AND",
       ["type", "anyof", "Journal"]
     ],
@@ -51,14 +67,17 @@ function buQuotaCard(request, response) {
   );
   nlapiLogExecution('debug', 'incomeJSearch', JSON.stringify(incomeJSearch));
   var incomeJData = [];
-  for (var i = 0; i < incomeJSearch.length; i++) {
-    var incomeClass = incomeJSearch[i].getValue(columnsA[0]);
-    var incomeVal = incomeJSearch[i].getValue(columnsA[1]);
-    incomeJData.push({
-      class: incomeClass,
-      total: incomeVal
-    });
+  if (incomeJSearch) {
+    for (var i = 0; i < incomeJSearch.length; i++) {
+      var incomeClass = incomeJSearch[i].getValue(columnsA[0]);
+      var incomeVal = incomeJSearch[i].getValue(columnsA[1]);
+      incomeJData.push({
+        class: incomeClass,
+        total: incomeVal
+      });
+    }
   }
+  
   nlapiLogExecution('debug', 'incomeJData', JSON.stringify(incomeJData));
 
   //so fulfilled - pending billing
@@ -82,20 +101,23 @@ function buQuotaCard(request, response) {
       "AND",
       ["formulanumeric: CASE WHEN {custbodycuscol_inv_pref} = 'Single Invoice' AND {status} = 'Pending Billing/Partially Fulfilled' THEN 1 ELSE 0 END", "equalto", "0"],
       "AND",
-      ["applyingtransaction.trandate", "onorbefore", "thismonth"]
+      ["applyingtransaction.trandate", "onorbefore", "lastmonth"]
     ],
     columnsA
   );
   nlapiLogExecution('debug', 'pending1Search', JSON.stringify(pending1Search));
   var pending1Data = [];
-  for (var i = 0; i < pending1Search.length; i++) {
-    var pending1Class = pending1Search[i].getValue(columnsA[0]);
-    var pending1Val = pending1Search[i].getValue(columnsA[1]);
-    pending1Data.push({
-      class: pending1Class,
-      total: pending1Val
-    });
+  if (pending1Search) {
+    for (var i = 0; i < pending1Search.length; i++) {
+      var pending1Class = pending1Search[i].getValue(columnsA[0]);
+      var pending1Val = pending1Search[i].getValue(columnsA[1]);
+      pending1Data.push({
+        class: pending1Class,
+        total: pending1Val
+      });
+    }
   }
+  
   nlapiLogExecution('debug', 'pending1Data', JSON.stringify(pending1Data));
 
   //so fulfilled - single invoice
@@ -119,20 +141,23 @@ function buQuotaCard(request, response) {
       "AND",
       ["formulanumeric: CASE WHEN {custbodycuscol_inv_pref} = 'Single Invoice' AND {status} = 'Pending Billing/Partially Fulfilled' THEN 1 ELSE 0 END", "equalto", "1"],
       "AND",
-      ["applyingtransaction.trandate", "onorbefore", "thismonth"]
+      ["applyingtransaction.trandate", "onorbefore", "lastmonth"]
     ],
     columnsA
   );
   nlapiLogExecution('debug', 'pending2Search', JSON.stringify(pending2Search));
   var pending2Data = [];
-  for (var i = 0; i < pending2Search.length; i++) {
-    var pending2Class = pending2Search[i].getValue(columnsA[0]);
-    var pending2Val = pending2Search[i].getValue(columnsA[1]);
-    pending2Data.push({
-      class: pending2Class,
-      total: pending2Val
-    });
+  if (pending2Search) {
+    for (var i = 0; i < pending2Search.length; i++) {
+      var pending2Class = pending2Search[i].getValue(columnsA[0]);
+      var pending2Val = pending2Search[i].getValue(columnsA[1]);
+      pending2Data.push({
+        class: pending2Class,
+        total: pending2Val
+      });
+    }
   }
+  
   nlapiLogExecution('debug', 'pending2Data', JSON.stringify(pending2Data));
 
   //this is booked sales. can still show, but goals are for invoiced sales
@@ -145,7 +170,7 @@ function buQuotaCard(request, response) {
     [
       ["type","anyof","SalesOrd"], 
       "AND", 
-      ["postingperiod","rel","TP"], 
+      ["postingperiod","rel",periodStr], 
       "AND", 
       ["mainline","is","T"], 
       "AND", 
@@ -158,14 +183,17 @@ function buQuotaCard(request, response) {
 
   nlapiLogExecution('debug', 'salesSearch', JSON.stringify(salesSearch));
   var data = [];
-  for (var i = 0; i < salesSearch.length; i++) {
-    var salesClass = salesSearch[i].getValue(columnsA[0]);
-    var salesVal = salesSearch[i].getValue(columnsA[1]);
-    data.push({
-      class: salesClass,
-      total: salesVal
-    });
+  if (salesSearch) {
+    for (var i = 0; i < salesSearch.length; i++) {
+      var salesClass = salesSearch[i].getValue(columnsA[0]);
+      var salesVal = salesSearch[i].getValue(columnsA[1]);
+      data.push({
+        class: salesClass,
+        total: salesVal
+      });
+    }
   }
+  
   nlapiLogExecution('debug', 'data', JSON.stringify(data));
 
   var buLabels = ['ArkLaTex', 'C. Rockies', 'Carlsbad NM', 'Mid-Con', 'N. Rockies', 'N. Texas', 'North East', 'S. Rockies', 'S. Texas', 'W. Texas', 'Automation-X'];
@@ -190,9 +218,14 @@ function buQuotaCard(request, response) {
   nlapiLogExecution('debug', 'currGoals', JSON.stringify(currGoals));
 
   var content = ''
-  content += "<table font-family: \"Arial\"; style=\"font-size:16px\" ><tr><td><th align=\"center\" colspan =8  style= \"border-bottom: solid; \">Invoiced Sales Targets</br><font size=\"1\">Current Month</font><th align=\"center\" colspan =1  style= \"border-bottom: solid; border-left: solid;\">Booked Sales</br><font size=\"1\">Current Month</font> </td></tr>"
+  if (!excludePending) {
+    content += "<table font-family: \"Arial\"; style=\"font-size:16px\" ><tr><td><th align=\"center\" colspan =8  style= \"border-bottom: solid; \">Invoiced Sales Targets</br><font size=\"1\">Current Month</font><th align=\"center\" colspan =1  style= \"border-bottom: solid; border-left: solid;\">Booked Sales</br><font size=\"1\">Current Month</font> </td></tr>"
     + "<tr><td></td><td></td></tr><tr><th valign=\"middle\" bgcolor=\"#dadada\"><b>BU</b></th> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Invoiced Sales </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > FF Pending Billing </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > FF Single Inv </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\" > Journals </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Total </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"> Target </Th> <th align=\"center\" bgcolor=\"#dadada\"><b> Remaining </b></th><th valign=\"middle\" bgcolor=\"#dadada\"><b> % Remaining </b></th><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Booked Sales </TH>";
-
+  } else {
+    content += "<table font-family: \"Arial\"; style=\"font-size:16px\" ><tr><td><th align=\"center\" colspan =4  style= \"border-bottom: solid; \">Invoiced Sales Targets</br><font size=\"1\">Last Month</font><th align=\"center\" colspan =1  style= \"border-bottom: solid; border-left: solid;\">Booked Sales</br><font size=\"1\">Last Month</font> </td></tr>"
+    + "<tr><td></td><td></td></tr><tr><th valign=\"middle\" bgcolor=\"#dadada\"><b>BU</b></th> <th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Invoiced Sales </TH><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"> Target </Th> <th align=\"center\" bgcolor=\"#dadada\"><b> Remaining </b></th><th valign=\"middle\" bgcolor=\"#dadada\"><b> % Remaining </b></th><th align=\"center\" valign=\"top\" bgcolor=\"#dadada\"  style= \"border-left: solid; border-color: #000000; \"> Booked Sales </TH>";
+  }
+  
   var runningSales = 0;
   var runningPending1 = 0;
   var runningPending2 = 0;
@@ -223,29 +256,31 @@ function buQuotaCard(request, response) {
         sales = parseFloat(sales) + parseFloat(incomeData[index].total);
         runningSales = parseFloat(runningSales) + parseFloat(incomeData[index].total);
       }
-      var index2 = findWithAttrLim(pending1Data, 'class', matchingClassIds[j]);
-      nlapiLogExecution('debug', 'index', index2);
-      if (index2 != -1) {
-        pending1 = parseFloat(pending1) + parseFloat(pending1Data[index2].total);
-        runningPending1 = parseFloat(runningPending1) + parseFloat(pending1Data[index2].total);
-      }
-      var index3 = findWithAttrLim(pending2Data, 'class', matchingClassIds[j]);
-      nlapiLogExecution('debug', 'index', index3);
-      if (index3 != -1) {
-        pending2 = parseFloat(pending2) + parseFloat(pending2Data[index3].total);
-        runningPending2 = parseFloat(runningPending2) + parseFloat(pending2Data[index3].total);
+      if (!excludePending) {
+        var index2 = findWithAttrLim(pending1Data, 'class', matchingClassIds[j]);
+        nlapiLogExecution('debug', 'index', index2);
+        if (index2 != -1) {
+          pending1 = parseFloat(pending1) + parseFloat(pending1Data[index2].total);
+          runningPending1 = parseFloat(runningPending1) + parseFloat(pending1Data[index2].total);
+        }
+        var index3 = findWithAttrLim(pending2Data, 'class', matchingClassIds[j]);
+        nlapiLogExecution('debug', 'index', index3);
+        if (index3 != -1) {
+          pending2 = parseFloat(pending2) + parseFloat(pending2Data[index3].total);
+          runningPending2 = parseFloat(runningPending2) + parseFloat(pending2Data[index3].total);
+        }
+        var index5 = findWithAttrLim(incomeJData, 'class', matchingClassIds[j]);
+        nlapiLogExecution('debug', 'index5', index5);
+        if (index5 != -1) {
+          journals = parseFloat(journals) + parseFloat(incomeJData[index5].total);
+          runningJournals = parseFloat(runningJournals) + parseFloat(incomeJData[index5].total);
+        }
       }
       var index4 = findWithAttrLim(data, 'class', matchingClassIds[j]);
       nlapiLogExecution('debug', 'index4', index4);
       if (index4 != -1) {
         booked = parseFloat(booked) + parseFloat(data[index4].total);
         runningBooked = parseFloat(runningBooked) + parseFloat(data[index4].total);
-      }
-      var index5 = findWithAttrLim(incomeJData, 'class', matchingClassIds[j]);
-      nlapiLogExecution('debug', 'index5', index5);
-      if (index5 != -1) {
-        journals = parseFloat(journals) + parseFloat(incomeJData[index5].total);
-        runningJournals = parseFloat(runningJournals) + parseFloat(incomeJData[index5].total);
       }
     }
     var total = sales + pending1 + pending2 + journals;
@@ -256,24 +291,45 @@ function buQuotaCard(request, response) {
     var percRemaining = 100 * (remaining / goal);
 
 
-    content += "<td  ><b>" + buLabels[i] + "</b></td>" + "<td align= \"center\" style= \"border-left: solid;\">$" + sales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" >$" + pending1.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" >$" + pending2.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\">$" + journals.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" style= \"border-left: solid;\">$" + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\">$" + goal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-    if (remaining > 0) {
-      content += "</td>" + "<td align= \"center\" bgcolor=\"#c79999\">$" + remaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" bgcolor=\"#c79999\">" + percRemaining.toFixed(2) + "%</td>"
+    if (!excludePending) {
+      content += "<td  ><b>" + buLabels[i] + "</b></td>" + "<td align= \"center\" style= \"border-left: solid;\">$" + sales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" >$" + pending1.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" >$" + pending2.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\">$" + journals.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" style= \"border-left: solid;\">$" + total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\">$" + goal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+      if (remaining > 0) {
+        content += "</td>" + "<td align= \"center\" bgcolor=\"#c79999\">$" + remaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" bgcolor=\"#c79999\">" + percRemaining.toFixed(2) + "%</td>"
+      } else {
+        content += "</td>" + "<td align= \"center\" bgcolor=\"#99c7a4\">$" + remaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" bgcolor=\"#99c7a4\">" + percRemaining.toFixed(2) + "%</td>"
+      }
+      content += "<td align= \"center\" style= \"border-left: solid;\">$" + booked.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td></tr>";
     } else {
-      content += "</td>" + "<td align= \"center\" bgcolor=\"#99c7a4\">$" + remaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" bgcolor=\"#99c7a4\">" + percRemaining.toFixed(2) + "%</td>"
+      content += "<td  ><b>" + buLabels[i] + "</b></td>" + "<td align= \"center\" style= \"border-left: solid;\">$" + sales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\">$" + goal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+      if (remaining > 0) {
+        content += "</td>" + "<td align= \"center\" bgcolor=\"#c79999\">$" + remaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" bgcolor=\"#c79999\">" + percRemaining.toFixed(2) + "%</td>"
+      } else {
+        content += "</td>" + "<td align= \"center\" bgcolor=\"#99c7a4\">$" + remaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td align= \"center\" bgcolor=\"#99c7a4\">" + percRemaining.toFixed(2) + "%</td>"
+      }
+      content += "<td align= \"center\" style= \"border-left: solid;\">$" + booked.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td></tr>";
     }
-    content += "<td align= \"center\" style= \"border-left: solid;\">$" + booked.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td></tr>";
   }
   var finalGoal = parseFloat(currGoals[buLabels.length - 1]);
   var finalRemaining = finalGoal - runningTotal;
   var finalPerc = 100 * (finalRemaining / finalGoal);
-  content += "<tr><td  width=\"20\%\" bgcolor=\"#dadada\" align= \"center\"><b> Automation-X </td>" + "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningSales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid;   \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningPending1.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid;   \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningPending2.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid; \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningJournals.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td  style= \"border-top: solid; \" bgcolor=\"#dadada\" align= \"center\"> <b>$" + finalGoal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>";
-  if (finalRemaining > 0) {
-    content += "<td  style= \"border-top: solid; \" bgcolor=\"#c79999\" align= \"center\"> <b>$" + finalRemaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<TD  style= \"border-top: solid; \" bgcolor=\"#c79999\" align= \"center\"> <b>" + finalPerc.toFixed(2) + "%</td>";
+  if (!excludePending) {
+    content += "<tr><td  width=\"20\%\" bgcolor=\"#dadada\" align= \"center\"><b> Automation-X </td>" + "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningSales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid;   \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningPending1.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid;   \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningPending2.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid; \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningJournals.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td  style= \"border-top: solid; \" bgcolor=\"#dadada\" align= \"center\"> <b>$" + finalGoal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>";
+    if (finalRemaining > 0) {
+      content += "<td  style= \"border-top: solid; \" bgcolor=\"#c79999\" align= \"center\"> <b>$" + finalRemaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<TD  style= \"border-top: solid; \" bgcolor=\"#c79999\" align= \"center\"> <b>" + finalPerc.toFixed(2) + "%</td>";
+    } else {
+      content += "<td  style= \"border-top: solid; \" bgcolor=\"#99c7a4\" align= \"center\"> <b>$" + finalRemaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<TD  style= \"border-top: solid; \" bgcolor=\"#99c7a4\" align= \"center\"> <b>" + finalPerc.toFixed(2) + "%</td>";
+    }
+    content += "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningBooked.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td></table>";
   } else {
-    content += "<td  style= \"border-top: solid; \" bgcolor=\"#99c7a4\" align= \"center\"> <b>$" + finalRemaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<TD  style= \"border-top: solid; \" bgcolor=\"#99c7a4\" align= \"center\"> <b>" + finalPerc.toFixed(2) + "%</td>";
+    content += "<tr><td  width=\"20\%\" bgcolor=\"#dadada\" align= \"center\"><b> Automation-X </td>" + "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningSales.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<td  style= \"border-top: solid; \" bgcolor=\"#dadada\" align= \"center\"> <b>$" + finalGoal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>";
+    if (finalRemaining > 0) {
+      content += "<td  style= \"border-top: solid; \" bgcolor=\"#c79999\" align= \"center\"> <b>$" + finalRemaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<TD  style= \"border-top: solid; \" bgcolor=\"#c79999\" align= \"center\"> <b>" + finalPerc.toFixed(2) + "%</td>";
+    } else {
+      content += "<td  style= \"border-top: solid; \" bgcolor=\"#99c7a4\" align= \"center\"> <b>$" + finalRemaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td>" + "<TD  style= \"border-top: solid; \" bgcolor=\"#99c7a4\" align= \"center\"> <b>" + finalPerc.toFixed(2) + "%</td>";
+    }
+    content += "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningBooked.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td></table>";
   }
-  content += "<td style= \"border-top: solid; border-left: solid;  \"  bgcolor=\"#dadada\" align= \"center\" > <b>$" + runningBooked.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + "</td></table>";
+  
   response.write(content);
 }
 function findWithAttrLim(array, attr, value) {
