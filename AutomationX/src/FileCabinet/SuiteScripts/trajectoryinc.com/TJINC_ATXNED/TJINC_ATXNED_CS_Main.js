@@ -861,6 +861,22 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             */
                     } else if (context.fieldId === 'entity') {
                         this._forcehold(context);
+                    } else if (context.fieldId === 'custcol120') {
+                        //if date is less than current date, show error and reset to today
+                        var prDate = o_rec.getCurrentSublistValue({
+                            sublistId: 'item',
+                            fieldId: 'custcol120'
+                        });
+                        var today = new Date ();
+                        // alert('test: ' + prDate < today);
+                        if (prDate != '' && prDate < today) {
+                            tj.alert('The date value for Purchase Request Date must be a current or future date. Please set a value of today or later.');
+                            o_rec.setCurrentSublistValue({
+                                sublistId: 'item',
+                                fieldId: 'custcol120',
+                                value: today
+                            });
+                        }                        
                     }
                     return;
                 } catch (e) {
