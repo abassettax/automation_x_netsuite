@@ -1758,7 +1758,13 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
             _xto_trailerhide_vline: function (context) {
                 var o_rec = context.currentRecord;
                 try {
-                    if ((o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362) && (parseInt(o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantityavailable' })) < o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity' }))) {
+                    if (o_rec.getValue({ fieldId: 'customform' }) == 364) {
+                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 211 })
+                    }
+                    if (o_rec.getValue({ fieldId: 'customform' }) == 347 || o_rec.getValue({ fieldId: 'customform' }) == 362) {
+                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 69 })
+                    }
+                    if ((o_rec.getValue({ fieldId: 'customform' }) == 347 || o_rec.getValue({ fieldId: 'customform' }) == 362) && (parseInt(o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantityavailable' })) < o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity' }))) {
                         tj.alert('STOCK ALERT\n\nThere is not enough avalible quantity to complete this line.  Please double check your part number or reduce the quantity to be less than or equal to Senecas available stock.');
                         return false;
                     }
@@ -1772,10 +1778,10 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
             _xto_trailerhide_linit: function (context) {
                 var o_rec = context.currentRecord;
                 try {
-                    if (o_rec.getValue({ fieldId: 'customform' }) === 364) {
+                    if (o_rec.getValue({ fieldId: 'customform' }) == 364) {
                         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 211 })
                     }
-                    if (o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362) {
+                    if (o_rec.getValue({ fieldId: 'customform' }) == 347 || o_rec.getValue({ fieldId: 'customform' }) == 362) {
                         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 69 })
                     }
                 } catch (e) {
@@ -1787,42 +1793,52 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                 var o_rec = context.currentRecord;
                 var o_temp;
                 try {
-                    if (context.fieldId === 'custbody213' && (o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362)) {
-                        o_temp = {
-                            afeField: document.getElementById('custbody214_fs'),
-                            afeFieldLabel: document.getElementById('custbody214_fs_lbl_uir_label'),
-                            loeField: document.getElementById('custbody215_fs'),
-                            loeFieldLabel: document.getElementById('custbody215_fs_lbl_uir_label'),
-                            custbody213: o_rec.getValue({ fieldId: 'custbody213' })
-                        };
-                        if (o_temp.custbody213 === 2) {
-                            if (o_temp.afeField) {
-                                o_temp.afeField.style.display = 'none';
-                                o_temp.afeFieldLabel.style.display = 'none';
-                                o_rec.setValue({ fieldId: 'custbody214', value: '' });
-                            }
-                            if (o_temp.loeField) {
-                                o_temp.loeField.style.display = '';
-                                o_temp.loeFieldLabel.style.display = 'list-item';
-                                o_rec.setValue({ fieldId: 'custbody215', value: '1' });
-                            }
-                        } else if (o_temp.custbody213 === 1) {
-                            if (o_temp.afeField) {
-                                o_temp.afeField.style.display = '';
-                                o_temp.afeFieldLabel.style.display = 'list-item';
-                                o_rec.setValue({ fieldId: 'custbody214', value: 'ICC- MISCELLANEOUS 1400-1220-1810' })
-                            }
-                            if (o_temp.loeField) {
-                                o_temp.loeField.style.display = 'none';
-                                o_temp.loeFieldLabel.style.display = 'none';
-                                o_rec.setValue({ fieldId: 'custbody215', value: '' });
+                    if ((o_rec.getValue({ fieldId: 'customform' }) == 347 || o_rec.getValue({ fieldId: 'customform' }) == 362)) {
+                        if (context.fieldId === 'custbody213') {
+                            o_temp = {
+                                afeField: document.getElementById('custbody214_fs'),
+                                afeFieldLabel: document.getElementById('custbody214_fs_lbl_uir_label'),
+                                loeField: document.getElementById('custbody215_fs'),
+                                loeFieldLabel: document.getElementById('custbody215_fs_lbl_uir_label'),
+                                custbody213: o_rec.getValue({ fieldId: 'custbody213' })
+                            };
+                            if (o_temp.custbody213 == 2) {
+                                if (o_temp.afeField) {
+                                    o_temp.afeField.style.display = 'none';
+                                    o_temp.afeFieldLabel.style.display = 'none';
+                                    o_rec.setValue({ fieldId: 'custbody214', value: '' });
+                                }
+                                if (o_temp.loeField) {
+                                    o_temp.loeField.style.display = '';
+                                    o_temp.loeFieldLabel.style.display = 'list-item';
+                                    o_rec.setValue({ fieldId: 'custbody215', value: '1' });
+                                }
+                            } else if (o_temp.custbody213 == 1) {
+                                if (o_temp.afeField) {
+                                    o_temp.afeField.style.display = '';
+                                    o_temp.afeFieldLabel.style.display = 'list-item';
+                                    o_rec.setValue({ fieldId: 'custbody214', value: 'ICC- MISCELLANEOUS 1400-1220-1810' })
+                                }
+                                if (o_temp.loeField) {
+                                    o_temp.loeField.style.display = 'none';
+                                    o_temp.loeFieldLabel.style.display = 'none';
+                                    o_rec.setValue({ fieldId: 'custbody215', value: '' });
+                                }
                             }
                         }
-                    }
-
-                    if (o_rec.getValue('tranid') === 'To Be Generated') {
-                        if (context.fieldId === 'item') {
-                            o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'taxcode', value: i_avalara_tax });
+                        if (o_rec.getValue('tranid') === 'To Be Generated') {
+                            if (context.fieldId === 'item') {
+                                o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'taxcode', value: i_avalara_tax });
+                                o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 69 })
+                            }
+                        }
+                        if (context.sublistId = 'item' && context.fieldId === 'location') {
+                            if (o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'location' }) == '') {
+                                setTimeout(function(){
+                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 69})
+                                }, 250);
+                                
+                            }
                         }
                     }
                 } catch (e) {
@@ -1835,47 +1851,54 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                 var o_user = runtime.getCurrentUser();
                 var o_lf, o_tempfield, o_temp, a_fields;
                 try {
-                    if (o_rec.getValue('tranid') === 'To Be Generated') {
-                        if (o_user.contact) {
-                            o_lf = tj.lookupFields(search.lookupFields({ id: o_user.contact, type: record.Type.CONTACT.toLowerCase(), columns: ['entityid'] }));
-                            o_rec.setValue({ fieldId: 'custbody173', value: o_user.contact });
-                            o_rec.setValue({ fieldId: 'custbody35', value: o_lf.entityid });
+                    // alert(o_rec.getValue('customform'))
+                    if (o_rec.getValue({ fieldId: 'customform' }) == 347 || o_rec.getValue({ fieldId: 'customform' }) == 362) {
+                        if (o_rec.getValue('tranid') === 'To Be Generated') {
+                            if (o_user.contact) {
+                                o_lf = tj.lookupFields(search.lookupFields({ id: o_user.contact, type: record.Type.CONTACT.toLowerCase(), columns: ['entityid'] }));
+                                o_rec.setValue({ fieldId: 'custbody173', value: o_user.contact });
+                                // o_rec.setValue({ fieldId: 'custbody35', value: o_lf.entityid });
+                            }
+                            o_rec.setValue({ fieldId: 'shipcarrier', value: 'nonups' });
+                            o_rec.setValue({ fieldId: 'shipmethod', value: 4605 });
+                            o_rec.setValue({ fieldId: 'custbody125', value: i_source_customercenter });
+                            o_rec.setValue({ fieldId: 'custbody68', value: 20 });
+                            o_rec.setValue({ fieldId: 'terms', value: 2 });
+                            o_rec.setValue({ fieldId: 'custbody_as_solutions_assist', value: 5 });
                         }
-                        o_rec.setValue({ fieldId: 'shipcarrier', value: 'nonups' });
-                        o_rec.setValue({ fieldId: 'shipmethod', value: 4605 });
-                        o_rec.setValue({ fieldId: 'custbody125', value: i_source_customercenter });
-                        o_rec.setValue({ fieldId: 'custbody68', value: 20 });
-                    }
-
-                    if ((o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362) && o_rec.getValue('custbody213') === 1) {
-                        o_temp = {
-                            loeField: document.getElementById('custbody215_fs'),
-                            loeFieldLabel: document.getElementById('custbody215_fs_lbl_uir_label')
-                        };
-                        if (o_temp.loeField) {
-                            o_temp.loeField.style.display = 'none';
-                            o_temp.loeFieldLabel.style.display = 'none';
+    
+                        // alert(o_rec.getValue('custbody213'))
+                        if (o_rec.getValue('custbody213') == 1) {
+                            o_temp = {
+                                loeField: document.getElementById('custbody215_fs'),
+                                loeFieldLabel: document.getElementById('custbody215_fs_lbl_uir_label')
+                            };
+                            // alert(JSON.stringify(o_temp))
+                            if (o_temp.loeField) {
+                                o_temp.loeField.style.display = 'none';
+                                o_temp.loeFieldLabel.style.display = 'none';
+                            }
                         }
-                    }
-
-                    a_fields = ['ns-header-menu-home-item0', 'ns-header-menu-home', 'tbl_custpagesi_sigcapturebtn', 'tbl_secondarycustpagesi_sigcapturebtn', 'NS_MENU_ID0'];/*,'item_pane_hd'*/
-                    for (var i = 0; i < a_fields.length; i++) {
-                        o_tempfield = document.getElementById(a_fields[i]);
-                        if (o_tempfield) {
-                            o_tempfield.style.display = 'none';
+    
+                        a_fields = ['tbl_custpagesi_sigcapturebtn', 'tbl_secondarycustpagesi_sigcapturebtn', 'NS_MENU_ID0', 'tbl_custpage_ava_calculatetax', 'tbl_custpage_ava_validatebillto', 'tbl_custpage_ava_validateshipto', 'tbl_secondarycustpage_ava_calculatetax', 'tbl_secondarycustpage_ava_validatebillto', 'tbl_secondarycustpage_ava_validateshipto', 'NS_MENU_ID0', 'item_pane_hd'];/*,'item_pane_hd'*/
+                        for (var i = 0; i < a_fields.length; i++) {
+                            o_tempfield = document.getElementById(a_fields[i]);
+                            if (o_tempfield) {
+                                o_tempfield.style.display = 'none';
+                            }
                         }
-                    }
-
-                    if (document.getElementsByClassName('totallingbg') !== null) {
-                        document.getElementsByClassName('totallingbg')[0].style.display = "none";
-                    }
-                    if (o_rec.getValue('location')) {
-                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: o_rec.getValue('location') });
-                    }
-                    if (o_rec.getValue('customform') === 363) {
-                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 47 });
-                    } else if (o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362) {
-                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 69 });
+    
+                        if (document.getElementsByClassName('totallingbg') !== null) {
+                            document.getElementsByClassName('totallingbg')[0].style.display = "none";
+                        }
+                        if (o_rec.getValue('location')) {
+                            o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: o_rec.getValue('location') });
+                        }
+                        // if (o_rec.getValue('customform') === 363) {
+                        //     o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 47 });
+                        // } else if (o_rec.getValue({ fieldId: 'customform' }) === 347 || o_rec.getValue({ fieldId: 'customform' }) === 362) {
+                        //     o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: 69 });
+                        // }
                     }
                 } catch (e) {
                     log.error('_xto_trailerhide_pinit', e);
@@ -1992,9 +2015,9 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     this._so_fieldchange_pinit(context);
                     this._set_so_loc_encino_pinit(context);
 
-                    if (o_user.roleCenter === s_customer_center || parseInt(o_user.id) === 6447 || parseInt(o_user.id) === 25918) {
+                    // if (o_user.roleCenter === s_customer_center || parseInt(o_user.id) === 6447 || parseInt(o_user.id) === 25918) {
                         this._xto_trailerhide_pinit(context);
-                    }
+                    // }
                 } catch (e) {
                     log.error('tjincATX_pageInitSO', e);
                 }
@@ -2008,9 +2031,9 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     this._so_fieldchangemargin(context);
                     this._so_fieldchange_selectprice(context);
 
-                    if (o_user.roleCenter === s_customer_center || parseInt(o_user.id) === 6447 || parseInt(o_user.id) === 25918) {
+                    // if (o_user.roleCenter === s_customer_center || parseInt(o_user.id) === 6447 || parseInt(o_user.id) === 25918) {
                         this._xto_trailerhide_fchange(context);
-                    }
+                    // }
                 } catch (e) {
                     log.error('tjincATX_fieldChangedSO', e);
                 }
@@ -2069,9 +2092,9 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     o_response = this._cs_so_baseprice(context);
                     o_response = this._cs_so_purchasereq(context);
 
-                    if (o_user.roleCenter === s_customer_center || parseInt(o_user.id) === 6447 || parseInt(o_user.id) === 25918) {
+                    // if (o_user.roleCenter === s_customer_center || parseInt(o_user.id) === 6447 || parseInt(o_user.id) === 25918) {
                         o_response = this._xto_trailerhide_vline(context);
-                    }
+                    // }
 
                     return o_response;
                 } catch (e) {
