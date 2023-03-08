@@ -534,7 +534,8 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                         if (approvalRequired) {
                             tj.alert('You are submitting a PR for an item marked as Approval Required.  Please provide details in the notes, otherwise your PR will be rejected.');
                         }
-                    } else if (context.fieldId == 'custcol90' || context.fieldId == 'custcol118') {
+                    } 
+                    if (context.fieldId == 'custcol90' || context.fieldId == 'custcol118') {
                         var prType = o_rec.getCurrentSublistValue({
                             sublistId: 'item',
                             fieldId: 'custcol90'
@@ -544,6 +545,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             fieldId: 'custcol118'
                         });
                         //if credit card PO and pr vendor is blank or another vendor, always reset to cc tracker vendor
+                        // alert(prType + ' | ' + prVendor);
                         if (prType == '6' && prVendor != '2491') {
                             o_rec.setCurrentSublistValue({
                                 sublistId: 'item',
