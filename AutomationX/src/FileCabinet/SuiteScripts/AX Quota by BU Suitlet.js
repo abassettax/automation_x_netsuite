@@ -214,7 +214,15 @@ function buQuotaCard(request, response) {
 
   var today = new Date();
   var currMonth = today.getMonth();
-  var currGoals = allGoals[currMonth];
+  if (excludePending) {
+    if (currMonth > 0) {
+      var currGoals = allGoals[currMonth-1];
+    } else {
+      var currGoals = allGoals[11];
+    }
+  } else {
+    var currGoals = allGoals[currMonth]
+  }
   nlapiLogExecution('debug', 'currGoals', JSON.stringify(currGoals));
 
   var content = ''
