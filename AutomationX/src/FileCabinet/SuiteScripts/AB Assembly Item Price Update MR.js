@@ -67,7 +67,7 @@
             log.debug('SUMMARIZE In');
             summary.reduceSummary.errors.iterator().each(function (key, value) {
                 var o_error = JSON.parse(value);
-                var msg = 'Key: ' + key + '. Error in line: ' + o_error.cause.lineNumber + ', error message: ' + o_error.message + '\n';
+                var msg = 'Key: ' + key + ', error message: ' + o_error.message + '\n';
                 log.debug('SUMMARIZE REDUCE ERROR', msg);
                 return true;
             });
