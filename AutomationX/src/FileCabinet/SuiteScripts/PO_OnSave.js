@@ -28,10 +28,21 @@ function PO_OnSave(type) {
       var PriceChange = parseFloat(newprice - oldprice).toFixed(2);
       var PercentChange = ((1 - (oldprice / newprice)))
       // alert(PriceChange + ' ' + PercentChange);
-      if (oldprice < newprice && oldprice && PriceChange > 1 && PercentChange > .02) { linepricechange = linepricechange + 1; }
+      if (oldprice < newprice && oldprice && PriceChange > 1 && PercentChange > .02) { 
+        linepricechange = linepricechange + 1; 
+      }      
+    } else {
+      //requested ship to to current day + 1
+      //quoted ship date null
+      var tomorrow = nlapiAddDays(new Date(), 1);
+      nlapiSetLineItemValue('item', 'custcol11', i, tomorrow);
+      nlapiSetLineItemValue('item', 'expectedreceiptdate', i, null);
     }
   }
-
+  if (!tranid) {
+    //clear ship date field on create, leave blank until confirmed
+    nlapiSetFieldValue('shipdate', null);
+  }
   var rec = nlapiGetFieldValue('custbody_po_follow_up');
 
 
@@ -170,8 +181,10 @@ function PO_OnSave(type) {
 
       //alert(rec);
       var sub = ("PO Update " + PO + " Created From " + SO + " Vendor: " + VN + " Customer : " + CUS + " ( " + tech + " )");
-      if (!CUS) { sub = "PO Update " + PO + " Created From Stock Request for  Vendor: " + VN; }
-      var body = (PO + " created from " + SO + " for " + CUS + " containg items from " + VN + " has been Updated <br><br>" + " <b>Next Action: </b>" + NA + "<br>" + " <b>Material Status: </b>" + MS + "<br>" + " <b>Expected Ship Date(Line1):</b> " + redate + "<br><br>" + " <b>Release Notes:</b><br> " + RN + "<BR><BR> This email is an automated email alerting you that a change has been made to a Purchase Order related to one of your orders. <b>Tech:</b> " + tech + " <b>WellName/Number </b>" + wellName + " / " + wellName + " <b>Approver</b> " + approver + " <b>Customer PO </b>" + customerPO + "               Please call purchasing with additional questions.");
+      var body = '';
+      if (!CUS) { 
+        sub = "PO Update " + PO + " Created From Stock Request for  Vendor: " + VN; }
+        body = (PO + " created from " + SO + " for " + CUS + " containg items from " + VN + " has been Updated <br><br>" + " <b>Next Action: </b>" + NA + "<br>" + " <b>Material Status: </b>" + MS + "<br>" + " <b>Expected Ship Date(Line1):</b> " + redate + "<br><br>" + " <b>Release Notes:</b><br> " + RN + "<BR><BR> This email is an automated email alerting you that a change has been made to a Purchase Order related to one of your orders. <b>Tech:</b> " + tech + " <b>WellName/Number </b>" + wellName + " / " + wellName + " <b>Approver</b> " + approver + " <b>Customer PO </b>" + customerPO + "               Please call purchasing with additional questions.");
       if (!CUS) {
         sub = "PO Update " + PO + " Created from a Purchasing Request for Vendor: " + VN;
         body = PO + " created from a Purchasing Request from " + VN + " has been Updated <br><br>" + " <b>Next Action: </b>" + NA + "<br>" + " <b>Material Status: </b>" + MS + "<br>" + " <b>Expected Ship Date(Line1):</b> " + redate + "<br><br>" + " <b>Release Notes:</b><br> " + RN + "<BR><BR> This email is an automated email alerting you that a change has been made to a Purchase Order related to one of your requests.  Please call purchasing with additional questions.";

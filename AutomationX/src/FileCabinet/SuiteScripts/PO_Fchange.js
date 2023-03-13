@@ -61,26 +61,26 @@ if(name =='rate' )
 	{
 nlapiSetFieldValue('custbody157', "T");
       }
-if(name =='shipdate' || name =='custbody6' )
-	{
+// if(name =='shipdate' || name =='custbody6' )
+// 	{
 
-nlapiSetFieldValue('custbody90', "T");
+// nlapiSetFieldValue('custbody90', "T");
 	
-      }
+//       }
 
 
-if(name == 'shipdate')
-{
-        var ShipingDate = nlapiGetFieldValue('shipdate');
+// if(name == 'shipdate')
+// {
+//         var ShipingDate = nlapiGetFieldValue('shipdate');
 
-        var lineCount = parseInt( nlapiGetLineItemCount('item'));
-	for(x =1; x<=lineCount; x++)
-	{
-		nlapiSetLineItemValue('item', 'custcol11', x, ShipingDate );
+//         var lineCount = parseInt( nlapiGetLineItemCount('item'));
+// 	for(x =1; x<=lineCount; x++)
+// 	{
+// 		nlapiSetLineItemValue('item', 'custcol11', x, ShipingDate );
 		
-	}
+// 	}
 
-}
+// }
 
 if(name =='entity')
 {
