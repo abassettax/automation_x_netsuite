@@ -22,16 +22,21 @@
             employeeId: +runtime.getCurrentScript().getParameter({ name: 'custscript_tjinc_dh_owner' }),
             purchaseRequest: JSON.parse(context.value)
         });
+        //should always write back PRs to lines, regardless of type
+        DH_Library_1.updateSalesOrder({
+            id: createPurchaseRequestResponse.purchaseRequest.salesOrderId[0].id,
+            salesOrderLineInfos: [createPurchaseRequestResponse.salesOrderLineInfo]
+        });
         log.debug('createPurchaseRequestResponse', JSON.stringify(createPurchaseRequestResponse));
         if (createPurchaseRequestResponse.purchaseRequest.fromSalesOrderProcess) {
             context.write(createPurchaseRequestResponse.purchaseRequest.internalId, JSON.stringify(createPurchaseRequestResponse.purchaseRequest));
         }
-        else {
-            DH_Library_1.updateSalesOrder({
-                id: createPurchaseRequestResponse.purchaseRequest.salesOrderId[0].id,
-                salesOrderLineInfos: [createPurchaseRequestResponse.salesOrderLineInfo]
-            });
-        }
+        // else {
+        //     DH_Library_1.updateSalesOrder({
+        //         id: createPurchaseRequestResponse.purchaseRequest.salesOrderId[0].id,
+        //         salesOrderLineInfos: [createPurchaseRequestResponse.salesOrderLineInfo]
+        //     });
+        // }
     };
     exports.summarize = function (context) {
         // Send new Purchase Requests to Processor

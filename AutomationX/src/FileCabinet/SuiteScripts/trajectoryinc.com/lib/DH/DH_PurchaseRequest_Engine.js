@@ -367,11 +367,18 @@ define(["require", "exports", "./DH_Library", "./PurchaseRequestItemDetail", "N/
                 purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'item', value: line.itemId });
                 purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity', value: line.quantity });
                 purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: line.locationId });
-                if (line.rate != '' && line.rate!= null && line.rate != undefined) {
+                //this sets the rate. skip except for direct codes so items default to their system defined pricing always
+                var itemLookup = search.lookupFields({
+                    type: search.Type.ITEM,
+                    id: line.itemId,
+                    columns: ['type']
+                });
+                var itemType = itemLookup.type[0].value;
+                if (line.rate != '' && line.rate!= null && line.rate != undefined && itemType == 'NonInvtPart') {
                     purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: line.rate });
                 }
                 // Allow the 'rate' to be overrideen by the incoming estimated cost 'rate' field
-                if (line.isCustomPrice) {
+                if (line.isCustomPrice && itemType == 'NonInvtPart') {
                     purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: line.estimatedCost });
                 }
                 purchaseOrder.setCurrentSublistValue({ sublistId: 'item', fieldId: DH_Library_1.FIELDS.TRANSACTION.COLUMN.SalesOrder, value: salesOrders.join(',') });
