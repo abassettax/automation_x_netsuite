@@ -2066,7 +2066,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     this._so_lineinit(context);
 
                     // if (o_user.roleCenter === s_customer_center || parseInt(o_user.id) === 6447 || parseInt(o_user.id) === 25918) {
-                        this._xto_trailerhide_linit(context);
+                        // this._xto_trailerhide_linit(context);
                     // }
                 } catch (e) {
                     log.error('tjincATX_lineInitSO', e);
