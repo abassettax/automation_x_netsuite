@@ -200,6 +200,7 @@ define(['N/search', 'N/runtime', '/SuiteBundles/Bundle 310544/TJINC_NS_Library_S
                 return true;
             }
         }
+        //execution order issues causing line to return true and submit prior to field change. causes cost est types to be duplicated on next line. added forceSyncSourcing to fix
         function validateLine (context) {
             //reset cost est type on line validate to handle edge cases
             var currentRecord = context.currentRecord;
@@ -312,81 +313,10 @@ define(['N/search', 'N/runtime', '/SuiteBundles/Bundle 310544/TJINC_NS_Library_S
                                 currentRecord.setCurrentSublistValue({
                                     sublistId: 'item',
                                     fieldId: 'costestimate',
-                                    value: buildCost
+                                    value: buildCost,
+                                    forceSyncSourcing: true
                                 });
                                 // tj.alert('Cost Estimate has been defaulted to the estimated cost for this build.  Please change or update if needed.');
-                            // }
-                        } else if (itemType == 'NonInvtPart') {
-                            // if (currentTypeText != 'Custom') {
-                                currentRecord.setCurrentSublistValue({
-                                    sublistId: 'item',
-                                    fieldId: 'costestimatetype',
-                                    value: 'CUSTOM'
-                                });
-                            // }
-                        } else {
-                            var itemAvail = 0;
-                            var filters = [];
-                            var itemFilter = ['internalid', 'anyof'];
-                            itemFilter.push(itemID.toString());
-                            var locationFilter = ['inventorylocation', 'anyof'];
-                            locationFilter.push(location.toString());
-                            var fullFilter = [];
-                            fullFilter.push(itemFilter);
-                            fullFilter.push('AND');
-                            fullFilter.push(locationFilter);
-                            filters.push(fullFilter);
-    
-                            search.create({
-                                type: 'item',
-                                filters: filters,
-                                columns: [
-                                    'inventorylocation',
-                                    'locationquantityavailable'
-                                ]
-                            }).run().each(function (result) {
-                                itemAvail = +result.getValue(result.columns[1])
-                                return true;
-                            });
-                            // alert('avail: ' + itemAvail);
-                            // alert('committed: ' + committed);
-                            // alert('fulfilled: ' + fulfilled);
-                            if (itemAvail > 0 || committed == remaining) {
-                                // alert('if');
-                                // alert('qty: ' + qty);
-                                var diff = committed + itemAvail - remaining;
-                                // alert('diff: ' + diff);
-                                // alert('check: ' + (diff == 0 || diff > 0) );
-                                // alert(currentTypeText != 'Average Cost');
-                                if (diff >= 0) {
-                                    // if (currentTypeText != 'Average Cost') {
-                                        currentRecord.setCurrentSublistValue({
-                                            sublistId: 'item',
-                                            fieldId: 'costestimatetype',
-                                            value: 'AVGCOST'
-                                        });
-                                    // }
-                                } else {
-                                    // alert(currentTypeText != 'Purchase Price');
-                                    // if (currentTypeText != 'Purchase Price') {
-                                        currentRecord.setCurrentSublistValue({
-                                            sublistId: 'item',
-                                            fieldId: 'costestimatetype',
-                                            value: 'PURCHPRICE'
-                                        });
-                                    // }
-                                }
-                            } else {
-                                // alert('else');
-                                // alert(currentTypeText != 'Purchase Price');
-                                // if (currentTypeText != 'Purchase Price') {
-                                    currentRecord.setCurrentSublistValue({
-                                        sublistId: 'item',
-                                        fieldId: 'costestimatetype',
-                                        value: 'PURCHPRICE'
-                                    });
-                                // }
-                            }
                         }
                     }
                     return true;
