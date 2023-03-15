@@ -101,7 +101,7 @@ function buQuotaCard(request, response) {
       "AND",
       ["formulanumeric: CASE WHEN {custbodycuscol_inv_pref} = 'Single Invoice' AND {status} = 'Pending Billing/Partially Fulfilled' THEN 1 ELSE 0 END", "equalto", "0"],
       "AND",
-      ["applyingtransaction.trandate", "onorbefore", "lastmonth"]
+      ["applyingtransaction.trandate", "onorbefore", "thismonth"]
     ],
     columnsA
   );
@@ -141,7 +141,7 @@ function buQuotaCard(request, response) {
       "AND",
       ["formulanumeric: CASE WHEN {custbodycuscol_inv_pref} = 'Single Invoice' AND {status} = 'Pending Billing/Partially Fulfilled' THEN 1 ELSE 0 END", "equalto", "1"],
       "AND",
-      ["applyingtransaction.trandate", "onorbefore", "lastmonth"]
+      ["applyingtransaction.trandate", "onorbefore", "thismonth"]
     ],
     columnsA
   );
