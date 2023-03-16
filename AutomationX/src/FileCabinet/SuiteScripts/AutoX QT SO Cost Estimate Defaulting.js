@@ -117,7 +117,7 @@ define(['N/search', 'N/runtime', '/SuiteBundles/Bundle 310544/TJINC_NS_Library_S
                                 currentRecord.setCurrentSublistValue({
                                     sublistId: 'item',
                                     fieldId: 'costestimate',
-                                    value: buildCost
+                                    value: (buildCost*qty).toFixed(2)
                                 });
                                 tj.alert('Cost Estimate has been defaulted to the estimated cost for this build.  Please change or update if needed.');
                             }
@@ -313,10 +313,11 @@ define(['N/search', 'N/runtime', '/SuiteBundles/Bundle 310544/TJINC_NS_Library_S
                                 currentRecord.setCurrentSublistValue({
                                     sublistId: 'item',
                                     fieldId: 'costestimate',
-                                    value: buildCost,
+                                    value: (buildCost*qty).toFixed(2),
                                     forceSyncSourcing: true
                                 });
                                 // tj.alert('Cost Estimate has been defaulted to the estimated cost for this build.  Please change or update if needed.');
+                            // }
                         }
                     }
                     return true;
