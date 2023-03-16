@@ -24,7 +24,7 @@ function (record, search, log) {
                 join: 'item',
                 summary: 'GROUP'
             });
-            if (itemtype != 'InvPart') {
+            if (itemtype != 'InvtPart') {
                 assemblyItems.push(itemid);
             }
             var salescontr = allResults[i].getValue({
@@ -138,7 +138,7 @@ function (record, search, log) {
                 name: 'type',
                 join: 'memberItem',
             });
-            if (itemtype != 'InvPart') {
+            if (itemtype != 'InvtPart') {
                 assemblies.push(itemid);
             }
             components.push(itemid);
