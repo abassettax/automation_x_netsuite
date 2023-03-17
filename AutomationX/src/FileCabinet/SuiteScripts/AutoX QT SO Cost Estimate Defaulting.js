@@ -196,6 +196,7 @@ define(['N/search', 'N/runtime', '/SuiteBundles/Bundle 310544/TJINC_NS_Library_S
                     }
                     return true;
                 }
+                return true;
             } catch (e) {
                 return true;
             }
@@ -322,6 +323,7 @@ define(['N/search', 'N/runtime', '/SuiteBundles/Bundle 310544/TJINC_NS_Library_S
                     }
                     return true;
                 }
+                return true;
             } catch (e) {
                 return true;
             }
