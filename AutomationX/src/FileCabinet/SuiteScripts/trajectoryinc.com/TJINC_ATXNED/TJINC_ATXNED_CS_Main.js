@@ -1502,16 +1502,26 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                 i_itemcheck++;
                                 break;
                         }
-                        var objSubRecord = o_rec.getSublistSubrecord({
+                        o_rec.selectLine({
                             sublistId: 'item',
-                            fieldId: 'inventorydetail',
                             line: i
                         });
-                        var invAssignLines = objSubRecord.getLineCount({
-                            sublistId: 'inventoryassignment'
+                        var hasSubrecord = o_rec.hasCurrentSublistSubrecord({
+                            sublistId: 'item',
+                            fieldId: 'inventorydetail'
                         });
-                        if (invAssignLines > 1) {
-                            i_multbincheck = true;
+                        if (hasSubrecord) {
+                            var objSubRecord = o_rec.getCurrentSublistSubrecord({
+                                sublistId: 'item',
+                                fieldId: 'inventorydetail',
+                                line: i
+                            });
+                            var invAssignLines = objSubRecord.getLineCount({
+                                sublistId: 'inventoryassignment'
+                            });
+                            if (invAssignLines > 1) {
+                                i_multbincheck = true;
+                            }
                         }
                     }
 

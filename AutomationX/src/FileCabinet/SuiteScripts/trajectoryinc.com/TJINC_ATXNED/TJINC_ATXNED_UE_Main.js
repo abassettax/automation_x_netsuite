@@ -357,7 +357,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                     s_inactivemessage = "Customer account is Inactive. Please have their account reactivated or use a different customer before processing order.<br/><br/>"
                     i_isproccesing = 0;
 
-                    let o_col4 = o_form.getSublist({ id: 'item' }).getField({ id: 'custcol4' });
+                    let o_col4 = a_itemsb.getField('custcol4' );
                     log.debug('Step 1');
                     let o_col76 = a_itemsb.getField('custcol76')
                     let o_col77 = a_itemsb.getField('custcol77');
