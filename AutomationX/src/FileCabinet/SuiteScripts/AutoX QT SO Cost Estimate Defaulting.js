@@ -80,6 +80,32 @@ define(['N/search', 'N/runtime', '/SuiteBundles/Bundle 310544/TJINC_NS_Library_S
 
                         }// alert('currentTypeText: ' + currentTypeText);
                         if (itemType == 'Assembly') {
+                            var itemAvail = 0;
+                            var filters = [];
+                            var itemFilter = ['internalid', 'anyof'];
+                            itemFilter.push(itemID.toString());
+                            var locationFilter = ['inventorylocation', 'anyof'];
+                            locationFilter.push(location.toString());
+                            var fullFilter = [];
+                            fullFilter.push(itemFilter);
+                            fullFilter.push('AND');
+                            fullFilter.push(locationFilter);
+                            filters.push(fullFilter);
+    
+                            search.create({
+                                type: 'assemblyitem',
+                                filters: filters,
+                                columns: [
+                                    'inventorylocation',
+                                    'locationquantityavailable'
+                                ]
+                            }).run().each(function (result) {
+                                itemAvail = +result.getValue(result.columns[1])
+                                return true;
+                            });
+                            // alert('avail: ' + itemAvail);
+                            // alert('committed: ' + committed);
+                            // alert('fulfilled: ' + fulfilled);
                             //need to force to custom and define cost based on members. using derived did not result in the correct/expected cost
                             var buildCost;
                             var assemblyitemSearchObj = search.create({
@@ -107,19 +133,55 @@ define(['N/search', 'N/runtime', '/SuiteBundles/Bundle 310544/TJINC_NS_Library_S
                                buildCost = result.getValue((result.columns[0]));
                                return true;
                             });
-                            if (currentTypeText != 'Custom') {
-                                currentRecord.setCurrentSublistValue({
-                                    sublistId: 'item',
-                                    fieldId: 'costestimatetype',
-                                    value: 'CUSTOM',
-                                    ignoreFieldChange: true
-                                });
-                                currentRecord.setCurrentSublistValue({
-                                    sublistId: 'item',
-                                    fieldId: 'costestimate',
-                                    value: (buildCost*qty).toFixed(2)
-                                });
-                                tj.alert('Cost Estimate has been defaulted to the estimated cost for this build.  Please change or update if needed.');
+                            if (itemAvail > 0 || committed == remaining) {
+                                // alert('if');
+                                // alert('qty: ' + qty);
+                                var diff = committed + itemAvail - remaining;
+                                // alert('diff: ' + diff);
+                                // alert('check: ' + (diff == 0 || diff > 0) );
+                                // alert(currentTypeText != 'Average Cost');
+                                if (diff >= 0) {
+                                    if (currentTypeText != 'Average Cost') {
+                                        currentRecord.setCurrentSublistValue({
+                                            sublistId: 'item',
+                                            fieldId: 'costestimatetype',
+                                            value: 'AVGCOST'
+                                        });
+                                    }
+                                } else {
+                                    // alert(currentTypeText != 'Purchase Price');
+                                    if (currentTypeText != 'Custom') {
+                                        currentRecord.setCurrentSublistValue({
+                                            sublistId: 'item',
+                                            fieldId: 'costestimatetype',
+                                            value: 'CUSTOM',
+                                            ignoreFieldChange: true
+                                        });
+                                        currentRecord.setCurrentSublistValue({
+                                            sublistId: 'item',
+                                            fieldId: 'costestimate',
+                                            value: (buildCost).toFixed(2)
+                                        });
+                                        tj.alert('Cost Estimate has been defaulted to the estimated cost for this build.  Please change or update if needed.');
+                                    }
+                                } 
+                            } else {
+                                // alert('else');
+                                // alert(currentTypeText != 'Purchase Price');
+                                if (currentTypeText != 'Custom') {
+                                    currentRecord.setCurrentSublistValue({
+                                        sublistId: 'item',
+                                        fieldId: 'costestimatetype',
+                                        value: 'CUSTOM',
+                                        ignoreFieldChange: true
+                                    });
+                                    currentRecord.setCurrentSublistValue({
+                                        sublistId: 'item',
+                                        fieldId: 'costestimate',
+                                        value: (buildCost).toFixed(2)
+                                    });
+                                    tj.alert('Cost Estimate has been defaulted to the estimated cost for this build.  Please change or update if needed.');
+                                }
                             }
                         } else if (itemType == 'NonInvtPart') {
                             if (currentTypeText != 'Custom') {
@@ -277,6 +339,32 @@ define(['N/search', 'N/runtime', '/SuiteBundles/Bundle 310544/TJINC_NS_Library_S
 
                         }// alert('currentTypeText: ' + currentTypeText);
                         if (itemType == 'Assembly') {
+                            var itemAvail = 0;
+                            var filters = [];
+                            var itemFilter = ['internalid', 'anyof'];
+                            itemFilter.push(itemID.toString());
+                            var locationFilter = ['inventorylocation', 'anyof'];
+                            locationFilter.push(location.toString());
+                            var fullFilter = [];
+                            fullFilter.push(itemFilter);
+                            fullFilter.push('AND');
+                            fullFilter.push(locationFilter);
+                            filters.push(fullFilter);
+    
+                            search.create({
+                                type: 'assemblyitem',
+                                filters: filters,
+                                columns: [
+                                    'inventorylocation',
+                                    'locationquantityavailable'
+                                ]
+                            }).run().each(function (result) {
+                                itemAvail = +result.getValue(result.columns[1])
+                                return true;
+                            });
+                            // alert('avail: ' + itemAvail);
+                            // alert('committed: ' + committed);
+                            // alert('fulfilled: ' + fulfilled);
                             //need to force to custom and define cost based on members. using derived did not result in the correct/expected cost
                             var buildCost;
                             var assemblyitemSearchObj = search.create({
@@ -304,21 +392,59 @@ define(['N/search', 'N/runtime', '/SuiteBundles/Bundle 310544/TJINC_NS_Library_S
                                buildCost = result.getValue((result.columns[0]));
                                return true;
                             });
-                            // if (currentTypeText != 'Custom') {
-                                currentRecord.setCurrentSublistValue({
-                                    sublistId: 'item',
-                                    fieldId: 'costestimatetype',
-                                    value: 'CUSTOM',
-                                    ignoreFieldChange: true
-                                });
-                                currentRecord.setCurrentSublistValue({
-                                    sublistId: 'item',
-                                    fieldId: 'costestimate',
-                                    value: (buildCost*qty).toFixed(2),
-                                    forceSyncSourcing: true
-                                });
-                                // tj.alert('Cost Estimate has been defaulted to the estimated cost for this build.  Please change or update if needed.');
-                            // }
+                            if (itemAvail > 0 || committed == remaining) {
+                                // alert('if');
+                                // alert('qty: ' + qty);
+                                var diff = committed + itemAvail - remaining;
+                                // alert('diff: ' + diff);
+                                // alert('check: ' + (diff == 0 || diff > 0) );
+                                // alert(currentTypeText != 'Average Cost');
+                                if (diff >= 0) {
+                                    // if (currentTypeText != 'Average Cost') {
+                                        currentRecord.setCurrentSublistValue({
+                                            sublistId: 'item',
+                                            fieldId: 'costestimatetype',
+                                            value: 'AVGCOST',
+                                            forceSyncSourcing: true
+                                        });
+                                    // }
+                                } else {
+                                    // alert(currentTypeText != 'Purchase Price');
+                                    // if (currentTypeText != 'Custom') {
+                                        currentRecord.setCurrentSublistValue({
+                                            sublistId: 'item',
+                                            fieldId: 'costestimatetype',
+                                            value: 'CUSTOM',
+                                            ignoreFieldChange: true
+                                        });
+                                        currentRecord.setCurrentSublistValue({
+                                            sublistId: 'item',
+                                            fieldId: 'costestimate',
+                                            value: (buildCost).toFixed(2),
+                                            forceSyncSourcing: true
+                                        });
+                                        tj.alert('Cost Estimate has been defaulted to the estimated cost for this build.  Please change or update if needed.');
+                                    // }
+                                } 
+                            } else {
+                                // alert('else');
+                                // alert(currentTypeText != 'Purchase Price');
+                                // if (currentTypeText != 'Custom') {
+                                    currentRecord.setCurrentSublistValue({
+                                        sublistId: 'item',
+                                        fieldId: 'costestimatetype',
+                                        value: 'CUSTOM',
+                                        ignoreFieldChange: true
+                                    });
+                                    currentRecord.setCurrentSublistValue({
+                                        sublistId: 'item',
+                                        fieldId: 'costestimate',
+                                        value: (buildCost).toFixed(2),
+                                        forceSyncSourcing: true
+                                    });
+                                    tj.alert('Cost Estimate has been defaulted to the estimated cost for this build.  Please change or update if needed.');
+                                // }
+                            }
                         }
                     }
                     return true;
