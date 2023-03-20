@@ -24,7 +24,7 @@ var MultiLocationString = replaceLetter(userMultiLocation);
  
  // alert(userMultiLocation.indexOf(ff_location)); alert(userMultiLocation);
   
-if ( ff_locationText != user_location &&  ff_locationText != user_location2 &&  ff_locationText != user_location3   && userMultiLocation.indexOf(ff_location) == -1  )
+if ( ff_locationText != user_location &&  ff_locationText != user_location2 &&  ff_locationText != user_location3   && userMultiLocation.indexOf(ff_location) == -1  && nlapiGetContext().getExecutionContext() == 'userinterface')
 {
 totlines=1;
 totallines = totallines+totlines;

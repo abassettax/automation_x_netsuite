@@ -68,7 +68,7 @@ alert(qtyRec);
   */
   
   
-if (name == 'shipstatus')
+if (name == 'shipstatus' && nlapiGetContext().getExecutionContext() == 'userinterface')
 {
 var docLocation = nlapiGetLineItemValue('item', 'location', 1); 
 var user = nlapiGetUser();
@@ -126,7 +126,7 @@ var stat = nlapiGetFieldValue('shipstatus');
 var ccost = nlapiGetFieldValue('custbody95');
 var shipb = nlapiGetFieldValue('custbody102')
 
-if((stat == "C") && ( (ccost == "") || (shipb  == "")))
+if((stat == "C") && ( (ccost == "") || (shipb  == "")) && nlapiGetContext().getExecutionContext() == 'userinterface')
 {
 alert("Please enter a value for CARRIER COST: and/or SHIPPED BY:\n \nCarrier Cost is the cost provided by the shipping company.  Please use standard millage rates for deliveries"); 
 
