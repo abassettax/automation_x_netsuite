@@ -588,7 +588,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             o_form.removeButton('process');
                         }
                         //add block for inactive customer
-                        if (o_tempobj.inactive) {
+                        if (o_tempobj.inactive == 'T' || o_tempobj.inactive == true) {
                             s_holdmessage += s_inactivemessage;
                             s_holdmessage += "</b></font></div >";
                             o_rec.setValue('custbody172', s_holdmessage);

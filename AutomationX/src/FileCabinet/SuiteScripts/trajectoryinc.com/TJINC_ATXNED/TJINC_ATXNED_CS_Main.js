@@ -1476,16 +1476,31 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
             //SO_onsave
             _so_onsave: function (context) {
                 var o_rec = context.currentRecord;
-                var o_temp, o_lf;
+                var o_temp, o_lf, o_lf2;
                 var i_itemcheck, i_splitinv;
                 var i, j;
                 try {
 
-                    o_lf = tj.lookupFields(search.lookupFields({ id: o_rec.getValue('entity'), type: 'customer', columns: ['custentity327'] }));
+                    o_lf = tj.lookupFields(search.lookupFields({ id: o_rec.getValue('entity'), type: 'customer', columns: ['custentity327', 'isinactive'] }));
 
                     if (parseInt(o_lf.custentity327) === 9) {
-                        tj.alert('The Following customer is on Force Hold, Please contact Accounting');
+                        tj.alert('The customer is on Force Hold, please contact Accounting');
                         return false;
+                    }
+                    if (context.type == 'create') {
+                        if (o_lf.isinactive == 'T' || o_lf.isinactive == true) {
+                            tj.alert('The customer is inactive, please contact Database or use an updated customer profile.');
+                            return false;
+                        }
+
+                        for (i = 0; i < o_rec.getLineCount('item'); i++) {
+                            var item = o_rec.getSublistValue('item', 'item', i);
+                            o_lf2 = tj.lookupFields(search.lookupFields({ id: item, type: search.Type.ITEM, columns: ['isinactive'] }));
+                            if (o_lf2.isinactive == 'T' || o_lf2.isinactive == true) {
+                                tj.alert('The item on line '+(i + 1)+' is inactive. Please contact Database or use an updated 5 code for this order.');
+                                return false;
+                            }
+                        }
                     }
 
                     i_splitinv = parseInt(o_rec.getValue('custbody_totalnumberofchildinvoices'));

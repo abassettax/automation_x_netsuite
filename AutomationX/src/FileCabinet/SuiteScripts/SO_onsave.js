@@ -96,7 +96,24 @@ function ValidateLineItemQuantity() {
 
 function onsave(type)
 {
-  
+    if (type == 'create') {
+        var cust = nlapiGetFieldValue("entity");
+        var isinactive = nlapiLookupField('customer', cust , 'isinactive' );
+        if (isinactive == 'T' || isinactive == true) {
+            alert('The customer is inactive, please contact Database or use an updated customer profile.');
+            return false;
+        }
+
+        var lineCount = nlapiGetLineItemCount('item');
+        for(x =1; x<=lineCount; x++){
+            var item = nlapiGetLineItemValue('item', 'item', x);
+            var isinactive2 = nlapiLookupField('item', item , 'isinactive' );
+            if (isinactive2 == 'T' || isinactive2 == true) {
+                alert('The item on line '+(x + 1)+' is inactive. Please contact Database or use an updated 5 code for this order.');
+                return false;
+            }
+        }
+    }    
   /////////////////////////////////////////////////////////////////create cust code summary 
     var a = nlapiGetFieldValue("otherrefnum");
   var b = nlapiGetFieldValue("custbody38");
