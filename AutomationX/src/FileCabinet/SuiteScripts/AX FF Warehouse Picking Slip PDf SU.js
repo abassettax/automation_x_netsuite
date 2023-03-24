@@ -137,7 +137,7 @@ function(log, record, render) {
             xmlStr += '<table class="itemtable" style="width: 100%; margin-top: 10px;"><thead><tr style="border:1px solid #d3d3d3;"><th colspan="3" style="align: center;">5 Code</th><th colspan="9" style="align: left;">Item Name</th><th colspan="6" style="align: center;">Bin(s)</th><th colspan="3" style="align: center; font-size:10px;">Quantity</th></tr></thead>';
             
             //loop item ff lines to generate rows
-            for (var i = 0; i < ffLines; i++) {
+            for (var i = 0; i < lineData.length; i++) {
                 var row5Code = lineData[i].fivecode;
                 var rowItem = lineData[i].item;
                 var rowDesc = lineData[i].desc;
