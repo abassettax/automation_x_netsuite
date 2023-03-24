@@ -25,9 +25,9 @@ function (record, search, tj) {
     return {
         CopyRecordReprice: function (i_id, i_cust) {
             try{
-                var s_url = 'https://system.na3.netsuite.com/app/accounting/transactions/salesord.nl?entity=' +  i_cust  + '&currentrecordType='+ record.Type.SALES_ORDER  + '&currentrecordID='+  i_id + '&axCopy=yes&whence=';
-                //var s_url2 = 'https://system.na3.netsuite.com/app/accounting/transactions/salesord.nl?id='+i_id+'&whence=&e=T&memdoc=0';
-                window.open(s_url,'_blank');
+                // var s_url = 'https://system.na3.netsuite.com/app/accounting/transactions/salesord.nl?entity=' +  i_cust  + '&currentrecordType='+ record.Type.SALES_ORDER  + '&currentrecordID='+  i_id + '&axCopy=yes&whence=';
+                var s_url2 = 'https://422523.app.netsuite.com/app/accounting/transactions/salesord.nl?id='+i_id+'&whence=&e=T&memdoc=0&axCopy=yes';
+                // window.open(s_url,'_blank');
                 window.open(s_url2,'_blank');
             }catch(e){
                 console.error('error',e);

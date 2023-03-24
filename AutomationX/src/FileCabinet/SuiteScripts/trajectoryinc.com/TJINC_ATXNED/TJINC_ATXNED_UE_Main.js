@@ -319,10 +319,10 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                 let o_form = context.form;
                 try {
                     if (context.type === 'view') {
-                        o_form.addButton({
-                            label: 'Make Copy & Reprice', id: 'custpage_Copy',
-                            functionName: 'CopyRecordReprice(' + o_rec.id.toString() + ',' + o_rec.getValue('entity').toString() + ')'
-                        });
+                        // o_form.addButton({
+                        //     label: 'Make Copy & Reprice', id: 'custpage_Copy',
+                        //     functionName: 'CopyRecordReprice(' + o_rec.id.toString() + ',' + o_rec.getValue('entity').toString() + ')'
+                        // });
                     }
                     d_today = new Date();
                     d_ndays = new Date();

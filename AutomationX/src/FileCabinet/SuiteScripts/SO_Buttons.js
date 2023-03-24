@@ -975,6 +975,7 @@ function adjustcostestimate() {
             items.push(item);
         }
         // alert(JSON.stringify(items));
+        nlapiCancelLineItem("item");
         for (x = 1; x <= nlapiGetLineItemCount('item'); x++) {
             var lineItem = nlapiGetLineItemValue('item', 'item', x);
             // alert(lineItem);

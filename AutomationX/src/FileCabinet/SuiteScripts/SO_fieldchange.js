@@ -30,32 +30,32 @@ function Pageintquote() {
 
   var IsCopy = getParameterFromURL('axCopy');
   if (IsCopy == 'yes' && nlapiGetFieldValue('tranid') == 'To Be Generated') {
-    var copyrecordid = getParameterFromURL('currentrecordID');
-    var copyrecordtype = nlapiGetRecordType();
-    var copyrecord = nlapiLoadRecord(copyrecordtype, copyrecordid);
+    // var copyrecordid = getParameterFromURL('id');
+    // var copyrecordtype = nlapiGetRecordType();
+    // var copyrecord = nlapiLoadRecord(copyrecordtype, copyrecordid);
 
-    copyrecord.getFieldValue('custentity149');
+    // copyrecord.getFieldValue('custentity149');
 
-    var copyrecordclass = copyrecord.getFieldValue("class"); //Class
-    var copyrecordlocation = copyrecord.getFieldValue("location"); //location
-    var copyrecordcustbody173 = copyrecord.getFieldValue("custbody173"); //Techname
-    var copyrecordcustbody38 = copyrecord.getFieldValue("custbody38"); //sellname
-    var copyrecordcustbody8 = copyrecord.getFieldValue("custbody8"); //wellnumber
-    var copyrecordcustbody9 = copyrecord.getFieldValue("custbody9"); //accountingnum
-    var copyrecordcustbody10 = copyrecord.getFieldValue("custbody10"); //plantcode
-    var copyrecordcustbody73 = copyrecord.getFieldValue("custbody73"); //approverid
-    var copyrecordcustbody11 = copyrecord.getFieldValue("custbody11"); //code
-    var copyrecordcustbody67 = copyrecord.getFieldValue("custbody67"); //reasoncode
-    var copyrecordcustbody74 = copyrecord.getFieldValue("custbody74"); //glaccount
-    var copyrecordcustbody87 = copyrecord.getFieldValue("custbody87"); //paykey
-    var copyrecordshipaddresslist = copyrecord.getFieldValue("shipaddresslist"); //shipto
-    var copyrecordcustbody34 = copyrecord.getFieldValue("custbody34"); //purchasenotes
-    var copyrecordcustbody35 = copyrecord.getFieldValue("custbody35"); //ffnotes
-    var copyrecordcustbody36 = copyrecord.getFieldValue("custbody36"); //invnotes
-    var copyrecordshipcarrier = copyrecord.getFieldValue("shipcarrier"); //shipcarrier
-    var copyrecordshipmethod = copyrecord.getFieldValue("shipmethod"); //shipmethod
-    var copyrecordshippingcost = copyrecord.getFieldValue("shippingcost"); //shippingcost
-    var copyrecordbilladdresslist = copyrecord.getFieldValue("billaddresslist"); //billaddresslist
+    // var copyrecordclass = copyrecord.getFieldValue("class"); //Class
+    // var copyrecordlocation = copyrecord.getFieldValue("location"); //location
+    // var copyrecordcustbody173 = copyrecord.getFieldValue("custbody173"); //Techname
+    // var copyrecordcustbody38 = copyrecord.getFieldValue("custbody38"); //sellname
+    // var copyrecordcustbody8 = copyrecord.getFieldValue("custbody8"); //wellnumber
+    // var copyrecordcustbody9 = copyrecord.getFieldValue("custbody9"); //accountingnum
+    // var copyrecordcustbody10 = copyrecord.getFieldValue("custbody10"); //plantcode
+    // var copyrecordcustbody73 = copyrecord.getFieldValue("custbody73"); //approverid
+    // var copyrecordcustbody11 = copyrecord.getFieldValue("custbody11"); //code
+    // var copyrecordcustbody67 = copyrecord.getFieldValue("custbody67"); //reasoncode
+    // var copyrecordcustbody74 = copyrecord.getFieldValue("custbody74"); //glaccount
+    // var copyrecordcustbody87 = copyrecord.getFieldValue("custbody87"); //paykey
+    // var copyrecordshipaddresslist = copyrecord.getFieldValue("shipaddresslist"); //shipto
+    // var copyrecordcustbody34 = copyrecord.getFieldValue("custbody34"); //purchasenotes
+    // var copyrecordcustbody35 = copyrecord.getFieldValue("custbody35"); //ffnotes
+    // var copyrecordcustbody36 = copyrecord.getFieldValue("custbody36"); //invnotes
+    // var copyrecordshipcarrier = copyrecord.getFieldValue("shipcarrier"); //shipcarrier
+    // var copyrecordshipmethod = copyrecord.getFieldValue("shipmethod"); //shipmethod
+    // var copyrecordshippingcost = copyrecord.getFieldValue("shippingcost"); //shippingcost
+    // var copyrecordbilladdresslist = copyrecord.getFieldValue("billaddresslist"); //billaddresslist
 
 
     /*nlapiSetFieldValue("class" , copyrecordclass); // Class
@@ -81,49 +81,50 @@ function Pageintquote() {
     */
 
 
-    if (copyrecordclass) { nlapiSetFieldValue("class", copyrecordclass); }// Class
-    if (copyrecordlocation) { nlapiSetFieldValue("location", copyrecordlocation); }// location
-    if (copyrecordcustbody173) { nlapiSetFieldValue("custbody173", copyrecordcustbody173); }// Techname
-    if (copyrecordcustbody38) { nlapiSetFieldValue("custbody38", copyrecordcustbody38); }// sellname
-    if (copyrecordcustbody8) { nlapiSetFieldValue("custbody8", copyrecordcustbody8); }// wellnumber
-    if (copyrecordcustbody9) { nlapiSetFieldValue("custbody9", copyrecordcustbody9); } // accountingnum
-    if (copyrecordcustbody10) { nlapiSetFieldValue("custbody10", copyrecordcustbody10); } // plantcode
-    if (copyrecordcustbody73) { nlapiSetFieldValue("custbody73", copyrecordcustbody73); }// approverid
-    if (copyrecordcustbody11) { nlapiSetFieldValue("custbody11", copyrecordcustbody11); }// code
-    if (copyrecordcustbody67) { nlapiSetFieldValue("custbody67", copyrecordcustbody67); }// reasoncode
-    if (copyrecordcustbody74) { nlapiSetFieldValue("custbody74", copyrecordcustbody74); }// glaccount
-    if (copyrecordcustbody87) { nlapiSetFieldValue("custbody87", copyrecordcustbody87); }// paykey
-    if (copyrecordshipaddresslist) { nlapiSetFieldValue("shipaddresslist", copyrecordshipaddresslist); } // shipto
-    if (copyrecordcustbody34) { nlapiSetFieldValue("custbody34", copyrecordcustbody34); } // purchasenotes
-    if (copyrecordcustbody35) { nlapiSetFieldValue("custbody35", copyrecordcustbody35); }// ffnotes
-    if (copyrecordcustbody36) { nlapiSetFieldValue("custbody36", copyrecordcustbody36); }// invnotes
-    if (copyrecordshipcarrier) { nlapiSetFieldValue("shipcarrier", copyrecordshipcarrier); } // shipcarrier
-    if (copyrecordshipmethod) { nlapiSetFieldValue("shipmethod", copyrecordshipmethod); } // shipmethod
-    if (copyrecordshippingcost) { nlapiSetFieldValue("shippingcost", copyrecordshippingcost); } // shippingcost
-    if (copyrecordbilladdresslist) { nlapiSetFieldValue("billaddresslist", copyrecordbilladdresslist); } // billaddresslist
+    // if (copyrecordclass) { nlapiSetFieldValue("class", copyrecordclass); }// Class
+    // if (copyrecordlocation) { nlapiSetFieldValue("location", copyrecordlocation); }// location
+    // if (copyrecordcustbody173) { nlapiSetFieldValue("custbody173", copyrecordcustbody173); }// Techname
+    // if (copyrecordcustbody38) { nlapiSetFieldValue("custbody38", copyrecordcustbody38); }// sellname
+    // if (copyrecordcustbody8) { nlapiSetFieldValue("custbody8", copyrecordcustbody8); }// wellnumber
+    // if (copyrecordcustbody9) { nlapiSetFieldValue("custbody9", copyrecordcustbody9); } // accountingnum
+    // if (copyrecordcustbody10) { nlapiSetFieldValue("custbody10", copyrecordcustbody10); } // plantcode
+    // if (copyrecordcustbody73) { nlapiSetFieldValue("custbody73", copyrecordcustbody73); }// approverid
+    // if (copyrecordcustbody11) { nlapiSetFieldValue("custbody11", copyrecordcustbody11); }// code
+    // if (copyrecordcustbody67) { nlapiSetFieldValue("custbody67", copyrecordcustbody67); }// reasoncode
+    // if (copyrecordcustbody74) { nlapiSetFieldValue("custbody74", copyrecordcustbody74); }// glaccount
+    // if (copyrecordcustbody87) { nlapiSetFieldValue("custbody87", copyrecordcustbody87); }// paykey
+    // if (copyrecordshipaddresslist) { nlapiSetFieldValue("shipaddresslist", copyrecordshipaddresslist); } // shipto
+    // if (copyrecordcustbody34) { nlapiSetFieldValue("custbody34", copyrecordcustbody34); } // purchasenotes
+    // if (copyrecordcustbody35) { nlapiSetFieldValue("custbody35", copyrecordcustbody35); }// ffnotes
+    // if (copyrecordcustbody36) { nlapiSetFieldValue("custbody36", copyrecordcustbody36); }// invnotes
+    // if (copyrecordshipcarrier) { nlapiSetFieldValue("shipcarrier", copyrecordshipcarrier); } // shipcarrier
+    // if (copyrecordshipmethod) { nlapiSetFieldValue("shipmethod", copyrecordshipmethod); } // shipmethod
+    // if (copyrecordshippingcost) { nlapiSetFieldValue("shippingcost", copyrecordshippingcost); } // shippingcost
+    // if (copyrecordbilladdresslist) { nlapiSetFieldValue("billaddresslist", copyrecordbilladdresslist); } // billaddresslist
 
 
 
 
 
     //add line items
-    var lineCount = copyrecord.getLineItemCount('item');
-    for (var i = 1; i <= lineCount; i++) {
-      var itemss = copyrecord.getLineItemValue('item', 'item', i);
-      var qty = copyrecord.getLineItemValue('item', 'quantity', i); if (!qty) { qty = ""; }
-      var desc = copyrecord.getLineItemValue('item', 'description', i);
-      var solocation = copyrecord.getLineItemValue('item', 'location', i);
-      var closed = copyrecord.getLineItemValue('item', 'isclosed', i);
-      if (closed != "T") {
-        nlapiSelectNewLineItem('item');
-        nlapiSetCurrentLineItemValue('item', 'item', itemss, true, true);
-        nlapiSetCurrentLineItemValue('item', 'quantity', qty, true, true);
-        nlapiSetCurrentLineItemValue('item', 'location', solocation, true, true);
-        nlapiSetCurrentLineItemValue('item', 'isclosed', closed, true, true);
-        nlapiCommitLineItem('item');
-      }
-    }
+    // var lineCount = copyrecord.getLineItemCount('item');
+    // for (var i = 1; i <= lineCount; i++) {
+    //   var itemss = copyrecord.getLineItemValue('item', 'item', i);
+    //   var qty = copyrecord.getLineItemValue('item', 'quantity', i); if (!qty) { qty = ""; }
+    //   var desc = copyrecord.getLineItemValue('item', 'description', i);
+    //   var solocation = copyrecord.getLineItemValue('item', 'location', i);
+    //   var closed = copyrecord.getLineItemValue('item', 'isclosed', i);
+    //   if (closed != "T") {
+    //     nlapiSelectNewLineItem('item');
+    //     nlapiSetCurrentLineItemValue('item', 'item', itemss, true, true);
+    //     nlapiSetCurrentLineItemValue('item', 'quantity', qty, true, true);
+    //     nlapiSetCurrentLineItemValue('item', 'location', solocation, true, true);
+    //     nlapiSetCurrentLineItemValue('item', 'isclosed', closed, true, true);
+    //     nlapiCommitLineItem('item');
+    //   }
+    // }
 
+    updateprice();
 
   }
 

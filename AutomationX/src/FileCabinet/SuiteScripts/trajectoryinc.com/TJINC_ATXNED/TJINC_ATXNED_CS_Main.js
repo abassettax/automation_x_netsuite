@@ -25,6 +25,38 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
         var i_source_customercenter = 14;
         var i_avalara_tax = 9162;
         return {
+            getParameterFromURL: function (param) {
+                if (param = (new RegExp('[?&]' + encodeURIComponent(param) + '=([^&]*)')).exec(location.search))
+                  return decodeURIComponent(param[1]);
+            },
+            getAllResults: function (searchObj) {
+                try {
+                    var searchResultsArr = new Array();
+                    var startCount = 0;
+        
+                    do {
+                        var searchResults = searchObj.run().getRange({
+                            start: startCount,
+                            end: startCount + 1000
+                        });
+                        startCount = startCount + 1000;
+                        for (var i = 0; i < searchResults.length; i++) {
+                            searchResultsArr.push(searchResults[i]);
+                        }
+                    } while (searchResults.length >= 1000)
+                    return searchResultsArr;
+                } catch (e) {
+                    alert('Error in getAllResults: ' + e)
+                }
+            },
+            findWithAttr: function (array, attr, value) {
+                for(var i = 0; i < array.length; i += 1) {
+                    if(array[i][attr] === value) {
+                        return i;
+                    }
+                }
+                return -1;
+            },
             _enablebuttons: function () {
                 for (var i = 0; i <= 16; i++) {
                     jQuery("#custformbutton_btn" + i + "").attr("disabled", false);
@@ -900,48 +932,6 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                 var i, o_temp, o_line, o_lf, i_total, i_ctotal, i_creditrem, o_oldrec;
 
                 try {
-                    if (o_rec.getValue({ fieldId: 'tranid' }) === 'To Be Generated') {
-                        if (context.type === 'copy') {
-                            o_oldrec = record.load({ type: s_rectype, id: i_oldid, isDynamic: true });
-                            //Set Body Fields
-                            for (i = 0; i < o_fields.length; i++) {
-                                o_temp = o_oldrec.getValue(o_fields[i]);
-                                if (o_temp) {
-                                    o_rec.setValue(o_fields[i], o_temp);
-                                }
-                            }
-                            // Set Line fields
-                            for (i = 0; i < o_oldrec.getLineCount('item'); i++) {
-                                o_line = {
-                                    itemss: o_oldrec.getSublistValue({ fieldId: 'item', sublistId: 'item', line: i }),
-                                    qty: o_oldrec.getSublistValue({ fieldId: 'quantity', sublistId: 'item', line: i }) || '',
-                                    desc: o_oldrec.getSublistValue({ fieldId: 'description', sublistId: 'item', line: i }),
-                                    solocation: o_oldrec.getSublistValue({ fieldId: 'location', sublistId: 'item', line: i }),
-                                    closed: o_oldrec.getSublistValue({ fieldId: 'isclosed', sublistId: 'item', line: i })
-                                }
-
-                                if (o_line.closed !== 'T') {
-                                    o_rec.selectNewLine({ sublistId: 'item' });
-                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'item', value: o_line.itemss, ignoreFieldChange: true, forceSyncSourcing: true });
-                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity', value: o_line.qty, ignoreFieldChange: true, forceSyncSourcing: true })
-                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: o_line.solocation, ignoreFieldChange: true, forceSyncSourcing: true })
-                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'isclosed', value: o_line.closed, ignoreFieldChange: true, forceSyncSourcing: true })
-                                    o_rec.commitLine({ sublistId: 'item' });
-                                }
-                            }
-                        }
-                        if (s_rectype === 'salesorder') {
-                            for (i = 0; i < o_rec.getLineCount({ sublistId: 'item' }); i++) {
-                                if (o_rec.getSublistValue({ fieldId: 'item', sublistId: 'item', line: i }) !== 0) {
-                                    o_rec.selectLine({ sublistId: 'item', line: i });
-                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol74', value: '' });
-                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol91', value: '' });
-                                    o_rec.commitLine({ sublistId: 'item' });
-
-                                }
-                            }
-                        }
-                    }
                     if (o_rec.getValue({ fieldId: 'entity' })) {
                         o_lf = tj.lookupFields(search.lookupFields({ id: o_rec.getValue({ fieldId: 'entity' }), type: record.Type.CUSTOMER, columns: ['balance', 'unbilledorders', 'creditlimit'] }));
                         if (!o_rec.id) {
@@ -968,6 +958,136 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             o_rec.setValue({ fieldId:'custbody167', value: i_taskid});
                         }
                     } */
+                    if (o_rec.getValue({ fieldId: 'tranid' }) === 'To Be Generated') {
+                        var IsCopy = getParameterFromURL('axCopy');
+                        // alert(IsCopy);
+                        if (IsCopy == 'yes') {
+                            // o_oldrec = record.load({ type: s_rectype, id: i_oldid, isDynamic: true });
+                            //Set Body Fields
+                            // for (i = 0; i < o_fields.length; i++) {
+                            //     o_temp = o_oldrec.getValue(o_fields[i]);
+                            //     if (o_temp) {
+                            //         o_rec.setValue(o_fields[i], o_temp);
+                            //     }
+                            // }
+                            // Set Line fields
+                            // for (i = 0; i < o_oldrec.getLineCount('item'); i++) {
+                            //     o_line = {
+                            //         itemss: o_oldrec.getSublistValue({ fieldId: 'item', sublistId: 'item', line: i }),
+                            //         qty: o_oldrec.getSublistValue({ fieldId: 'quantity', sublistId: 'item', line: i }) || '',
+                            //         desc: o_oldrec.getSublistValue({ fieldId: 'description', sublistId: 'item', line: i }),
+                            //         solocation: o_oldrec.getSublistValue({ fieldId: 'location', sublistId: 'item', line: i }),
+                            //         closed: o_oldrec.getSublistValue({ fieldId: 'isclosed', sublistId: 'item', line: i })
+                            //     }
+
+                            //     if (o_line.closed !== 'T') {
+                            //         o_rec.selectNewLine({ sublistId: 'item' });
+                            //         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'item', value: o_line.itemss, ignoreFieldChange: true, forceSyncSourcing: true });
+                            //         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity', value: o_line.qty, ignoreFieldChange: true, forceSyncSourcing: true })
+                            //         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'location', value: o_line.solocation, ignoreFieldChange: true, forceSyncSourcing: true })
+                            //         o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'isclosed', value: o_line.closed, ignoreFieldChange: true, forceSyncSourcing: true })
+                            //         o_rec.commitLine({ sublistId: 'item' });
+                            //     }
+                            // }
+                            // alert('test');
+
+                            alert("Starting price sync. This may take several minutes. You will be notified when it is completed.");
+
+                            
+                            //iterate through all lines to get item ids. loop through item ids. see if customer has defined pricing for each item. if yes, set custom rate. else, set current base rate for item
+                            var cust = o_rec.getValue({ fieldId: 'entity' });
+
+                            var priceSearchObj = search.create({
+                                type: "pricing",
+                                filters:
+                                [
+                                   ["pricelevel","noneof","@NONE@","1"], 
+                                   "AND", 
+                                   ["customer","anyof",cust]
+                                ],
+                                columns:
+                                [
+                                   search.createColumn({name: "item", summary: "GROUP"}),
+                                   search.createColumn({name: "pricelevel", summary: "GROUP"}),
+                                   search.createColumn({name: "unitprice", summary: "AVG"}),
+                                ]
+                            });
+                            // alert(JSON.stringify(priceSearchObj));
+                            var priceLevelIds = [157,150,98,151,99,152,100,153,101,154,102,155,103,156,105,122,106,123,107,120,108,121,114,119,113,124,109,125,115,126,116,127,117,128,118,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,159,110,1,111,5];
+                            var priceLevelNames = ['0-LAP - Lowest Allowable Price','01% Off Base Price','02% Off Base Price','03% Off Base Price','04% Off Base Price','05% Off Base Price','06% Off Base Price','07% Off Base Price','08% Off Base Price','09% Off Base Price','10% Off Base Price','11% Off Base Price','12% Off Base Price','13% Off Base Price','14% Off Base Price','15% Off Base Price','16% Off Base Price','17% Off Base Price','18% Off Base Price','19% off base price','20% Off Base Price','21% off base price','22% Off Base Price','23% Off Base Price','24% Off Base Price','25% Off Base Price','26% Off Base Price','27% Off Base Price','28% Off Base Price','29% Off Base Price','30% Off Base Price','31% Off Base Price','32% Off Base Price','33% Off Base Price','34% Off Base Price','35% Off Base Price','36% Off Base Price','37% Off Base Price','38% Off Base Price','39% Off Base Price','40% Off Base Price','42% Off Base Price','44% Off Base Price','46% Off Base Price','48% Off Base Price','50% Off Base Price','52% Off Base Price','54% Off Base Price','56% Off Base Price','58% Off Base Price','60% Off Base Price','62% Off Base Price','64% Off Base Price','66% Off Base Price','68% Off Base Price','70% Off Base Price','AMAZON','Archive Base Price','Base Price','MSRP','Online Price'];
+                            var customerPrices = [];
+                            var items = [];
+                            // var allResults = getAllResults(priceSearchObj);
+                            var allResults = priceSearchObj.runPaged().count;
+                            // alert(allResults);
+                            priceSearchObj.run().each(function(result){
+                                // .run().each has a limit of 4,000 results
+                                var item = result.getValue({
+                                    name: 'item',
+                                    summary: 'GROUP'
+                                });
+                                var price = result.getValue({
+                                    name: 'pricelevel',
+                                    summary: 'GROUP'
+                                });
+                                var rate = result.getValue({
+                                    name: 'unitprice',
+                                    summary: 'AVG'
+                                });
+                                customerPrices.push({
+                                    item: item,
+                                    price: price,
+                                    rate: rate
+                                });
+                                items.push(item);
+                                return true;
+                            });
+                            o_rec.cancelLine({sublistId: 'item'});
+                            for (x = 0; x < o_rec.getLineCount({ sublistId: 'item' }); x++) {
+                                var lineItem = o_rec.getSublistValue({ fieldId: 'item', sublistId: 'item', line: x });
+                                // alert(lineItem);
+                                var priceIndex = findWithAttr(customerPrices, 'item', lineItem);
+                                // alert("priceIndex " + priceIndex);
+                                if (priceIndex != -1) {
+                                    var priceLevelIndex = priceLevelNames.indexOf(price);
+                                    // alert("priceLevelIndex " + priceLevelIndex);
+                                    if (priceLevelIndex != -1) {
+                                        // alert("priceLevelIds[priceLevelIndex] " + priceLevelIds[priceLevelIndex]);
+                                        //set to defined customer price level for given item
+                                        o_rec.selectLine({ sublistId: 'item', line: x });
+                                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'price', value: priceLevelIds[priceLevelIndex] });
+                                        o_rec.commitLine({ sublistId: 'item', ignoreRecalc: true});
+                                    } else {
+                                        // alert("customerPrices[priceIndex].rate " + customerPrices[priceIndex].rate);
+                                        //set to custom, set rate to customer defined rate
+                                        o_rec.selectLine({ sublistId: 'item', line: x });
+                                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'price', value: '-1' });
+                                        o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'rate', value: customerPrices[priceIndex].rate });
+                                        o_rec.commitLine({ sublistId: 'item', ignoreRecalc: true});
+                                    }
+                                } else {
+                                    //set to base price level
+                                    o_rec.selectLine({ sublistId: 'item', line: x });
+                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'price', value: '1' });
+                                    o_rec.commitLine({ sublistId: 'item', ignoreRecalc: true});
+                                }
+                            }
+                            
+                            alert("Pricing has been synced for all items.");
+
+                        }
+                        if (s_rectype === 'salesorder') {
+                            for (i = 0; i < o_rec.getLineCount({ sublistId: 'item' }); i++) {
+                                if (o_rec.getSublistValue({ fieldId: 'item', sublistId: 'item', line: i }) !== 0) {
+                                    o_rec.selectLine({ sublistId: 'item', line: i });
+                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol74', value: '' });
+                                    o_rec.setCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol91', value: '' });
+                                    o_rec.commitLine({ sublistId: 'item' });
+
+                                }
+                            }
+                        }
+                    }
                 } catch (e) {
                     log.error('_so_fieldchange_pinit', e);
                 }

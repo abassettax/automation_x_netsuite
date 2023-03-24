@@ -3,8 +3,8 @@ function hideSaveAndPrintButton(type, form)
 {
      if (type == 'view');/// ||  type == 'edit' || type == 'copy')
 {
-    form.addButton('custpage_Copy', 'Make Copy & Reprice', 'CopyRecordReprice() ');  
-   	form.setScript('customscript1218');
+    // form.addButton('custpage_Copy', 'Make Copy & Reprice', 'CopyRecordReprice() ');  
+   	// form.setScript('customscript1218');
   
 }
   var today = new Date();       
