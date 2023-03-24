@@ -684,6 +684,11 @@ function Fchanged(type, name) {
       ////////////////old overstock location
     }
 
+    var item = nlapiGetCurrentLineItemValue('item', 'item');
+    var rfqAlways = nlapiLookupField('item', item , 'custitem124');
+    if (rfqAlways == 'T' || rfqAlways == true) {
+        alert('This item requires a RFQ for every transaction. Please contact Purchasing and start an RFQ prior to finalizing this order.');
+    }
 
   }
 

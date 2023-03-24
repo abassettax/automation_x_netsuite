@@ -783,6 +783,11 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             o_rec.setCurrentSublistValue({ fieldId: 'custcol_linenumber', sublistId: 'item', value: parseInt(i_linecount) + 1 });
                         }
 
+                        var item = o_rec.getCurrentSublistValue({ fieldId: 'item', sublistId: 'item' });
+                        var itemLookup = tj.lookupFields(search.lookupFields({ id: item, type: search.Type.ITEM, columns: ['custitem124'] }));
+                        if (itemLookup.custitem124 == 'T' || itemLookup.custitem124 == true) {
+                            tj.alert('This item requires a RFQ for every transaction. Please contact Purchasing and start an RFQ prior to finalizing this order.');
+                        }
 
 
                         /*}else if(context.fieldId === 'quantity' && o_rec.getValue('customform') !== 303){
