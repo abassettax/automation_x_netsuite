@@ -12,6 +12,9 @@ function PR_PageInt(type) {
         nlapiDisableField('custrecord350', true);   //Approved By
         nlapiDisableField('custrecord351', true);   //Processed By
         nlapiDisableField('custrecord352', true);   //Assigned to Sourcing
+        nlapiDisableField('custrecord359', true);   //Approval Required
+        nlapiDisableField('owner', true);           //Owner
+        nlapiDisableField('custrecord239', true);   //For Salesorder Process
     }
     // }
 }
@@ -37,6 +40,14 @@ function PR_valfield(type, name) {
             }
         } else {
             return true;
+        }
+    } else if (name == 'custrecord187') {
+        //TODO: add logic for checking Do Not Purchase field on item
+        var item = nlapiGetFieldValue('custrecord187');
+        var doNotPurchase = nlapiLookupField('item', item , 'custitem122' );
+        if (doNotPurchase == 'T' || doNotPurchase == true) {
+            alert('The item entered is marked as Do Not Purchase. Please use a different item or reach out to sourcing for an alternate.');
+            return false;
         }
     } else {
         return true;
