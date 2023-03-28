@@ -1663,6 +1663,9 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                 i_multbincheck = true;
                             }
                         }
+                        o_rec.cancelLine({
+                            sublistId: 'item'
+                        });
                     }
 
                     if (i_itemcheck > 0 && i_splitinv > 0) {
