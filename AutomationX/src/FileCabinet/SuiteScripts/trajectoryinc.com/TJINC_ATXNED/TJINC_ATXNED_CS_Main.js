@@ -1775,6 +1775,29 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                     }
                     o_rec.setValue('custbody153', s_addtocart, true);
 
+                    //check context. if UI, require tech name OR ordered by, po # OR AFE/LOE, wellsite name OR wellsite #
+                    // alert(runtime.ContextType.USER_INTERFACE);
+                    // alert(context.mode);
+                    if (runtime.executionContext === runtime.ContextType.USER_INTERFACE && context.mode == 'create') {
+                        var tech = o_rec.getValue('custbody38')    //Tech Name
+                        var orderedBy = o_rec.getValue('custbody173')   //Ordered By
+                        var poNum = o_rec.getValue('otherrefnum')   //PO #
+                        var afeLoe = o_rec.getValue('custbody10')    //AFE/LOE #
+                        var wellName = o_rec.getValue('custbody8')     //Wellsite Name
+                        var wellNum = o_rec.getValue('custbody9')     //Wellsite #
+                        if (tech == '' && orderedBy == ''){
+                            tj.alert('This order does not have a Technician Name or Ordered By set in Customer Codes. Please set one of these two values before saving.');
+                            return false;
+                        }
+                        if (poNum == '' && afeLoe == '') {
+                            tj.alert('This order does not have a PO # or AFE/LOE # set in Customer Codes. Please set one of these two values before saving.');
+                            return false;
+                        }
+                        if (wellName == '' && wellNum == ''){
+                            tj.alert('This order does not have a Wellsite Name or Well Number set in Customer Codes. Please set one of these two values before saving.');
+                            return false;
+                        }
+                    }
                     return true;
                 } catch (e) {
                     log.error('_so_onsave', e);
