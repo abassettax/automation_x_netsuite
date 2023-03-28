@@ -1790,7 +1790,7 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             return false;
                         }
                         if (poNum == '' && afeLoe == '') {
-                            tj.alert('This order does not have a PO # or AFE/LOE # set in Customer Codes. Please set one of these two values before saving.');
+                            tj.alert('This order does not have a PO # or Accounting # set in Customer Codes. Please set one of these two values before saving.');
                             return false;
                         }
                         if (wellName == '' && wellNum == ''){
