@@ -99,6 +99,7 @@
             var prType = currentRecord.getValue('custpage_prtype');
             var purchMethod = currentRecord.getValue('custpage_purchmethod');
             var ax5code = currentRecord.getValue('custpage_ax5code');
+            window.onbeforeunload = null;
             window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2234&deploy=1&compid=422523' + '&locationFilter=' + location_1 + '&normallystocked=' + normallystocked + '&prType=' + prType + '&purchMethod=' + purchMethod + '&ax5code=' + ax5code, '_self');
             return true;
         }

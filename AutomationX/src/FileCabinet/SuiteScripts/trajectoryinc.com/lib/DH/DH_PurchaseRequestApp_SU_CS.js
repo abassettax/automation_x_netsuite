@@ -78,6 +78,7 @@
             var prType = currentRecord.getValue('custpage_prtype');
             var ax5code = currentRecord.getValue('custpage_ax5code');
             var sourcing = currentRecord.getValue('custpage_sourcing');
+            window.onbeforeunload = null;
             window.open('https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2456&deploy=1&compid=422523' + '&locationFilter=' + location_1 + '&prType=' + prType + '&ax5code=' + ax5code + '&sourcing=' + sourcing, '_self');
             return true;
         }
