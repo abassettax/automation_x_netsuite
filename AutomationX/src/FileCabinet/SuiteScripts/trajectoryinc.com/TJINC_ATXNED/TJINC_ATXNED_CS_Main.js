@@ -1663,6 +1663,48 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                                 i_multbincheck = true;
                             }
                         }
+
+                        var i_prVal = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol90' });
+                        var i_prType = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol117' });
+                        var i_prVendor = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol118' });
+
+                        var i_loc = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'location' });
+                        var i_tranloc = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol114' });
+                        var i_tranqtyavail = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol115' });
+                        var i_qty = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity' });
+
+                        // log.debug('Purchase Request: ', i_prVal);
+                        if (i_prVal) {
+                            if (i_prVal == '1') {
+                                //if PR, validate selection for purchase request type
+                                if (i_prType == '') {
+                                    tj.alert('Line '+(i+1)+' that you selected for a Purchase Request does not have a Purchase Request Type set. Please correct this line before submitting.')
+                                    return false;
+                                }
+                            }
+                            if (i_prVal != '5') {
+                                //if PR, validate selection for Vendor
+                                if (i_prVendor == '') {
+                                    tj.alert('Line '+(i+1)+' that you selected for a Purchase Request does not have a Vendor set. Please correct this line before submitting.')
+                                    return false;
+                                }
+                            }
+                            if (i_prVal == '5') {
+                                if (i_loc == '218' || i_loc == '219' || i_tranloc == '218' || i_tranloc == '219') {
+                                    tj.alert('Line '+(i+1)+' that you selected for a Transfer is attempting to transfer from/to a panel shop. Please choose a different location before submitting.')
+                                    return false;
+                                }
+                                //if TO, validate selection for ship loc (and qty avail > qty)
+                                if (i_loc == '' || i_tranloc == '') {
+                                    tj.alert('Line '+(i+1)+' that you selected for a Transfer is missing either a Ship Location or a Transfer From Location. Please correct this line before submitting.')
+                                    return false;
+                                } else if (i_tranqtyavail == '' || i_tranqtyavail == 0 || i_tranqtyavail < i_qty) {
+                                    tj.alert('Line '+(i+1)+' that you selected for a Transfer does not have enough quantity to transfer. Either select a location with enough available to complete the line or change to a Purchase Request. Please correct this line before submitting.')
+                                    return false;
+                                }
+                            }
+                        }
+
                         o_rec.cancelLine({
                             sublistId: 'item'
                         });
