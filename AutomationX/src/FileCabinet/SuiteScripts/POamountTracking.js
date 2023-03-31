@@ -19,7 +19,12 @@ function poamounttracking(type) {
       //customscript855   customscript357
       var approvalStatus = nlapiGetFieldValue('approvalstatus');
       if (approvalStatus == '2') {  //Approved
-        form.addButton('custpage_emailpo', 'Email Untransmitted PO', 'SendPOEmailRefreshes() ');
+        var materialStatus = nlapiGetFieldValue('custbody6');
+        if (materialStatus == '1') {
+          form.addButton('custpage_emailpo', 'Email Untransmitted PO', 'SendPOEmailRefreshes() ');
+        } else if (materialStatus == '7') {
+          form.addButton('custpage_emailpo', 'Email Unconfirmed PO', 'SendPOEmailRefreshes() ');
+        }
       }
     }
     form.setScript('customscript357'); // sets the script on the client side

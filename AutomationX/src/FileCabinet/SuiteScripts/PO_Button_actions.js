@@ -278,8 +278,8 @@ function SendPOEmailRefreshes() {
   var rec = nlapiLookupField('purchaseorder', nlapiGetRecordId(), pofields);   //nlapiLoadRecord('purchaseorder', nlapiGetRecordId());
   var vendorid = rec.entity;   //rec.getFieldValue('entity');
   var POtransmitEmail = nlapiLookupField('vendor', vendorid, 'email');
-  if (rec.custbody6 != 7) { alert('This PO has already been sent.'); return false; }
-  if (!POtransmitEmail) { alert('Vendor is Missing PO transmision Email.  Please add PO Email To Vendor '); return false; }
+  // if (rec.custbody6 != 7) { alert('This PO has already been sent.'); return false; }
+  // if (!POtransmitEmail) { alert('Vendor is Missing PO transmision Email.  Please add PO Email To Vendor '); return false; }
   nlapiSubmitField("purchaseorder", nlapiGetRecordId(), 'custbody201', 'T');
   var createPOUrl = window.location.href + '&selectedtab=cmmnctntab';
   window.open(createPOUrl, '_self');

@@ -16,8 +16,7 @@ function EmailPOButton(context, form) {
     var thisPOID = nlapiGetRecordId();
     var documentnumber = nlapiGetFieldValue('tranid');
 
-
-    if (materialstatus == 7 || materialstatus == 1 || materialstatus == 8)//////////////////////////////////start transmit email
+    if (materialstatus == 7 || materialstatus == 1)//////////////////////////////////start transmit email
     {
 
       var fileinvoice = nlapiPrintRecord('TRANSACTION', thisPOID, 'DEFAULT', null);
@@ -29,6 +28,7 @@ function EmailPOButton(context, form) {
 
 
       var author = nlapiGetUser();
+      // var author = 38129;
       var USERNAME = nlapiLookupField('employee', author, 'entityid');
       var recipient = POtransmitEmail;
 
@@ -37,12 +37,24 @@ function EmailPOButton(context, form) {
       var mergeResult = emailMerger.merge(); // Merge the template with the email
 
 
-      var emailSubject = mergeResult.getSubject(); // Get the subject for the email
-      var emailBody = mergeResult.getBody(); // Get the body for the email
+      // var emailSubject = mergeResult.getSubject(); // Get the subject for the email
+      // var emailBody = mergeResult.getBody(); // Get the body for the email
 
-      if (materialstatus == 1) { emailSubject = ' **Confirm PO** Automation-X Corporation: Purchase Order # ' + documentnumber; emailBody = '**DO NOT DUPLICATE**THIS IS A REQUEST FOR AN UPDATE ON AN EXISTING ORDER** Please confirm receipt of ' + documentnumber + ' and provide a ship date.'; }///unconfirmed
-      if (materialstatus == 8) { emailSubject = ' **Ship Dates** Automation-X Corporation: Purchase Order # ' + documentnumber; emailBody = '**DO NOT DUPLICATE**THIS IS A REQUEST FOR AN UPDATE ON AN EXISTING ORDER** Please provide a ship date for our order ' + documentnumber + '. If the order has shipped, please provide tracking.'; }///confirmed pending ship dates
-      if (materialstatus == 8 && nlapiGetFieldValue('custbody147') == 'T') { emailSubject = ' **Ship Dates** Automation-X Corporation: Purchase Order # ' + documentnumber; emailBody = '**DO NOT DUPLICATE**THIS IS A REQUEST FOR AN UPDATE ON AN EXISTING ORDER** Please provide a ship date for our order ' + documentnumber + '. If the order has shipped, please provide tracking and freight cost.'; }///confirmed pending ship dates
+      var emailBody = '<font size="2"><b><font color="#ff0000"><span style="mso-spacerun: yes">***PLEASE NOTE THE SHIP TO ADDRESS***</span></font></b></font><br /><br /><b>Automation-X Corporation: Purchase Order # '+tranId+'</b><br /><br />';                   
+
+
+      if (materialstatus == 1) { 
+        var emailSubject = ' **Confirm PO** Automation-X Corporation: Purchase Order # ' + documentnumber;
+        emailBody += '<font size="3">Please review the attached purchase order and reply to this email within <b>24 hours</b> to verify this purchase order was received and processed. Please include an expected ship date and/or tracking if available.</font><p><font size="3"><font face="Calibri"><span style="mso-spacerun: yes">';
+ 
+      }///unconfirmed
+      if (materialstatus == 7) { 
+        var emailSubject = ' **Confirm PO Ship Date** Automation-X Corporation: Purchase Order # ' + documentnumber;
+        emailBody += '<font size="3">Please review the attached purchase order and reply to this email within <b>24 hours</b> to verify this purchase order was received and processed. Please include an expected ship date and/or tracking if available.</font><p><font size="3"><font face="Calibri"><span style="mso-spacerun: yes">';
+ 
+      }///unconfirmed
+
+      emailBody += '<b>NOTE: If pricing on PO is not correct, do not ship product until you have received a revised PO.  Acceptance of this PO constitutes acceptance of listed pricing.</b></span></font></font></p><font size="3"><font face="Calibri"><font face="Arial" size="1"> </font></font></font><p align="center" class="MsoNormal" style="TEXT-ALIGN: center; MARGIN: 0in 0in 0pt"><b style="mso-bidi-font-weight: normal"><font size="3">Automation-X Shipping Terms:</font></span></b></p><p align="center"><font size="3"><font size="2"><b>Standard Warehouse Shipments:</b></font></font></p><p align="center" class="MsoNormal" style="text-align: center; margin: 0in 0in 0pt;"><font size="3"><font face="Calibri"><span style="font-family: "Garamond","serif";">Please ship all small package shipments via UPS Ground account #05R4X4.  </span></font></font></p><p align="center" class="MsoNormal" style="TEXT-ALIGN: center; MARGIN: 0in 0in 0pt"><font size="3"><font face="Calibri">For Freight shipments use FedEx Freight #653849990.  These shipping accounts can be used for anything that is shipping to one of our warehouse locations.<br /><br />Please send an order confirmation or report any discrepancies within 24 hours to <font color="#0000ff"><a href="mailto:purchasing@automation-x.com">purchasing@automation-x.com</a>. </font>Please include estimated ship dates. In the event of delays or back-orders please contact purchasing immediately.<br /><br />Please let us know if you have any questions.<br /><br />Have a great week!</span></font></font></p><font size="3"><font face="Calibri"> </font></font><p align="center"><font size="3"><font face="Calibri"><a href="mailto:purchasing@automation-x.com"><font color="#0000ff">purchasing@automation-x.com</font></a></span></font></font></p>';
 
       var records = new Object();
       records['transaction'] = thisPOID;
@@ -59,13 +71,13 @@ function EmailPOButton(context, form) {
       var releasenotes = '';
       if (materialstatus == 7 && !ExistingreleaseNotes) { releasenotes = transmistiondate + ' Emailed to Vendor. ' + USERNAME; } // untransmited 
       if (materialstatus == 1 && !ExistingreleaseNotes) { releasenotes = transmistiondate + ' Emailed to Vendor for confirmation. ' + USERNAME; }///unconfirmed
-      if (materialstatus == 8 && !ExistingreleaseNotes) { releasenotes = transmistiondate + ' Emailed to Vendor for ship dates.' + USERNAME; }///confirmed pending ship dates
-      if (materialstatus == 8 && !ExistingreleaseNotes && nlapiGetFieldValue('custbody147') == 'T') { releasenotes = transmistiondate + 'Emailed to Vendor for ship dates  and freight cost. ' + USERNAME; }///confirmed pending ship dates drop
+      // if (materialstatus == 8 && !ExistingreleaseNotes) { releasenotes = transmistiondate + ' Emailed to Vendor for ship dates.' + USERNAME; }///confirmed pending ship dates
+      // if (materialstatus == 8 && !ExistingreleaseNotes && nlapiGetFieldValue('custbody147') == 'T') { releasenotes = transmistiondate + 'Emailed to Vendor for ship dates  and freight cost. ' + USERNAME; }///confirmed pending ship dates drop
 
       if (ExistingreleaseNotes && materialstatus == 7) { releasenotes = ExistingreleaseNotes + '</br>' + transmistiondate + ' Emailed to Vendor. ' + USERNAME; }
       if (ExistingreleaseNotes && materialstatus == 1) { releasenotes = ExistingreleaseNotes + '</br>' + transmistiondate + ' Emailed to Vendor for confirmation. ' + USERNAME; }///unconfirmed
-      if (ExistingreleaseNotes && materialstatus == 8) { releasenotes = ExistingreleaseNotes + '</br>' + transmistiondate + ' Emailed to Vendor for ship dates. ' + USERNAME; }///confirmed pending ship dates
-      if (ExistingreleaseNotes && materialstatus == 8 && nlapiGetFieldValue('custbody147') == 'T') { releasenotes = ExistingreleaseNotes + '</br>' + transmistiondate + ' Emailed to Vendor for ship dates and freight cost. ' + USERNAME; }///confirmed pending ship dates
+      // if (ExistingreleaseNotes && materialstatus == 8) { releasenotes = ExistingreleaseNotes + '</br>' + transmistiondate + ' Emailed to Vendor for ship dates. ' + USERNAME; }///confirmed pending ship dates
+      // if (ExistingreleaseNotes && materialstatus == 8 && nlapiGetFieldValue('custbody147') == 'T') { releasenotes = ExistingreleaseNotes + '</br>' + transmistiondate + ' Emailed to Vendor for ship dates and freight cost. ' + USERNAME; }///confirmed pending ship dates
 
       var lastsaved = transmistiondate;
       var shipdate = "";
@@ -85,7 +97,7 @@ function EmailPOButton(context, form) {
       var newmaterialstatus = 1;
       if (materialstatuss == 8) { newmaterialstatus = 8; }
 
-      nlapiSubmitField('purchaseorder', thisPOID, ['custbody45', 'shipdate', 'custbody6', 'custbody77', 'custbody71', 'custbody201'], [releasenotes, shipdate, newmaterialstatus, lastsaved, nextactiondate, 'F']);
+      nlapiSubmitField('purchaseorder', thisPOID, ['custbody45', 'shipdate', 'custbody6', 'custbody77', 'custbody71', 'custbody201', custbody242], [releasenotes, shipdate, newmaterialstatus, lastsaved, nextactiondate, 'F', today]);
       var selectedTabParam = new Array();
       selectedTabParam['selectedtab'] = 'cmmnctntab';
       selectedTabParam['custparamsendemail'] = 'T';
