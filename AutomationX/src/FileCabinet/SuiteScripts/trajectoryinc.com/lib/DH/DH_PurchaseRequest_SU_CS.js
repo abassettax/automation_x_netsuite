@@ -110,6 +110,7 @@
         var lineCount = currentRecord.getLineCount({
             sublistId: 'custpagesublist'
         });
+        var prType = currentRecord.getValue('custpage_prtype');
         var failedLine;
         var zeroLines = true;
         var emptyStatus = false;
@@ -117,6 +118,7 @@
         var zeroQtys = false;
         // var typesArray = [];
         var methodsArray = [];
+        var selectedLines = [];
         for (var i = 0; i < lineCount; i++) {
             var processLine = currentRecord.getSublistValue({
                 sublistId: 'custpagesublist',
@@ -124,6 +126,7 @@
                 line: i
             });
             if (processLine == true) {
+                selectedLines.push(i);
                 zeroLines = false;
                 var status = currentRecord.getSublistValue({
                     sublistId: 'custpagesublist',
@@ -229,6 +232,16 @@
             var myMsg = message.create({
                 title: 'MULTIPLE PURCH METHODS',
                 message: 'The requests you selected are across multiple purchase methods. Please select requests of a single purchase method before submitting.',
+                type: message.Type.ERROR
+            });
+            myMsg.show({
+                duration: 10000 // will disappear after 5s
+            });
+            return false;
+        } else if ((prType == '3' || prType == '5') && selectedLines.length > 1) { 
+            var myMsg = message.create({
+                title: 'MULTIPLE LINES ON DROP SHIP',
+                message: 'The requests you selected are drop ships and cannot be processed together. Please select a single drop ship order before submitting.',
                 type: message.Type.ERROR
             });
             myMsg.show({
