@@ -40,7 +40,7 @@ function EmailPOButton(context, form) {
       // var emailSubject = mergeResult.getSubject(); // Get the subject for the email
       // var emailBody = mergeResult.getBody(); // Get the body for the email
 
-      var emailBody = '<font size="2"><b><font color="#ff0000"><span style="mso-spacerun: yes">***PLEASE NOTE THE SHIP TO ADDRESS***</span></font></b></font><br /><br /><b>Automation-X Corporation: Purchase Order # '+tranId+'</b><br /><br />';                   
+      var emailBody = '<font size="2"><b><font color="#ff0000"><span style="mso-spacerun: yes">***PLEASE NOTE THE SHIP TO ADDRESS***</span></font></b></font><br /><br /><b>Automation-X Corporation: Purchase Order # '+documentnumber+'</b><br /><br />';                   
 
 
       if (materialstatus == 1) { 
@@ -97,7 +97,7 @@ function EmailPOButton(context, form) {
       var newmaterialstatus = 1;
       if (materialstatuss == 8) { newmaterialstatus = 8; }
 
-      nlapiSubmitField('purchaseorder', thisPOID, ['custbody45', 'shipdate', 'custbody6', 'custbody77', 'custbody71', 'custbody201', custbody242], [releasenotes, shipdate, newmaterialstatus, lastsaved, nextactiondate, 'F', today]);
+      nlapiSubmitField('purchaseorder', thisPOID, ['custbody45', 'shipdate', 'custbody6', 'custbody77', 'custbody71', 'custbody201', 'custbody242'], [releasenotes, shipdate, newmaterialstatus, lastsaved, nextactiondate, 'F', today]);
       var selectedTabParam = new Array();
       selectedTabParam['selectedtab'] = 'cmmnctntab';
       selectedTabParam['custparamsendemail'] = 'T';
