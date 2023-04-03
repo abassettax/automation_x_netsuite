@@ -6,6 +6,38 @@ define([
     'N/email', 'N/runtime', 'N/record', 'N/log', 'N/url'
 ], function (email, runtime, record, log, url) {
 
+    function beforeSubmit(context) {
+        var poRec = context.newRecord;
+        log.debug({
+            title: 'beforeSubmit',
+            details: 'context.type: ' + context.type
+        });
+        log.debug({
+            title: 'beforeSubmit',
+            details: 'runtime.executionContext: ' + runtime.executionContext
+        });
+        var itemLines = poRec.getLineCount({
+            sublistId: 'item'
+        });
+        log.debug('itemLines', itemLines);
+        for (var j = 0; j < itemLines; j++) {
+            var tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            poRec.setSublistValue({
+                sublistId: 'item',
+                fieldId : 'custcol11',
+                line : j,
+                value : tomorrow
+            });
+            poRec.setSublistValue({
+                sublistId: 'item',
+                fieldId : 'expectedreceiptdate',
+                line : j,
+                value : null
+            });
+        }
+    }
+    
     function afterSubmit(context) {
         log.debug({
             title: 'afterSubmit',
@@ -115,5 +147,8 @@ define([
             }
         }
     }
-    return {afterSubmit: afterSubmit};
+    return {
+        beforeSubmit: beforeSubmit,
+        afterSubmit: afterSubmit
+    };
 });

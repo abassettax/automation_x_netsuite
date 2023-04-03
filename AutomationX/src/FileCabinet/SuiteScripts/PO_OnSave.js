@@ -36,13 +36,14 @@ function PO_OnSave(type) {
   if (!tranid) {
     //clear ship date field on create, leave blank until confirmed
     nlapiSetFieldValue('shipdate', null);
-    for (x = 1; x <= lineCount; x++) {
+    //moving to PO Ue on beforeSubmit
+    // for (x = 1; x <= lineCount; x++) {
       //requested ship to to current day + 1
       //quoted ship date null
-      var tomorrow = nlapiAddDays(new Date(), 1);
-      nlapiSetLineItemValue('item', 'custcol11', x, tomorrow);
-      nlapiSetLineItemValue('item', 'expectedreceiptdate', x, null);
-    }
+      // var tomorrow = nlapiAddDays(new Date(), 1);
+      // nlapiSetLineItemValue('item', 'custcol11', x, tomorrow);
+      // nlapiSetLineItemValue('item', 'expectedreceiptdate', x, '');
+    // }
   }
   var rec = nlapiGetFieldValue('custbody_po_follow_up');
 
