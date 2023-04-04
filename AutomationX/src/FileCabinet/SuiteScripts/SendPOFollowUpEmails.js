@@ -16,7 +16,7 @@ function EmailPOButton(context, form) {
     var thisPOID = nlapiGetRecordId();
     var documentnumber = nlapiGetFieldValue('tranid');
 
-    if (materialstatus == 7 || materialstatus == 1)//////////////////////////////////start transmit email
+    if ((materialstatus == 7 || materialstatus == 1) && POtransmitEmail != '')//////////////////////////////////start transmit email
     {
 
       var fileinvoice = nlapiPrintRecord('TRANSACTION', thisPOID, 'DEFAULT', null);
