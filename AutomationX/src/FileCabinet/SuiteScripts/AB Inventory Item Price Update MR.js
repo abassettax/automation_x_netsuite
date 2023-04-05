@@ -57,23 +57,23 @@
                     });
                     break;
                 }
-                if (priceLevel == '157') {
-                    log.debug('Start low price update','item id: ' + itemId);
-                    var lowPrice = invItem.getSublistValue({
-                        sublistId: 'price',
-                        fieldId: 'price_1_',
-                        line: i
-                    });
-                    log.debug('old lowPrice', lowPrice);
-                    log.debug('new lowPrice', newLowPrice);
-                    invItem.setSublistValue({
-                        sublistId: 'price',
-                        fieldId: 'price_1_',
-                        line: i,
-                        value: newLowPrice
-                    });
-                    break;
-                }
+                // if (priceLevel == '157') {
+                //     log.debug('Start low price update','item id: ' + itemId);
+                //     var lowPrice = invItem.getSublistValue({
+                //         sublistId: 'price',
+                //         fieldId: 'price_1_',
+                //         line: i
+                //     });
+                //     log.debug('old lowPrice', lowPrice);
+                //     log.debug('new lowPrice', newLowPrice);
+                //     invItem.setSublistValue({
+                //         sublistId: 'price',
+                //         fieldId: 'price_1_',
+                //         line: i,
+                //         value: newLowPrice
+                //     });
+                //     break;
+                // }
             }
             invItem.save({ 
                 enableSourcing: false, 
