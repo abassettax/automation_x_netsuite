@@ -259,7 +259,7 @@ define(["require", "exports", "N/log", "N/record", "N/render", "N/https", "N/sea
         
         // region Form Elements
         var FORM_BUTTONS = [];
-        FORM_BUTTONS.push({ id: 'custpage_clear_btn', label: 'Clear All Lines', functionName: 'clearalllines' });
+        // FORM_BUTTONS.push({ id: 'custpage_clear_btn', label: 'Clear All Lines', functionName: 'clearalllines' });
         FORM_BUTTONS.push({ id: 'custpage_reset', label: 'Reset', functionName: 'reset' });
 
         // sublist fields
