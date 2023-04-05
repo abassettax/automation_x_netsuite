@@ -48,9 +48,14 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/run
                 id : 'custpage_main',
                 label : 'Settings'
             });
+            if (rfqType == '1') {
+                var labelStr = 'RFQ Details';
+            } else {
+                var labelStr = 'Email Details';
+            }
             var emailGroup = form.addFieldGroup({
                 id : 'custpage_secondary',
-                label : 'Email Details'
+                label : labelStr
             });
 
             var rfqTypeFld = form.addField({ id: 'custpage_rfqtype', type: serverWidget.FieldType.SELECT, label: 'Request Type', container : 'custpage_main'});
@@ -156,10 +161,12 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/run
                 notesFld.updateBreakType({
                     breakType : serverWidget.FieldBreakType.STARTROW
                 });
-                var attachmentFld = form.addField({ id: 'custpage_attach', type: serverWidget.FieldType.FILE, label: 'Email Attachment'});
-                // attachmentFld.updateBreakType({
-                //     breakType : serverWidget.FieldBreakType.STARTROW
-                // });
+                if (rfqType != '1') {
+                    var attachmentFld = form.addField({ id: 'custpage_attach', type: serverWidget.FieldType.FILE, label: 'Email Attachment'});
+                    // attachmentFld.updateBreakType({
+                    //     breakType : serverWidget.FieldBreakType.STARTROW
+                    // });
+                }
                 var emailBodyFld = form.addField({ id: 'custpage_emailbody', type: serverWidget.FieldType.RICHTEXT, label: 'Email Body'});
                 emailBodyFld.updateBreakType({
                     breakType : serverWidget.FieldBreakType.STARTROW
@@ -177,12 +184,30 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/run
                     fiveCodeFld.updateDisplayType({
                         displayType : serverWidget.FieldDisplayType.HIDDEN
                     });
-                    tranFld.isMandatory = true;
+                    // tranFld.isMandatory = true;
                     itemFld.isMandatory = true;
                     qtyFld.isMandatory = true;
                     vendorFld.isMandatory = true;
-                    customerFld.isMandatory = true;
+                    // customerFld.isMandatory = true;
                     dueDateFld.isMandatory = true;
+                    ccFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    tranFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    customerFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    emailFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    subjectFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+                    emailBodyFld.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
                 } else if (rfqType == '2') {
                     //PO Update
                     emailFld.defaultValue = 'purchasing@automation-x.com';
@@ -257,8 +282,13 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/run
                     vendorFld.isMandatory = true;
                 }
     
+                if (rfqType == '1') {
+                    var labelStr2 = 'Submit RFQ';
+                } else {
+                    var labelStr2 = 'Send Email';
+                }
                 form.addSubmitButton({
-                    label: 'Send Email'
+                    label: labelStr2
                 });
             }
             
@@ -271,90 +301,150 @@ define(["require", "exports", "N/log", "N/record", "N/https", "N/search", "N/run
                 title: 'post rfqType',
                 details: rfqType
             });
-            var tranId = context.request.parameters.custpage_tranid;
-            log.debug({
-                title: 'post tranId',
-                details: tranId
-            });
-            var userId = runtime.getCurrentUser().id;
-            log.debug({
-                title: 'post userId',
-                details: userId
-            });
-            var emailTo = context.request.parameters.custpage_email;
-            log.debug({
-                title: 'post emailTo',
-                details: emailTo
-            });
-            var subject = context.request.parameters.custpage_subject;
-            log.debug({
-                title: 'post subject',
-                details: subject
-            });
-            var emailBody = context.request.parameters.custpage_emailbody;
-            log.debug({
-                title: 'post emailBody',
-                details: emailBody
-            });
-            var ccCheck = context.request.parameters.custpage_ccteam;
-            log.debug({
-                title: 'post ccCheck',
-                details: ccCheck
-            });
-            var ccEmail = context.request.parameters.custpage_ccemail;
-            log.debug({
-                title: 'post ccEmail',
-                details: ccEmail
-            });
-            var ccEmails = [];
-            if (ccCheck) {
-                ccEmails.push(ccEmail);
-            }
-            log.debug({
-                title: 'post ccEmails',
-                details: JSON.stringify(ccEmails)
-            });
-            var attachment = context.request.files['custpage_attach'];
-            log.debug({
-                title: 'post attachment',
-                details: attachment
-            });
-            if (attachment) {
-                var file1 = context.request.files['custpage_attach'];
-                var attachments = [file1];
+            if (rfqType != '1') {
+                var tranId = context.request.parameters.custpage_tranid;
+                log.debug({
+                    title: 'post tranId',
+                    details: tranId
+                });
+                var userId = runtime.getCurrentUser().id;
+                log.debug({
+                    title: 'post userId',
+                    details: userId
+                });
+                var emailTo = context.request.parameters.custpage_email;
+                log.debug({
+                    title: 'post emailTo',
+                    details: emailTo
+                });
+                var subject = context.request.parameters.custpage_subject;
+                log.debug({
+                    title: 'post subject',
+                    details: subject
+                });
+                var emailBody = context.request.parameters.custpage_emailbody;
+                log.debug({
+                    title: 'post emailBody',
+                    details: emailBody
+                });
+                var ccCheck = context.request.parameters.custpage_ccteam;
+                log.debug({
+                    title: 'post ccCheck',
+                    details: ccCheck
+                });
+                var ccEmail = context.request.parameters.custpage_ccemail;
+                log.debug({
+                    title: 'post ccEmail',
+                    details: ccEmail
+                });
+                var ccEmails = [];
+                if (ccCheck) {
+                    ccEmails.push(ccEmail);
+                }
+                log.debug({
+                    title: 'post ccEmails',
+                    details: JSON.stringify(ccEmails)
+                });
+                var attachment = context.request.files['custpage_attach'];
+                log.debug({
+                    title: 'post attachment',
+                    details: attachment
+                });
+                if (attachment) {
+                    var file1 = context.request.files['custpage_attach'];
+                    var attachments = [file1];
+                } else {
+                    var attachments = [];
+                }
+                
+                // emailTo = 'andrew.bassett@automation-x.com';
+                // var ccEmails = [];
+    
+                if (tranId != '') {
+                    email.send({
+                        author: userId,
+                        recipients: emailTo,
+                        subject: subject,
+                        body: emailBody,
+                        relatedRecords: {
+                            transactionId: tranId
+                        },
+                        cc: ccEmails,
+                        attachments: attachments
+                    });
+                } else {
+                    email.send({
+                        author: userId,
+                        recipients: emailTo,
+                        subject: subject,
+                        body: emailBody,
+                        cc: ccEmails,
+                        attachments: attachments
+                    });
+                }
+                log.debug({
+                    title: 'post',
+                    details: 'Inquiry Email Sent'
+                });
             } else {
-                var attachments = [];
+                //create RFQ record with input data
+                var userId = runtime.getCurrentUser().id;
+                log.debug({
+                    title: 'post userId',
+                    details: userId
+                });
+                var urgent = context.request.parameters.custpage_urgent;
+                log.debug({
+                    title: 'post urgent',
+                    details: urgent
+                });
+                if (urgent == 'T') {
+                    urgent = true;
+                } else {
+                    urgent = false;
+                }
+                var itemId = context.request.parameters.custpage_itemid;
+                log.debug({
+                    title: 'post itemId',
+                    details: itemId
+                });
+                var qty = context.request.parameters.custpage_qty;
+                log.debug({
+                    title: 'post qty',
+                    details: qty
+                });
+                var vendor = context.request.parameters.custpage_vendor;
+                log.debug({
+                    title: 'post vendor',
+                    details: vendor
+                });
+                var due = context.request.parameters.custpage_due;
+                log.debug({
+                    title: 'post due',
+                    details: due
+                });
+                var newDate = new Date (Date.parse(due));
+                log.debug('newDate',newDate);
+                var notes = context.request.parameters.custpage_notes;
+                log.debug({
+                    title: 'post notes',
+                    details: notes
+                });
+                var rfqRecord = record.create({
+                    type: 'customrecord1506',
+                    isDynamic: true
+                });
+                rfqRecord.setValue({ fieldId: 'owner', value: userId });
+                rfqRecord.setValue({ fieldId: 'custrecord361', value: itemId });
+                rfqRecord.setValue({ fieldId: 'custrecord362', value: vendor });
+                rfqRecord.setValue({ fieldId: 'custrecord363', value: qty });
+                rfqRecord.setValue({ fieldId: 'custrecord364', value: newDate });
+                rfqRecord.setValue({ fieldId: 'custrecord365', value: urgent });
+                rfqRecord.setValue({ fieldId: 'custrecord366', value: notes });
+                rfqRecord.setValue({ fieldId: 'custrecord370', value: 1 });
+                rfqRecord.save();
             }
             
-            // emailTo = 'andrew.bassett@automation-x.com';
-            // var ccEmails = [];
-
-            if (tranId != '') {
-                email.send({
-                    author: userId,
-                    recipients: emailTo,
-                    subject: subject,
-                    body: emailBody,
-                    relatedRecords: {
-                        transactionId: tranId
-                    },
-                    cc: ccEmails,
-                    attachments: attachments
-                });
-            } else {
-                email.send({
-                    author: userId,
-                    recipients: emailTo,
-                    subject: subject,
-                    body: emailBody,
-                    cc: ccEmails,
-                    attachments: attachments
-                });
-            }
-            log.debug({
-                title: 'post',
-                details: 'Inquiry Email Sent'
-            });
             // Reload the current page.
             context.response.sendRedirect({
                 type: https.RedirectType.SUITELET,
