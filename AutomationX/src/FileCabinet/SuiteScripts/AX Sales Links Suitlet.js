@@ -57,8 +57,6 @@ function salesLinksCard(request, response) {
   var searchUrl11 = 'https://422523.app.netsuite.com/app/common/search/searchresults.nl?searchid=7466&whence=';
   var searchName12 = 'Purchasing/Sourcing Inquiry';
   var searchUrl12 = 'https://422523.app.netsuite.com/app/site/hosting/scriptlet.nl?script=2472&deploy=1&compid=422523';
-  var searchName12 = '';
-  var searchUrl12 = '';
   var searchName13 = 'Open Purchase Orders';
   var searchUrl13 = 'https://422523.app.netsuite.com/app/common/search/searchresults.nl?&searchid=7465&whence=';
   var searchName14 = 'My BUs Purchase Requests';
