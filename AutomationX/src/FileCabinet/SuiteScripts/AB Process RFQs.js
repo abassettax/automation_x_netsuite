@@ -63,6 +63,7 @@ define(["require", "exports", "N/log", "N/record", "N/render", "N/https", "N/sea
                 poList.setSublistValue({ id: 'line', value: parseFloat(index + 1).toFixed(), line: index });
                 poList.setSublistValue({ id: 'id', value: rfqResult.id, line: index });
                 poList.setSublistValue({ id: 'idtext', value: rfqResult.idtext, line: index });
+                poList.setSublistValue({ id: 'fivecode', value: rfqResult.fivecode, line: index });
                 poList.setSublistValue({ id: 'item', value: rfqResult.item, line: index });
                 poList.setSublistValue({ id: 'qty', value: rfqResult.qty, line: index });         
                 poList.setSublistValue({ id: 'vendor', value: rfqResult.vendor, line: index });
@@ -249,6 +250,7 @@ define(["require", "exports", "N/log", "N/record", "N/render", "N/https", "N/sea
         REQUEST_FIELDS.push({ value: '', config: { id: 'process', type: serverWidget.FieldType.CHECKBOX, label: 'Email'}, displayType: serverWidget.FieldDisplayType.ENTRY });
         REQUEST_FIELDS.push({ value: '', config: { id: 'id', type: serverWidget.FieldType.SELECT, label: 'RFQ Detail', source: 'customrecord1506' }, displayType: serverWidget.FieldDisplayType.HIDDEN });
         REQUEST_FIELDS.push({ value: '', config: { id: 'idtext', type: serverWidget.FieldType.TEXT, label: 'RFQ Detail', source: 'customrecord1506' }, displayType: serverWidget.FieldDisplayType.DISABLED });
+        REQUEST_FIELDS.push({ value: '', config: { id: 'fivecode', type: serverWidget.FieldType.TEXT, label: '5 Code', source: 'item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         REQUEST_FIELDS.push({ value: '', config: { id: 'item', type: serverWidget.FieldType.TEXT, label: 'Item', source: 'item' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         REQUEST_FIELDS.push({ value: '', config: { id: 'qty', type: serverWidget.FieldType.INTEGER, label: 'Qty' }, displayType: serverWidget.FieldDisplayType.DISABLED });
         REQUEST_FIELDS.push({ value: '', config: { id: 'vendor', type: serverWidget.FieldType.TEXT, label: 'Vendor', source: 'vendor' }, displayType: serverWidget.FieldDisplayType.DISABLED });
@@ -285,6 +287,7 @@ define(["require", "exports", "N/log", "N/record", "N/render", "N/https", "N/sea
                 var deadline = allResults[i].getValue(allResults[i].columns[6]);
                 var notes = allResults[i].getValue(allResults[i].columns[7]);
                 var urgent = allResults[i].getValue(allResults[i].columns[8]) ? 'T' : 'F';
+                var fivecode = allResults[i].getValue(allResults[i].columns[9]);
                 rfqResults.push({
                     id: rfqId,
                     idtext: rfqId,
@@ -295,7 +298,8 @@ define(["require", "exports", "N/log", "N/record", "N/render", "N/https", "N/sea
                     created: dateCreated,
                     deadline: deadline,
                     notes: notes,
-                    urgent: urgent
+                    urgent: urgent,
+                    fivecode: fivecode
                 });
             }
             return rfqResults;
