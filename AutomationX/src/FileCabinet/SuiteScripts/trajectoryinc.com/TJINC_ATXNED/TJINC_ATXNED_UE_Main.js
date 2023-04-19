@@ -826,6 +826,7 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                 try {
                     if (runtime.executionContext !== runtime.ContextType.MAP_REDUCE) {
                         var updatePrices = [];
+                        var createRFQs = [];
                         var commitVal = 0;
                         var backVal = 0;
                         var cust = context.newRecord.getValue('entity');
@@ -884,6 +885,16 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                             log.debug('beforeSubmit - backOrdered', backOrdered);
                             commitVal = parseFloat(commitVal) + parseFloat((parseFloat(lineCommitted)*parseFloat(rate)).toFixed(2));
                             backVal = parseFloat(backVal) + parseFloat((parseFloat(backOrdered)*parseFloat(rate)).toFixed(2));
+                            var createRFQ = context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol124' });
+                            if (createRFQ) {
+                                createRFQs.push({
+                                    item: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'item' }),
+                                    qty: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'quantity' }),
+                                    vendor: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol125' }),
+                                    deadline: context.newRecord.getSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol126' })
+                                });
+                                context.newRecord.setSublistValue({ sublistId: 'item', line: i, fieldId: 'custcol124', value: false });
+                            }
                         }
                         log.debug('beforeSubmit - commitVal', commitVal);
                         log.debug('beforeSubmit - backVal', backVal);
@@ -1044,6 +1055,31 @@ define(['N/record', 'N/search', 'N/email', 'N/file', 'N/task', 'N/ui/serverWidge
                                 });
                                 log.debug('beforeSubmit - price update', 'customer saved: ' + custId);
                             // }
+                        }
+                        log.debug('beforeSubmit - createRFQs', JSON.stringify(createRFQs));
+                        var userId = runtime.getCurrentUser().id;
+                        log.debug({
+                            title: 'post userId',
+                            details: userId
+                        });
+                        if (createRFQs.length > 0) {
+                            for (var i = 0; i < createRFQs.length; i++) {
+                                var item = createRFQs[i].item;
+                                var qty = createRFQs[i].qty;
+                                var vendor = createRFQs[i].vendor;
+                                var deadline = createRFQs[i].deadline;
+                                var rfqRecord = record.create({
+                                    type: 'customrecord1506',
+                                    isDynamic: true
+                                });
+                                rfqRecord.setValue({ fieldId: 'owner', value: userId });
+                                rfqRecord.setValue({ fieldId: 'custrecord361', value: item });
+                                rfqRecord.setValue({ fieldId: 'custrecord362', value: vendor });
+                                rfqRecord.setValue({ fieldId: 'custrecord363', value: qty });
+                                rfqRecord.setValue({ fieldId: 'custrecord364', value: deadline });
+                                rfqRecord.setValue({ fieldId: 'custrecord370', value: 1 });
+                                rfqRecord.save();
+                            }
                         }
                     }
                 } catch (e) {

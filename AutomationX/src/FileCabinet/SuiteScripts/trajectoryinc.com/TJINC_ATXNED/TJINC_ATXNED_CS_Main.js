@@ -1705,6 +1705,20 @@ define(['N/runtime', 'N/url', 'N/record', 'N/search', 'N/http',
                             }
                         }
 
+                        var i_rfqVal = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol124' });
+                        var i_rfqItem = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'item' });
+                        var i_rfqQuantity = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'quantity' });
+                        var i_rfqVendor = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol125' });
+                        var i_rfqDeadline = o_rec.getCurrentSublistValue({ sublistId: 'item', fieldId: 'custcol126' });
+
+                        // log.debug('Purchase Request: ', i_prVal);
+                        if (i_rfqVal == 'T' || i_rfqVal == true) {
+                            if (i_rfqItem == '' || i_rfqQuantity == '' || i_rfqVendor == '' || i_rfqDeadline == '') {
+                                tj.alert('Line '+(i+1)+' that you selected for a RFQ does not have all required fields set. Please verify this line has Item, Quantity, RFQ Vendor, and RFQ Deadline set before submitting.')
+                                return false;
+                            }
+                        }
+
                         o_rec.cancelLine({
                             sublistId: 'item'
                         });
